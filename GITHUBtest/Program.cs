@@ -13,6 +13,7 @@ namespace GITHUBtest
             NewClass newClass = new NewClass();
             Console.WriteLine("Hello my name is Peter");
             Console.WriteLine(newClass.JaredMethod());
+            Console.WriteLine("Hello my name is Adam");
         }
     }
 }
