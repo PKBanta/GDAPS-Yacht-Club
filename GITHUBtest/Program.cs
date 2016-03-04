@@ -10,7 +10,9 @@ namespace GITHUBtest
     {
         static void Main(string[] args)
         {
+            NewClass newClass = new NewClass();
             Console.WriteLine("Hello my name is Peter");
+            Console.WriteLine(newClass.JaredMethod());
         }
     }
 }
