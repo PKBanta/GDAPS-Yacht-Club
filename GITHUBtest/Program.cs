@@ -11,6 +11,7 @@ namespace GITHUBtest
         static void Main(string[] args)
         {
             Console.WriteLine("Hello my name is Peter");
+            Console.WriteLine("Hello my name is Adam");
         }
     }
 }
