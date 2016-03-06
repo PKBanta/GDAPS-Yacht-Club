@@ -1,0 +1,61 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+namespace SemesterProject
+{
+    class MapObject
+    {
+        //location fields
+        private int xpos;
+        private int ypos;
+
+        //appearance fields
+        private int height;
+        private int width;
+        Texture2D tex;
+
+        //properties
+
+        public int Xpos
+        {
+            get { return xpos; }
+            set { xpos = value; }
+        }
+        public int Ypos
+        {
+            get { return ypos; }
+            set { ypos = value; }
+        }
+
+        public int Height
+        {
+            get { return height; }
+            set { height = value; }
+        }
+
+        public int Width
+        {
+            get { return width; }
+            set { width = value; }
+        }
+
+        public Texture2D Tex
+        {
+            get { return tex; }
+        }
+
+        //constructor
+        public MapObject(int x, int y, int h, int w, Texture2D t)
+        {
+            xpos = x;
+            ypos = y;
+            height = h;
+            width = w;
+            tex = t;
+        }
+    }
+}
