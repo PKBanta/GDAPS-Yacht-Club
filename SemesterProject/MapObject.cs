@@ -17,6 +17,7 @@ namespace SemesterProject
         private int height;
         private int width;
         Texture2D tex;
+        Rectangle rect;
 
         //properties
 
@@ -48,6 +49,10 @@ namespace SemesterProject
             get { return tex; }
         }
 
+        public Rectangle Rect
+        {
+            get { return rect; }
+        }
         //constructor
         public MapObject(int x, int y, int h, int w, Texture2D t)
         {
@@ -56,6 +61,8 @@ namespace SemesterProject
             height = h;
             width = w;
             tex = t;
+
+            rect = new Rectangle(xpos, ypos, width, height);
         }
     }
 }

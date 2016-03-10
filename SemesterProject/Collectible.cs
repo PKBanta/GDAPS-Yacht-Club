@@ -8,11 +8,19 @@ using Microsoft.Xna.Framework.Input;
 
 namespace SemesterProject
 {
-    class Platform : MapObject
+    class Collectible : MapObject
     {
-        public Platform (int x, int y, int h, int w, Texture2D t) : base(x, y, h, w, t)
-        {
+        //fields
+        string name;
 
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+        public Collectible(int x, int y, int h, int w, Texture2D t, string n) : base(x, y, h, w, t)
+        {
+            name = n;
         }
 
         public void Draw(SpriteBatch spritebatch)
