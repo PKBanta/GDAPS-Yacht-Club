@@ -53,7 +53,7 @@ namespace SemesterProject
         }
 
         //Constructor
-        private Character(int x, int y, int width, int height, int damage, int maxHealth, Texture2D tex)
+        public Character(int x, int y, int width, int height, int damage, int maxHealth, Texture2D tex)
         {
             this.x = x;
             this.y = y;

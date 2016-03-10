@@ -28,6 +28,8 @@ namespace SemesterProject
         private KeyboardState previousKBState;
 
         private Player player;
+        private Texture2D playerTexture;    //Player's texture
+
         private Texture2D mainMenuImage, pauseImage, gameOverImage;
         private SpriteFont menuFont;
 
@@ -80,6 +82,10 @@ namespace SemesterProject
             // TODO: Add your initialization logic here
             state = GameState.Menu;
             kbState = Keyboard.GetState();
+
+            //Initializes player and their texture
+            player = new Player(0, 0, playerTexture.Width, playerTexture.Height, 10, 20, playerTexture);
+
             base.Initialize();
         }
 
@@ -146,6 +152,9 @@ namespace SemesterProject
                 new Vector2(GraphicsDevice.Viewport.Width / 2 - 250,
                     GraphicsDevice.Viewport.Height / 2),
                 Color.White);
+
+            //Loads the player's texture
+            playerTexture = Content.Load<Texture2D>("mario");
         }
 
         /// <summary>
