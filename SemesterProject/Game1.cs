@@ -21,6 +21,21 @@ namespace SemesterProject
             GameOver // Game Over Screen
         }
 
+        enum PlayerXState
+        {
+            StandRight,     //Standing facing right
+            WalkRight,      //Walking right
+            StandLeft,      //Standing facing left
+            WalkLeft,       //Walking left
+        }
+
+        enum PlayerYState
+        {
+            Jump,           //Jumping
+            Fall,           //Falling
+            Ground          //No vertical movement
+        }
+
         private GameState state;
         private GameState previousState; //Needed for pause menu
 
@@ -28,7 +43,9 @@ namespace SemesterProject
         private KeyboardState previousKBState;
 
         private Player player;
-        private Texture2D playerTexture;    //Player's texture
+        private Texture2D playerTexture;        //Player's texture
+        private PlayerXState playerXState;      //Player's X direction state
+        private PlayerYState playerYState;      //Player's Y direction state
 
         private Texture2D mainMenuImage, pauseImage, gameOverImage;
         private SpriteFont menuFont;
@@ -84,6 +101,11 @@ namespace SemesterProject
             state = GameState.Menu;
             kbState = Keyboard.GetState();
             IsMouseVisible = true;
+            
+
+            //Initializes player and their texture
+            playerXState = PlayerXState.StandRight;
+            playerYState = PlayerYState.Ground;
             
             base.Initialize();
         }
@@ -236,6 +258,9 @@ namespace SemesterProject
             previousKBState = kbState;
             kbState = Keyboard.GetState();
 
+            int jumpTime = 5;
+            int jumpCounter = 0;
+
             switch (state)
             {
                 case GameState.Menu:
@@ -309,11 +334,89 @@ namespace SemesterProject
                     }
                     break;
 
-
+                
 
             }
 
-            
+            //Deals with players x directional movement
+            switch (playerXState)
+            {
+                case PlayerXState.StandRight:
+                    if (kbState.IsKeyDown(Keys.D))
+                    {
+                        playerXState = PlayerXState.WalkRight;
+                    }
+
+                    else if (kbState.IsKeyDown(Keys.A))
+                    {
+                        playerXState = PlayerXState.WalkLeft;
+                    }
+                    break;
+
+                case PlayerXState.WalkRight:
+                    if (kbState.IsKeyUp(Keys.Right))
+                    {
+                        playerXState = PlayerXState.StandRight;
+                    }
+                    break;
+
+                case PlayerXState.StandLeft:
+                    if (kbState.IsKeyDown(Keys.A))
+                    {
+                        playerXState = PlayerXState.WalkLeft;
+                    }
+
+                    else if (kbState.IsKeyDown(Keys.D))
+                    {
+                        playerXState = PlayerXState.WalkRight;
+                    }
+                    break;
+
+                case PlayerXState.WalkLeft:
+                    player.Y = GraphicsDevice.Viewport.Height;
+
+                    if (kbState.IsKeyUp(Keys.Left))
+                    {
+                        playerXState = PlayerXState.StandLeft;
+                    }
+                    break;
+            }
+
+            //Deals with player's y directional movement
+            switch (playerYState)
+            {
+                case PlayerYState.Ground:
+                    player.Y = GraphicsDevice.Viewport.Height;
+
+                    if (kbState.IsKeyDown(Keys.Space))
+                    {
+                        playerYState = PlayerYState.Jump;
+                    }
+                    break;
+
+                case PlayerYState.Jump:
+                    if (jumpCounter < jumpTime)
+                    {
+                        player.Jump();
+                    }
+
+                    else playerYState = PlayerYState.Fall;
+                    break;
+
+                case PlayerYState.Fall:
+                    jumpCounter = 0;
+
+                    if(player.Y < GraphicsDevice.Viewport.Height)
+                    {
+                        player.Fall();
+                    }
+
+                    else
+                    {
+                        playerYState = PlayerYState.Ground;
+                    }
+                    break;
+            }
 
             base.Update(gameTime);
         }
