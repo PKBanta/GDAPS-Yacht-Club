@@ -52,7 +52,7 @@ namespace SemesterProject
 
         private Texture2D buttonImage;
 
-        private Menu MAIN_MENU, PAUSE_MENU, GAME_OVER_MENU;
+        private Menu mainMenu, pauseMenu, gameOverMenu;
 
 
         public Game1()
@@ -133,56 +133,99 @@ namespace SemesterProject
             //Initializes player and their texture
             player = new Player(0, 0, playerTexture.Width, playerTexture.Height, 10, 20, playerTexture);
 
-            // Buttons
-            List<Button> testingButtons = new List<Button>();
+            // Create default buttons
+            //// Activatable & clickable button
+            //Button button0 = new Button(
+            //    buttonImage,
+            //    new Rectangle(GraphicsDevice.Viewport.Width - 100, 0,
+            //        buttonImage.Width, buttonImage.Height),
+            //    menuFont,
+            //    "button0",
+            //    Vector2.Zero,
+            //    Color.White);
 
-            Button button0 = new Button(
+            //// Activatable but unclickable button
+            //Button button1 = new Button(
+            //    buttonImage,
+            //    new Rectangle(GraphicsDevice.Viewport.Width - 100, 50,
+            //        buttonImage.Width, buttonImage.Height),
+            //    menuFont,
+            //    "button1",
+            //    Vector2.Zero,
+            //    Color.White,
+            //    true, false);
+
+            //// Inactivatable but clickable button
+            //Button button2 = new Button(
+            //    buttonImage,
+            //    new Rectangle(GraphicsDevice.Viewport.Width - 100, 100,
+            //        buttonImage.Width, buttonImage.Height),
+            //    menuFont,
+            //    "button2",
+            //    Vector2.Zero,
+            //    Color.White,
+            //    false, true);
+
+            //// Inactivatable and unclickable button
+            //Button button3 = new Button(
+            //    buttonImage,
+            //    new Rectangle(GraphicsDevice.Viewport.Width - 100, 150,
+            //        buttonImage.Width, buttonImage.Height),
+            //    menuFont,
+            //    "button3",
+            //    Vector2.Zero,
+            //    Color.White,
+            //    false, false);
+
+            // Default menu buttons
+
+            Button mainMenuButton = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width - 100, 0,
                     buttonImage.Width, buttonImage.Height),
                 menuFont,
-                "button0",
+                "Main Menu",
                 Vector2.Zero,
                 Color.White);
 
-            Button button1 = new Button(
+            Button resumeButton = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width - 100, 50,
                     buttonImage.Width, buttonImage.Height),
                 menuFont,
-                "button1",
+                "Resume",
                 Vector2.Zero,
-                Color.White,
-                true, false);
+                Color.White);
 
-            Button button2 = new Button(
+            Button playButton = new Button(
                 buttonImage,
-                new Rectangle(GraphicsDevice.Viewport.Width - 100, 100,
+                new Rectangle(GraphicsDevice.Viewport.Width - 100, 0,
                     buttonImage.Width, buttonImage.Height),
                 menuFont,
-                "button2",
+                "Play Game",
                 Vector2.Zero,
-                Color.White,
-                false, true);
+                Color.White);
 
-            Button button3 = new Button(
-                buttonImage,
-                new Rectangle(GraphicsDevice.Viewport.Width - 100, 150,
-                    buttonImage.Width, buttonImage.Height),
-                menuFont,
-                "button3",
-                Vector2.Zero,
-                Color.White,
-                false, false);
-            
-            testingButtons.Add(button0);
-            testingButtons.Add(button1);
-            testingButtons.Add(button2);
-            testingButtons.Add(button3);
+            //List<Button> testingButtons = new List<Button>()
+            //{
+            //    button0, button1, button2, button3
+            //};
+
+            List<Button> pauseButtons = new List<Button>()
+            {
+                mainMenuButton, resumeButton
+            };
+
+            List<Button> menuButtons = new List<Button>(){ playButton };
+
+            List<Button> gameOverButtons = new List<Button>()
+            {
+                mainMenuButton
+            };
 
 
             // Main Menu
-            MAIN_MENU = new Menu(
+            mainMenu = new Menu(
                 mainMenuImage,
                 Vector2.Zero,
 
@@ -198,10 +241,10 @@ namespace SemesterProject
                     GraphicsDevice.Viewport.Height / 2),
                 Color.White,
 
-                testingButtons);
+                menuButtons);
 
             // Pause Menu
-            PAUSE_MENU = new Menu(
+            pauseMenu = new Menu(
                 pauseImage,
                 new Vector2(20, 20),
 
@@ -215,10 +258,10 @@ namespace SemesterProject
                 new Vector2(15, 30),
                 Color.White,
 
-                testingButtons);
+                pauseButtons);
 
             // GameOver Menu
-            GAME_OVER_MENU = new Menu(
+            gameOverMenu = new Menu(
                 pauseImage,
                 Vector2.Zero,
 
@@ -234,7 +277,7 @@ namespace SemesterProject
                     GraphicsDevice.Viewport.Height / 2),
                 Color.White,
 
-                testingButtons);
+                gameOverButtons);
         }
 
         /// <summary>
@@ -264,7 +307,7 @@ namespace SemesterProject
             switch (state)
             {
                 case GameState.Menu:
-                    MAIN_MENU.Update(Mouse.GetState());
+                    mainMenu.Update(Mouse.GetState());
 
                     if (SingleKeyPress(Keys.Enter))
                     {
@@ -297,7 +340,7 @@ namespace SemesterProject
                     break;
 
                 case GameState.Pause:
-                    PAUSE_MENU.Update(Mouse.GetState());
+                    pauseMenu.Update(Mouse.GetState());
 
                     if (SingleKeyPress(Keys.P))
                     {
@@ -324,7 +367,7 @@ namespace SemesterProject
                     break;
                     
                 case GameState.GameOver:
-                    GAME_OVER_MENU.Update(Mouse.GetState());
+                    gameOverMenu.Update(Mouse.GetState());
 
                     if (SingleKeyPress(Keys.Enter))
                     {
@@ -436,7 +479,7 @@ namespace SemesterProject
             switch (state)
             {
                 case GameState.Menu:
-                    MAIN_MENU.Draw(spriteBatch);
+                    mainMenu.Draw(spriteBatch);
                     break;
 
                 case GameState.World:
@@ -449,11 +492,11 @@ namespace SemesterProject
                     break;
 
                 case GameState.Pause:
-                    PAUSE_MENU.Draw(spriteBatch);
+                    pauseMenu.Draw(spriteBatch);
                     break;
 
                 case GameState.GameOver:
-                    GAME_OVER_MENU.Draw(spriteBatch);
+                    gameOverMenu.Draw(spriteBatch);
                     break;
             }
 

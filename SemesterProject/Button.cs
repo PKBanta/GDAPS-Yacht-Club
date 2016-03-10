@@ -114,7 +114,7 @@ namespace SemesterProject
 
         // Methods
         /// <summary>
-        /// Update the button
+        /// Update the button based on input information
         /// </summary>
         /// <param name="mouse">Mouse information</param>
         public void Update(MouseState mouse)

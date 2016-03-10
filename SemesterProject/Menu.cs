@@ -163,7 +163,8 @@ namespace SemesterProject
         /// <param name="menuLocation">Where the menu's background is located
         /// </param>
         /// <param name="buttons">The list of buttons for this menu</param>
-        public Menu(Texture2D texture, Vector2 menuLocation,List<Button> buttons)
+        public Menu(Texture2D texture, Vector2 menuLocation,
+            List<Button> buttons = null)
         {
             menuTexture = texture;
             menuPosition = menuLocation;
@@ -176,7 +177,10 @@ namespace SemesterProject
             bodyPosition = Vector2.Zero;
             bodyColor = Color.White;
 
-            menuButtons = buttons;
+            if (buttons != null)
+                menuButtons = buttons;
+            else
+                menuButtons = new List<Button>();
         }
 
         /// <summary>
@@ -207,7 +211,10 @@ namespace SemesterProject
             bodyPosition = Vector2.Zero;
             bodyColor = Color.White;
 
-            menuButtons = buttons;
+            if (buttons != null)
+                menuButtons = buttons;
+            else
+                menuButtons = new List<Button>();
         }
 
         /// <summary>
@@ -245,7 +252,10 @@ namespace SemesterProject
             bodyPosition = menuLocation + captionLocation;
             bodyColor = captionColor;
 
-            menuButtons = buttons;
+            if (buttons != null)
+                menuButtons = buttons;
+            else
+                menuButtons = new List<Button>();
         }
 
         
