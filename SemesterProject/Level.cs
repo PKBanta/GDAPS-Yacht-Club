@@ -21,13 +21,26 @@ namespace SemesterProject
         /// </returns>
         public Room this[int index]
         {
-            get { return rooms.ElementAt(index); }
+            get
+            {
+                if (index >= 0 && index < rooms.Count)
+                {
+                    return rooms.ElementAt(index);
+                }
+
+                else
+                {
+                    return default(Room);
+                }
+            }
         }
 
 
         // Constructors
         public Level(List<Room> levelRooms)
         {
+            rooms = new LinkedList<Room>();
+
             foreach (Room r in levelRooms)
             {
                 rooms.AddLast(r);

@@ -33,6 +33,8 @@ namespace SemesterProject
         private Texture2D mainMenuImage, pauseImage, gameOverImage;
         private SpriteFont menuFont;
 
+        private Texture2D buttonImage;
+
         private Menu MAIN_MENU, PAUSE_MENU, GAME_OVER_MENU;
 
 
@@ -79,13 +81,10 @@ namespace SemesterProject
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
             state = GameState.Menu;
             kbState = Keyboard.GetState();
-
-            //Initializes player and their texture
-            player = new Player(0, 0, playerTexture.Width, playerTexture.Height, 10, 20, playerTexture);
-
+            IsMouseVisible = true;
+            
             base.Initialize();
         }
 
@@ -98,11 +97,67 @@ namespace SemesterProject
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // mainMenuImage = Content.Load<Texture2D>(filename);
-            // pauseImage = Content.Load<Texture2D>(filename);
+            mainMenuImage = Content.Load<Texture2D>("mainMenu");
+            pauseImage = Content.Load<Texture2D>("pauseMenu");
+            gameOverImage = Content.Load<Texture2D>("mainMenu");
 
-            // gameOverImage = Content.Load<Texture2D>(filename);
-            // menuFont = Content.Load<SpriteFont>(filename);
+            buttonImage = Content.Load<Texture2D>("ButtonImage");
+
+            menuFont = Content.Load<SpriteFont>("MenuFont");
+
+            //Loads the player's texture
+            playerTexture = Content.Load<Texture2D>("mario");
+
+            //Initializes player and their texture
+            player = new Player(0, 0, playerTexture.Width, playerTexture.Height, 10, 20, playerTexture);
+
+            // Buttons
+            List<Button> testingButtons = new List<Button>();
+
+            Button button0 = new Button(
+                buttonImage,
+                new Rectangle(GraphicsDevice.Viewport.Width - 100, 0,
+                    buttonImage.Width, buttonImage.Height),
+                menuFont,
+                "button0",
+                Vector2.Zero,
+                Color.White);
+
+            Button button1 = new Button(
+                buttonImage,
+                new Rectangle(GraphicsDevice.Viewport.Width - 100, 50,
+                    buttonImage.Width, buttonImage.Height),
+                menuFont,
+                "button1",
+                Vector2.Zero,
+                Color.White,
+                true, false);
+
+            Button button2 = new Button(
+                buttonImage,
+                new Rectangle(GraphicsDevice.Viewport.Width - 100, 100,
+                    buttonImage.Width, buttonImage.Height),
+                menuFont,
+                "button2",
+                Vector2.Zero,
+                Color.White,
+                false, true);
+
+            Button button3 = new Button(
+                buttonImage,
+                new Rectangle(GraphicsDevice.Viewport.Width - 100, 150,
+                    buttonImage.Width, buttonImage.Height),
+                menuFont,
+                "button3",
+                Vector2.Zero,
+                Color.White,
+                false, false);
+            
+            testingButtons.Add(button0);
+            testingButtons.Add(button1);
+            testingButtons.Add(button2);
+            testingButtons.Add(button3);
+
 
             // Main Menu
             MAIN_MENU = new Menu(
@@ -119,7 +174,9 @@ namespace SemesterProject
                 "Press Enter to play",
                 new Vector2(GraphicsDevice.Viewport.Width / 2 - 200,
                     GraphicsDevice.Viewport.Height / 2),
-                Color.White);
+                Color.White,
+
+                testingButtons);
 
             // Pause Menu
             PAUSE_MENU = new Menu(
@@ -133,12 +190,14 @@ namespace SemesterProject
 
                 menuFont,
                 "Press Enter to return to Main Menu\nPress P to resume",
-                new Vector2(20, 50),
-                Color.White);
+                new Vector2(15, 30),
+                Color.White,
+
+                testingButtons);
 
             // GameOver Menu
             GAME_OVER_MENU = new Menu(
-                gameOverImage,
+                pauseImage,
                 Vector2.Zero,
 
                 menuFont,
@@ -151,10 +210,9 @@ namespace SemesterProject
                 "Press Enter to return to menu",
                 new Vector2(GraphicsDevice.Viewport.Width / 2 - 250,
                     GraphicsDevice.Viewport.Height / 2),
-                Color.White);
+                Color.White,
 
-            //Loads the player's texture
-            playerTexture = Content.Load<Texture2D>("mario");
+                testingButtons);
         }
 
         /// <summary>
@@ -181,6 +239,8 @@ namespace SemesterProject
             switch (state)
             {
                 case GameState.Menu:
+                    MAIN_MENU.Update(Mouse.GetState());
+
                     if (SingleKeyPress(Keys.Enter))
                     {
                         previousState = state;
@@ -212,6 +272,8 @@ namespace SemesterProject
                     break;
 
                 case GameState.Pause:
+                    PAUSE_MENU.Update(Mouse.GetState());
+
                     if (SingleKeyPress(Keys.P))
                     {
                         state = previousState;
@@ -219,22 +281,26 @@ namespace SemesterProject
                     }
                     break;
 
-                /*case GameState.Battle: //Most likely will be commented out for this milestone
-                    if (SingleKeyPress(Keys.P)) //Switch to pause menu
+                case GameState.Battle:
+                    if (SingleKeyPress(Keys.P))
                     {
                         previousState = state;
                         state = GameState.Pause;
                     }
 
+                    /*
                     //If battle has finished(Some sort of bool needed here)
                     if (battle.Finished)
                     {
                         previousState = state;
                         state = GameState.World;
-                    }
-                    break;*/
+                    }*/
+
+                    break;
                     
                 case GameState.GameOver:
+                    GAME_OVER_MENU.Update(Mouse.GetState());
+
                     if (SingleKeyPress(Keys.Enter))
                     {
                         previousState = state;
@@ -260,7 +326,7 @@ namespace SemesterProject
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.DarkSlateGray);
 
             spriteBatch.Begin();
 
@@ -271,9 +337,12 @@ namespace SemesterProject
                     break;
 
                 case GameState.World:
+                    player.Draw(spriteBatch);
+                    // Draw the contents of the current room here
                     break;
 
                 case GameState.Battle:
+                    player.Draw(spriteBatch); // DO NOT call this in the final
                     break;
 
                 case GameState.Pause:

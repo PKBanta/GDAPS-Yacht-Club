@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace SemesterProject
 {
@@ -19,6 +20,7 @@ namespace SemesterProject
         private Vector2 menuPosition, headPosition, bodyPosition;
         private string headText, bodyText;
         private Color headColor, bodyColor;
+        private List<Button> menuButtons;
 
 
         // Properties
@@ -131,6 +133,27 @@ namespace SemesterProject
             }
         }
 
+        /// <summary>
+        /// The Button in the list of buttons for this menu.
+        /// </summary>
+        /// <param name="index">Index of button to access</param>
+        /// <returns>Button in this index</returns>
+        public Button this[int index]
+        {
+            get
+            {
+                if (index >= 0 && index < menuButtons.Count)
+                {
+                    return menuButtons[index];
+                }
+
+                else
+                {
+                    return default(Button);
+                }
+            }
+        }
+
 
         // Constructors
         /// <summary>
@@ -139,7 +162,8 @@ namespace SemesterProject
         /// <param name="texture">Texture of the menu's background</param>
         /// <param name="menuLocation">Where the menu's background is located
         /// </param>
-        public Menu(Texture2D texture, Vector2 menuLocation)
+        /// <param name="buttons">The list of buttons for this menu</param>
+        public Menu(Texture2D texture, Vector2 menuLocation,List<Button> buttons)
         {
             menuTexture = texture;
             menuPosition = menuLocation;
@@ -151,6 +175,8 @@ namespace SemesterProject
             bodyFont = default(SpriteFont);
             bodyPosition = Vector2.Zero;
             bodyColor = Color.White;
+
+            menuButtons = buttons;
         }
 
         /// <summary>
@@ -164,9 +190,10 @@ namespace SemesterProject
         /// <param name="headerLocation">The location of the header relative to
         /// the location of the menu itself</param>
         /// <param name="headerColor">Color of header text</param>
+        /// <param name="buttons">The list of buttons for this menu</param>
         public Menu(Texture2D texture, Vector2 menuLocation,
             SpriteFont font, string header, Vector2 headerLocation,
-            Color headerColor)
+            Color headerColor, List<Button> buttons)
         {
             menuTexture = texture;
             menuPosition = menuLocation;
@@ -179,6 +206,8 @@ namespace SemesterProject
             bodyFont = default(SpriteFont);
             bodyPosition = Vector2.Zero;
             bodyColor = Color.White;
+
+            menuButtons = buttons;
         }
 
         /// <summary>
@@ -197,10 +226,11 @@ namespace SemesterProject
         /// <param name="captionLocation">The location of the body relative
         /// to the location of the menu itself</param>
         /// <param name="captionColor">Color of body text</param>
+        ///// <param name="buttons">The list of buttons for this menu</param>
         public Menu(Texture2D texture, Vector2 menuLocation,
             SpriteFont headerFont, string header, Vector2 headerLocation,
             Color headerColor, SpriteFont captionFont, string caption,
-            Vector2 captionLocation, Color captionColor)
+            Vector2 captionLocation, Color captionColor, List<Button> buttons)
         {
             menuTexture = texture;
             menuPosition = menuLocation;
@@ -214,20 +244,44 @@ namespace SemesterProject
             bodyText = caption;
             bodyPosition = menuLocation + captionLocation;
             bodyColor = captionColor;
+
+            menuButtons = buttons;
         }
 
         
         // Methods
+        /// <summary>
+        /// Remove the header text from the menu. (Sets text to null)
+        /// </summary>
         public void RemoveHeader()
         {
             headText = null;
         }
 
+        /// <summary>
+        /// Remove the body text from the menu. (Sets text to null)
+        /// </summary>
         public void RemoveBody()
         {
             bodyText = null;
         }
 
+        /// <summary>
+        /// Update the menu's buttons
+        /// </summary>
+        /// <param name="mouse">Mouse information</param>
+        public void Update(MouseState mouse)
+        {
+            for (int i = 0; i < menuButtons.Count; i++)
+            {
+                menuButtons[i].Update(mouse);
+            }
+        }
+
+        /// <summary>
+        /// Draw the menu & its buttons
+        /// </summary>
+        /// <param name="spriteBatch">SpriteBatch to draw menu with</param>
         public void Draw(SpriteBatch spriteBatch)
         {
             // Draw the menu's background
@@ -255,7 +309,12 @@ namespace SemesterProject
                     bodyPosition,
                     bodyColor);
             }
-        }
 
+            // Draw the menu's buttons
+            foreach (Button b in menuButtons)
+            {
+                b.Draw(spriteBatch);
+            }
+        }
     }
 }
