@@ -186,7 +186,7 @@ namespace SemesterProject
 
             Button mainMenuButton = new Button(
                 buttonImage,
-                new Rectangle(GraphicsDevice.Viewport.Width - 100, 0,
+                new Rectangle(GraphicsDevice.Viewport.Width - 100, 50,
                     buttonImage.Width, buttonImage.Height),
                 menuFont,
                 "Main Menu",
@@ -195,7 +195,7 @@ namespace SemesterProject
 
             Button resumeButton = new Button(
                 buttonImage,
-                new Rectangle(GraphicsDevice.Viewport.Width - 100, 50,
+                new Rectangle(GraphicsDevice.Viewport.Width - 100, 0,
                     buttonImage.Width, buttonImage.Height),
                 menuFont,
                 "Resume",
