@@ -33,7 +33,9 @@ namespace SemesterProject
         public int Y
         {
             get { return y; }
-            set { y = value; }
+            set { y = value;
+                rect.Y = y;
+                }
         }
 
         public int Damage
@@ -50,6 +52,16 @@ namespace SemesterProject
         {
             get { return health; }
             set { health = value; }
+        }
+
+        public int Width
+        {
+            get { return width; }
+        }
+
+        public int Height
+        {
+            get { return height; }
         }
 
         //Constructor
