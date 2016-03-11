@@ -117,13 +117,13 @@ namespace SemesterProject
         /// Update the button based on input information
         /// </summary>
         /// <param name="mouse">Mouse information</param>
-        public void Update(MouseState mouse)
+        public void Update(MouseState mouse, MouseState prevMouse)
         {
             // Button is selected (Mouse hovering over button)
             if (position.Contains(mouse.X, mouse.Y))
             {
                 // Button is pressed down
-                if (mouse.LeftButton == ButtonState.Pressed)
+                if (SingleMouseClick(mouse, prevMouse))
                 {
                     if (active)
                     {
@@ -213,6 +213,17 @@ namespace SemesterProject
         {
             spriteBatch.Draw(buttonTexture, position, buttonColor);
             spriteBatch.DrawString(font, buttonText, textLocation, textColor);
+        }
+
+        /// <summary>
+        /// Check to see if the left mouse button was pressed just this frame
+        /// </summary>
+        /// <returns>True if pressed this frame</returns>
+        public bool SingleMouseClick(MouseState mouseState,
+            MouseState prevMouseState)
+        {
+            return (mouseState.LeftButton == ButtonState.Pressed
+                && prevMouseState.LeftButton == ButtonState.Released);
         }
     }
 }

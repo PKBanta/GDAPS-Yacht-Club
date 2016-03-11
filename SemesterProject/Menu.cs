@@ -280,11 +280,12 @@ namespace SemesterProject
         /// Update the menu's buttons
         /// </summary>
         /// <param name="mouse">Mouse information</param>
-        public void Update(MouseState mouse)
+        /// <param name="prevMouse">The previous mouse information</param>
+        public void Update(MouseState mouse, MouseState prevMouse)
         {
             for (int i = 0; i < menuButtons.Count; i++)
             {
-                menuButtons[i].Update(mouse);
+                menuButtons[i].Update(mouse, prevMouse);
             }
         }
 

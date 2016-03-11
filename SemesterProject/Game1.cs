@@ -41,6 +41,9 @@ namespace SemesterProject
 
         private KeyboardState kbState;
         private KeyboardState previousKBState;
+        
+        private MouseState mState;
+        private MouseState previousMState;
 
         private Player player;
         private Texture2D playerTexture;        //Player's texture
@@ -72,15 +75,20 @@ namespace SemesterProject
         /// Check to see if a single key was pressed just this frame
         /// </summary>
         /// <param name="k">Key pressed</param>
-        /// <returns></returns>
-        public bool SingleKeyPress(Keys k)
+        /// <returns>True if pressed this frame</returns>
+        private bool SingleKeyPress(Keys k)
         {
-            if (kbState.IsKeyDown(k) && previousKBState.IsKeyUp(k))
-            {
-                return true;
-            }
+            return (kbState.IsKeyDown(k) && previousKBState.IsKeyUp(k));
+        }
 
-            return false;
+        /// <summary>
+        /// Check to see if the left mouse button was pressed just this frame
+        /// </summary>
+        /// <returns>True if pressed this frame</returns>
+        private bool SingleMouseClick()
+        {
+            return (mState.LeftButton == ButtonState.Pressed
+                && previousMState.LeftButton == ButtonState.Released);
         }
 
         /*
@@ -125,7 +133,6 @@ namespace SemesterProject
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            //player = new Player(5, 5, 50, 50, 10, 50, Content.Load<Texture2D>("Pokeball"));
 
             mainMenuImage = Content.Load<Texture2D>("mainMenu");
             pauseImage = Content.Load<Texture2D>("pauseMenu");
@@ -189,7 +196,7 @@ namespace SemesterProject
 
             Button mainMenuButton = new Button(
                 buttonImage,
-                new Rectangle(GraphicsDevice.Viewport.Width - 100, 50,
+                new Rectangle(GraphicsDevice.Viewport.Width - 100, 0,
                     buttonImage.Width, buttonImage.Height),
                 menuFont,
                 "Main Menu",
@@ -198,7 +205,7 @@ namespace SemesterProject
 
             Button resumeButton = new Button(
                 buttonImage,
-                new Rectangle(GraphicsDevice.Viewport.Width - 100, 0,
+                new Rectangle(GraphicsDevice.Viewport.Width - 100, 50,
                     buttonImage.Width, buttonImage.Height),
                 menuFont,
                 "Resume",
@@ -306,20 +313,24 @@ namespace SemesterProject
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
             previousKBState = kbState;
             kbState = Keyboard.GetState();
 
-            
+            previousMState = mState;
+            mState = Mouse.GetState();
 
             switch (state)
             {
                 case GameState.Menu:
-                    mainMenu.Update(Mouse.GetState());
+
+                    mainMenu.Update(mState, previousMState);
 
                     if (SingleKeyPress(Keys.Enter) || menuButtons[0].Activated)
                     {
                         previousState = state;
                         state = GameState.World;
+                        IsMouseVisible = false;
                     }
                     
 
@@ -332,7 +343,8 @@ namespace SemesterProject
                     {
                         previousState = state;
                         state = GameState.Pause;
-                    }
+                        IsMouseVisible = true;
+                    }   // Put everything after this in an else statement?
 
                     //Put in player collision with enemy here
 
@@ -385,7 +397,7 @@ namespace SemesterProject
                     break;
 
                 case GameState.Pause:
-                    pauseMenu.Update(Mouse.GetState());
+                    pauseMenu.Update(mState, previousMState);
 
                     if (SingleKeyPress(Keys.P) || pauseButtons[1].Activated)
                     {
@@ -420,7 +432,7 @@ namespace SemesterProject
                     break;
                     
                 case GameState.GameOver:
-                    gameOverMenu.Update(Mouse.GetState());
+                    gameOverMenu.Update(Mouse.GetState(), previousMState);
 
                     if (SingleKeyPress(Keys.Enter) || gameOverButtons[0].Activated)
                     {
