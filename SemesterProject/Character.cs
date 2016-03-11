@@ -53,7 +53,7 @@ namespace SemesterProject
         }
 
         //Constructor
-        private Character(int x, int y, int width, int height, int damage, int maxHealth, Texture2D tex)
+        public Character(int x, int y, int width, int height, int damage, int maxHealth, Texture2D tex)
         {
             this.x = x;
             this.y = y;
@@ -80,7 +80,12 @@ namespace SemesterProject
         /// <param name="dist">Distance for the character to move per frame</param>
         public virtual void Move(int dist)
         {
-            x += dist;
+            rect.X += dist;
+        }
+        
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(tex, rect, Color.White);
         }
     }
 }

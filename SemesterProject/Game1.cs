@@ -87,6 +87,7 @@ namespace SemesterProject
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            player = new Player(5, 5, 50, 50, 10, 50, Content.Load<Texture2D>("Pokeball"));
 
             // TODO: use this.Content to load your game content here
         }
@@ -135,11 +136,11 @@ namespace SemesterProject
                     //Player Movement
                     if (kbState.IsKeyDown(Keys.Left))
                     {
-                        player.X -= 4;
+                        player.Move(-4);
                     }
                     else if (kbState.IsKeyDown(Keys.Right))
                     {
-                        player.X += 4;
+                        player.Move(4);
                     }                    
                     break;
                 case GameState.Pause:
@@ -147,6 +148,12 @@ namespace SemesterProject
                     {
                         state = previousState;
                         previousState = GameState.Pause;
+                    }
+
+                    if (SingleKeyPress(Keys.Enter))
+                    {
+                        previousState = state;
+                        state = GameState.Menu;
                     }
                     break;
                 /*case GameState.Battle: //Most likely will be commented out for this milestone
@@ -190,6 +197,9 @@ namespace SemesterProject
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            spriteBatch.Begin();
+            player.Draw(spriteBatch);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
