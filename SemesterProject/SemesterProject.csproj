@@ -39,6 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Character.cs" />
+    <Compile Include="Collectible.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="MapObject.cs" />
