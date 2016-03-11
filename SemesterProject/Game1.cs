@@ -397,6 +397,8 @@ namespace SemesterProject
                     break;
 
                 case PlayerXState.WalkRight:
+                    player.Move(20);
+
                     if (kbState.IsKeyUp(Keys.Right))
                     {
                         playerXState = PlayerXState.StandRight;
@@ -417,6 +419,8 @@ namespace SemesterProject
 
                 case PlayerXState.WalkLeft:
                     player.Y = GraphicsDevice.Viewport.Height;
+
+                    player.Move(-20);
 
                     if (kbState.IsKeyUp(Keys.Left))
                     {

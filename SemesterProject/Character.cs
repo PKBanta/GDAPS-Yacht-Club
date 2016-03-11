@@ -80,7 +80,7 @@ namespace SemesterProject
         /// <param name="dist">Distance for the character to move per frame</param>
         public virtual void Move(int dist)
         {
-            x += dist;
+            rect.X += dist;
         }
 
         /// <summary>
