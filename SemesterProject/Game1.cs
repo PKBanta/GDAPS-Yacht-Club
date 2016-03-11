@@ -118,6 +118,7 @@ namespace SemesterProject
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            //player = new Player(5, 5, 50, 50, 10, 50, Content.Load<Texture2D>("Pokeball"));
 
             mainMenuImage = Content.Load<Texture2D>("mainMenu");
             pauseImage = Content.Load<Texture2D>("pauseMenu");
@@ -331,11 +332,11 @@ namespace SemesterProject
                     //Player Movement
                     if (kbState.IsKeyDown(Keys.Left))
                     {
-                        player.X -= 4;
+                        player.Move(-4);
                     }
                     else if (kbState.IsKeyDown(Keys.Right))
                     {
-                        player.X += 4;
+                        player.Move(4);
                     }                    
                     break;
 
@@ -346,6 +347,12 @@ namespace SemesterProject
                     {
                         state = previousState;
                         previousState = GameState.Pause;
+                    }
+
+                    if (SingleKeyPress(Keys.Enter))
+                    {
+                        previousState = state;
+                        state = GameState.Menu;
                     }
                     break;
 
@@ -467,7 +474,6 @@ namespace SemesterProject
 
             base.Update(gameTime);
         }
-
         
 
         /// <summary>
