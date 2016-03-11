@@ -505,7 +505,7 @@ namespace SemesterProject
                     gameOverMenu.Draw(spriteBatch);
                     break;
             }
-            
+
             spriteBatch.End();
 
             base.Draw(gameTime);
