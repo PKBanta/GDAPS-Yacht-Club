@@ -53,9 +53,13 @@ namespace SemesterProject
         private Texture2D buttonImage;
 
         private Menu mainMenu, pauseMenu, gameOverMenu;
-
+        
         private int jumpTime = 5;
         private int jumpCounter = 0;
+
+        private List<Button> pauseButtons;
+        private List<Button> menuButtons;
+        private List<Button> gameOverButtons;
 
 
         public Game1()
@@ -215,14 +219,14 @@ namespace SemesterProject
             //    button0, button1, button2, button3
             //};
 
-            List<Button> pauseButtons = new List<Button>()
+            pauseButtons = new List<Button>()
             {
                 mainMenuButton, resumeButton
             };
 
-            List<Button> menuButtons = new List<Button>(){ playButton };
+            menuButtons = new List<Button>(){ playButton };
 
-            List<Button> gameOverButtons = new List<Button>()
+            gameOverButtons = new List<Button>()
             {
                 mainMenuButton
             };
@@ -312,11 +316,12 @@ namespace SemesterProject
                 case GameState.Menu:
                     mainMenu.Update(Mouse.GetState());
 
-                    if (SingleKeyPress(Keys.Enter))
+                    if (SingleKeyPress(Keys.Enter) || menuButtons[0].Activated)
                     {
                         previousState = state;
                         state = GameState.World;
                     }
+                    
 
 
                     break;
@@ -382,17 +387,19 @@ namespace SemesterProject
                 case GameState.Pause:
                     pauseMenu.Update(Mouse.GetState());
 
-                    if (SingleKeyPress(Keys.P))
+                    if (SingleKeyPress(Keys.P) || pauseButtons[1].Activated)
                     {
                         state = previousState;
                         previousState = GameState.Pause;
                     }
 
-                    if (SingleKeyPress(Keys.Enter))
+                    if (SingleKeyPress(Keys.Enter) || pauseButtons[0].Activated)
                     {
                         previousState = state;
                         state = GameState.Menu;
                     }
+
+                    
                     break;
 
                 case GameState.Battle:
@@ -415,7 +422,7 @@ namespace SemesterProject
                 case GameState.GameOver:
                     gameOverMenu.Update(Mouse.GetState());
 
-                    if (SingleKeyPress(Keys.Enter))
+                    if (SingleKeyPress(Keys.Enter) || gameOverButtons[0].Activated)
                     {
                         previousState = state;
                         state = GameState.Menu;
