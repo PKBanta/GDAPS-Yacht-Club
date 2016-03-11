@@ -45,6 +45,7 @@ namespace SemesterProject
                 instream = File.OpenRead(name);
                 input = new StreamReader(instream);
 
+                //reads the first line, parses the info to the correct variables
                 line = input.ReadLine();
                 string[] newLine = line.Split(',');
                 x = int.Parse(newLine[0]);
@@ -55,6 +56,7 @@ namespace SemesterProject
                 left = (charList[2] != 0);
                 right = (charList[3] != 0);
 
+                //sets up a new room with the input
                 room = new Room(x, y, up, down, left, right);
                 while ((line = input.ReadLine()) != null)
                 {
