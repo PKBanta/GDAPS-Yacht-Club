@@ -118,7 +118,7 @@ namespace SemesterProject
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            player = new Player(5, 5, 50, 50, 10, 50, Content.Load<Texture2D>("Pokeball"));
+            
 
             mainMenuImage = Content.Load<Texture2D>("mainMenu");
             pauseImage = Content.Load<Texture2D>("pauseMenu");
@@ -507,12 +507,10 @@ namespace SemesterProject
                     break;
             }
 
-<<<<<<< HEAD
+
             // TODO: Add your drawing code here
             spriteBatch.Begin();
             player.Draw(spriteBatch);
-=======
->>>>>>> 308250dffb86756003d22718adbd7c8c8a60880c
             spriteBatch.End();
 
             base.Draw(gameTime);
