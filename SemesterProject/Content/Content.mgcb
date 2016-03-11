@@ -13,11 +13,7 @@
 
 #---------------------------------- Content ---------------------------------#
 
-<<<<<<< HEAD
-#begin Pokeball.PNG
-=======
-#begin mario.png
->>>>>>> 308250dffb86756003d22718adbd7c8c8a60880c
+#begin ButtonImage.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -26,16 +22,7 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:TextureFormat=Color
-<<<<<<< HEAD
-/build:Pokeball.PNG
-=======
-/build:mario.png
-
-#begin MenuFont.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:TextureFormat=Compressed
-/build:MenuFont.spritefont
+/build:ButtonImage.png
 
 #begin mainMenu.png
 /importer:TextureImporter
@@ -48,6 +35,23 @@
 /processorParam:TextureFormat=Color
 /build:mainMenu.png
 
+#begin mario.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:TextureFormat=Color
+/build:mario.png
+
+#begin MenuFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:MenuFont.spritefont
+
 #begin pauseMenu.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -58,16 +62,4 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:TextureFormat=Color
 /build:pauseMenu.png
-
-#begin ButtonImage.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:TextureFormat=Color
-/build:ButtonImage.png
->>>>>>> 308250dffb86756003d22718adbd7c8c8a60880c
 
