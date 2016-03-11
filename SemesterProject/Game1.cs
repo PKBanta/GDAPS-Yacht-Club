@@ -54,6 +54,9 @@ namespace SemesterProject
 
         private Menu mainMenu, pauseMenu, gameOverMenu;
 
+        private int jumpTime = 5;
+        private int jumpCounter = 0;
+
 
         public Game1()
         {
@@ -302,8 +305,7 @@ namespace SemesterProject
             previousKBState = kbState;
             kbState = Keyboard.GetState();
 
-            int jumpTime = 5;
-            int jumpCounter = 0;
+            
 
             switch (state)
             {
@@ -337,7 +339,44 @@ namespace SemesterProject
                     else if (kbState.IsKeyDown(Keys.Right))
                     {
                         player.Move(4);
-                    }                    
+                    }
+
+                    //Deals with player's y directional movement
+                    switch (playerYState)
+                    {
+                        case PlayerYState.Ground:
+                            player.Y = GraphicsDevice.Viewport.Height - player.Height;
+
+                            if (kbState.IsKeyDown(Keys.Space))
+                            {
+                                playerYState = PlayerYState.Jump;
+                            }
+                            break;
+
+                        case PlayerYState.Jump:
+                            if (jumpCounter < jumpTime)
+                            {
+                                player.Jump();
+                                jumpCounter++;
+                            }
+
+                            else playerYState = PlayerYState.Fall;
+                            break;
+
+                        case PlayerYState.Fall:
+                            jumpCounter = 0;
+
+                            if (player.Y < GraphicsDevice.Viewport.Height - player.Height)
+                            {
+                                player.Fall();
+                            }
+
+                            else
+                            {
+                                playerYState = PlayerYState.Ground;
+                            }
+                            break;
+                    }
                     break;
 
                 case GameState.Pause:
@@ -388,6 +427,7 @@ namespace SemesterProject
 
             }
 
+            /*
             //Deals with players x directional movement
             switch (playerXState)
             {
@@ -435,7 +475,7 @@ namespace SemesterProject
                     }
                     break;
             }
-
+            
             //Deals with player's y directional movement
             switch (playerYState)
             {
@@ -452,6 +492,7 @@ namespace SemesterProject
                     if (jumpCounter < jumpTime)
                     {
                         player.Jump();
+                        jumpCounter++;
                     }
 
                     else playerYState = PlayerYState.Fall;
@@ -472,7 +513,7 @@ namespace SemesterProject
                     break;
             }
 
-            base.Update(gameTime);
+            base.Update(gameTime);*/
         }
         
 
