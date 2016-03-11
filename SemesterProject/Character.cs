@@ -87,5 +87,16 @@ namespace SemesterProject
         {
             spriteBatch.Draw(tex, rect, Color.White);
         }
+
+        /// <summary>
+        /// Draw this character
+        /// </summary>
+        /// <param name="spriteBatch">SpriteBatch to draw with.</param>
+        // NOTE: This should be called in the Draw class intended to draw the
+        // map/current room & its contents.
+        public virtual void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(tex, rect, Color.White);
+        }
     }
 }
