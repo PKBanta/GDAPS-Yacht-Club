@@ -38,19 +38,21 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="BattleManager.cs" />
     <Compile Include="Character.cs" />
     <Compile Include="Collectible.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="MapObject.cs" />
     <Compile Include="MapReader.cs" />
-    <Compile Include="Menu.cs" />
+    <Compile Include="ListMenu.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="Platform.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Room.cs" />
+    <Compile Include="Menu.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

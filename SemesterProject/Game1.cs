@@ -14,7 +14,7 @@ namespace SemesterProject
         SpriteBatch spriteBatch;
         enum GameState
         {
-            Menu,    // Main Menu
+            Menu,    // Main ListMenu
             World,   // Game World
             Battle,  // Battle Scene
             Pause,   // Pause Screen
@@ -36,7 +36,7 @@ namespace SemesterProject
             Ground          //No vertical movement
         }
 
-        private GameState state;
+        private GameState gameState;
         private GameState previousState; //Needed for pause menu
 
         private KeyboardState kbState;
@@ -49,20 +49,25 @@ namespace SemesterProject
         private Texture2D playerTexture;        //Player's texture
         private PlayerXState playerXState;      //Player's X direction state
         private PlayerYState playerYState;      //Player's Y direction state
+        
+        private Texture2D mainMenuImage, pauseImage, gameOverImage, buttonImage,
+            quitImage, shadeOverlay;
+        private SpriteFont menuFont, buttonFont;
+        private static Rectangle screen;
+        private static Color shadowColor = new Color(200, 200, 200, 255);
 
-        private Texture2D mainMenuImage, pauseImage, gameOverImage;
-        private SpriteFont menuFont;
+        private ListMenu mainMenu, pauseMenu, gameOverMenu, quitMenu;
+        private bool quitActive;
 
-        private Texture2D buttonImage;
+        private Button mainMenu_play, mainMenu_quit, pause_menu, pause_resume,
+            pause_quit, quit_no, quit_yes;
+        private List<Button> mainMenuButtons, pauseButtons, gameOverButtons,
+            confirmQuitButtons;
 
-        private Menu mainMenu, pauseMenu, gameOverMenu;
+        private static Vector2 buttonTextLoc = new Vector2(5, 5);
         
         private int jumpTime = 5;
         private int jumpCounter = 0;
-
-        private List<Button> pauseButtons;
-        private List<Button> menuButtons;
-        private List<Button> gameOverButtons;
 
 
         public Game1()
@@ -91,20 +96,6 @@ namespace SemesterProject
                 && previousMState.LeftButton == ButtonState.Released);
         }
 
-        /*
-        public void ChangeRoom(int change)
-        {
-            if(change < 0)
-            {
-                //Go to previous room   
-            }
-            else if(change > 0)
-            {
-                //Go to next room
-            }
-        }
-        */
-
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -113,15 +104,19 @@ namespace SemesterProject
         /// </summary>
         protected override void Initialize()
         {
-            state = GameState.Menu;
+            gameState = GameState.Menu;
             kbState = Keyboard.GetState();
             IsMouseVisible = true;
+            quitActive = false;
             
 
             //Initializes player and their texture
             playerXState = PlayerXState.StandRight;
             playerYState = PlayerYState.Ground;
-            
+
+            screen = new Rectangle(0, 0, GraphicsDevice.Viewport.Width,
+                GraphicsDevice.Viewport.Height);
+
             base.Initialize();
         }
 
@@ -133,157 +128,222 @@ namespace SemesterProject
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
+            
+            //Loads the player's texture
+            playerTexture = Content.Load<Texture2D>("mario");
             mainMenuImage = Content.Load<Texture2D>("mainMenu");
             pauseImage = Content.Load<Texture2D>("pauseMenu");
             gameOverImage = Content.Load<Texture2D>("mainMenu");
-
+            quitImage = Content.Load<Texture2D>("QuitMenu");
             buttonImage = Content.Load<Texture2D>("ButtonImage");
+            shadeOverlay = Content.Load<Texture2D>("ShadeOverlay");
 
             menuFont = Content.Load<SpriteFont>("MenuFont");
-
-            //Loads the player's texture
-            playerTexture = Content.Load<Texture2D>("mario");
+            buttonFont = Content.Load<SpriteFont>("ButtonFont");
 
             //Initializes player and their texture
             player = new Player(0, 0, playerTexture.Width, playerTexture.Height, 10, 20, playerTexture);
 
-            // Create default buttons
-            //// Activatable & clickable button
-            //Button button0 = new Button(
-            //    buttonImage,
-            //    new Rectangle(GraphicsDevice.Viewport.Width - 100, 0,
-            //        buttonImage.Width, buttonImage.Height),
-            //    menuFont,
-            //    "button0",
-            //    Vector2.Zero,
-            //    Color.White);
 
-            //// Activatable but unclickable button
-            //Button button1 = new Button(
-            //    buttonImage,
-            //    new Rectangle(GraphicsDevice.Viewport.Width - 100, 50,
-            //        buttonImage.Width, buttonImage.Height),
-            //    menuFont,
-            //    "button1",
-            //    Vector2.Zero,
-            //    Color.White,
-            //    true, false);
-
-            //// Inactivatable but clickable button
-            //Button button2 = new Button(
-            //    buttonImage,
-            //    new Rectangle(GraphicsDevice.Viewport.Width - 100, 100,
-            //        buttonImage.Width, buttonImage.Height),
-            //    menuFont,
-            //    "button2",
-            //    Vector2.Zero,
-            //    Color.White,
-            //    false, true);
-
-            //// Inactivatable and unclickable button
-            //Button button3 = new Button(
-            //    buttonImage,
-            //    new Rectangle(GraphicsDevice.Viewport.Width - 100, 150,
-            //        buttonImage.Width, buttonImage.Height),
-            //    menuFont,
-            //    "button3",
-            //    Vector2.Zero,
-            //    Color.White,
-            //    false, false);
-
-            // Default menu buttons
-
-            Button mainMenuButton = new Button(
+            // BUTTONS
+            mainMenu_play = new Button(
                 buttonImage,
-                new Rectangle(GraphicsDevice.Viewport.Width - 100, 0,
+                new Rectangle(GraphicsDevice.Viewport.Width / 2
+                    - buttonImage.Width - 30, GraphicsDevice.Viewport.Height
+                    / 2 - 30, buttonImage.Width, buttonImage.Height),
+                StartGame,  // ActivationFunction
+
+                buttonFont,
+                "Play",
+                buttonTextLoc,
+                Color.White,
+
+                true,   // active
+                true,   // highlightable
+                true,   // clickable
+                true);  // linger
+
+            mainMenu_quit = new Button(
+                buttonImage,
+                new Rectangle(GraphicsDevice.Viewport.Width / 2
+                    + 30, GraphicsDevice.Viewport.Height / 2 - 30,
                     buttonImage.Width, buttonImage.Height),
-                menuFont,
+                ShowQuitMenu,  // ActivationFunction
+
+                buttonFont,
+                "Exit",
+                buttonTextLoc,
+                Color.White,
+
+                true,  // active
+                true,  // highlightable
+                true,  // clickable
+                true); // linger
+
+            pause_menu = new Button(
+                buttonImage,
+                new Rectangle(GraphicsDevice.Viewport.Width - buttonImage.Width,
+                buttonImage.Height, buttonImage.Width, buttonImage.Height),
+                MainMenu,  // ActivationFunction
+
+                buttonFont,
                 "Main Menu",
-                Vector2.Zero,
-                Color.White);
+                buttonTextLoc,
+                Color.White,
 
-            Button resumeButton = new Button(
-                buttonImage,
-                new Rectangle(GraphicsDevice.Viewport.Width - 100, 50,
-                    buttonImage.Width, buttonImage.Height),
-                menuFont,
-                "Resume",
-                Vector2.Zero,
-                Color.White);
+                true,   // active
+                true,   // highlightable
+                true,   // clickable
+                true); // linger
 
-            Button playButton = new Button(
+            pause_resume = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width - 100, 0,
                     buttonImage.Width, buttonImage.Height),
-                menuFont,
-                "Play Game",
-                Vector2.Zero,
-                Color.White);
+                UnpauseGame,  // ActivationFunction
 
-            //List<Button> testingButtons = new List<Button>()
-            //{
-            //    button0, button1, button2, button3
-            //};
+                buttonFont,
+                "Resume",
+                buttonTextLoc,
+                Color.White,
+
+                true,  // active
+                true,  // highlightable
+                true,  // clickable
+                true); // linger
+
+            pause_quit = new Button(
+                buttonImage,
+                new Rectangle(GraphicsDevice.Viewport.Width - buttonImage.Width,
+                2 * buttonImage.Height, buttonImage.Width, buttonImage.Height),
+                ShowQuitMenu,  // ActivationFunction
+
+                buttonFont,
+                "Quit game",
+                buttonTextLoc,
+                Color.White,
+
+                true,  // active
+                true,  // highlightable
+                true,  // clickable
+                true); // linger
+
+            quit_no = new Button(
+                buttonImage,
+                new Rectangle(GraphicsDevice.Viewport.Width / 2
+                    - buttonImage.Width - 10, GraphicsDevice.Viewport.Height
+                    / 2, buttonImage.Width, buttonImage.Height),
+                DenyQuit,  // ActivationFunction
+
+                buttonFont,
+                "No",
+                buttonTextLoc,
+                Color.White,
+
+                true,  // active
+                true,  // highlightable
+                true,  // clickable
+                true); // linger
+
+            quit_yes = new Button(
+                buttonImage,
+                new Rectangle(GraphicsDevice.Viewport.Width / 2
+                    + 10, GraphicsDevice.Viewport.Height / 2,
+                    buttonImage.Width, buttonImage.Height),
+                Exit,  // ActivationFunction
+
+                buttonFont,
+                "Yes",
+                buttonTextLoc,
+                Color.White,
+
+                true,  // active
+                true,  // highlightable
+                true,  // clickable
+                true); // linger
+
+            mainMenuButtons = new List<Button>()
+            {
+                mainMenu_play,
+                mainMenu_quit
+            };
 
             pauseButtons = new List<Button>()
             {
-                mainMenuButton, resumeButton
+                pause_resume,
+                pause_menu,
+                pause_quit
             };
-
-            menuButtons = new List<Button>(){ playButton };
 
             gameOverButtons = new List<Button>()
             {
-                mainMenuButton
+
             };
 
-
+            confirmQuitButtons = new List<Button>()
+            {
+                quit_no,
+                quit_yes
+            };
+            
             // Main Menu
-            mainMenu = new Menu(
+            mainMenu = new ListMenu(
                 mainMenuImage,
                 Vector2.Zero,
+                Color.White,
 
                 menuFont,
                 "TITLE",
-                new Vector2(GraphicsDevice.Viewport.Width / 2 - 100,
-                    GraphicsDevice.Viewport.Height / 5),
+                new Vector2 (GraphicsDevice.Viewport.Width / 2 - 22,
+                    GraphicsDevice.Viewport.Height / 4),
                 Color.White,
-
+                
                 menuFont,
-                "Press Enter to play",
-                new Vector2(GraphicsDevice.Viewport.Width / 2 - 200,
-                    GraphicsDevice.Viewport.Height / 2),
+                "Click or use arrow keys to select an option.",
+                new Vector2(GraphicsDevice.Viewport.Width / 2 - 150,
+                    GraphicsDevice.Viewport.Height / 4 + 20),
                 Color.White,
 
-                menuButtons);
+                mainMenuButtons,
+                Keys.Left,
+                Keys.Right,
+                Keys.Enter,
+                -1,
+                true);
 
             // Pause Menu
-            pauseMenu = new Menu(
+            pauseMenu = new ListMenu(
                 pauseImage,
                 new Vector2(20, 20),
+                Color.White,
 
                 menuFont,
                 "PAUSED",
-                new Vector2(10, 10),
+                new Vector2(5, 7),
                 Color.White,
 
                 menuFont,
-                "Press Enter to return to Main Menu\nPress P to resume",
-                new Vector2(15, 30),
+                "Select an option w/ arrows or mouse\nPress P to resume",
+                new Vector2(10, 30),
                 Color.White,
 
-                pauseButtons);
+                pauseButtons,
+                Keys.Up,
+                Keys.Down,
+                Keys.Enter,
+                0,
+                true);
 
             // GameOver Menu
-            gameOverMenu = new Menu(
+            gameOverMenu = new ListMenu(
                 pauseImage,
                 Vector2.Zero,
+                Color.White,
 
                 menuFont,
                 "GAME OVER",
-                new Vector2(GraphicsDevice.Viewport.Width / 2 - 100,
-                    GraphicsDevice.Viewport.Height / 5),
+                new Vector2(GraphicsDevice.Viewport.Width / 2
+                - pauseImage.Width, GraphicsDevice.Viewport.Height / 5),
                 Color.White,
 
                 menuFont,
@@ -292,7 +352,37 @@ namespace SemesterProject
                     GraphicsDevice.Viewport.Height / 2),
                 Color.White,
 
-                gameOverButtons);
+                gameOverButtons,
+                Keys.Left,
+                Keys.Right,
+                Keys.Enter,
+                0,
+                false);
+
+            // GameOver Menu
+            quitMenu = new ListMenu(
+                quitImage,
+                new Vector2(GraphicsDevice.Viewport.Width / 2
+                - quitImage.Width / 2, GraphicsDevice.Viewport.Height / 2
+                - quitImage.Height / 2),
+                Color.White,
+
+                menuFont,
+                "Are you sure you want to quit?",
+                new Vector2(25, 30),
+                Color.White,
+
+                confirmQuitButtons,
+                Keys.Left,
+                Keys.Right,
+                Keys.Enter,
+                0,
+                false);
+            
+            mainMenu_play.ButtonActivationEvent += mainMenu.Reset;
+            pause_resume.ButtonActivationEvent += pauseMenu.Reset;
+            pause_menu.ButtonActivationEvent += pauseMenu.Reset;
+            quit_no.ButtonActivationEvent += quitMenu.Reset;
         }
 
         /// <summary>
@@ -320,31 +410,19 @@ namespace SemesterProject
             previousMState = mState;
             mState = Mouse.GetState();
 
-            switch (state)
+            switch (gameState)
             {
                 case GameState.Menu:
-
-                    mainMenu.Update(mState, previousMState);
-
-                    if (SingleKeyPress(Keys.Enter) || menuButtons[0].Activated)
-                    {
-                        previousState = state;
-                        state = GameState.World;
-                        IsMouseVisible = false;
-                    }
-                    
-
-
+                    if (!quitActive)
+                        mainMenu.Update(mState, previousMState, kbState, previousKBState);
                     break;
 
                 case GameState.World:
-                    //Pause Menu
+                    
                     if (SingleKeyPress(Keys.P)) //Swtch to pause menu
                     {
-                        previousState = state;
-                        state = GameState.Pause;
-                        IsMouseVisible = true;
-                    }   // Put everything after this in an else statement?
+                        PauseGame();
+                    }
 
                     //Put in player collision with enemy here
 
@@ -397,29 +475,20 @@ namespace SemesterProject
                     break;
 
                 case GameState.Pause:
-                    pauseMenu.Update(mState, previousMState);
-
-                    if (SingleKeyPress(Keys.P) || pauseButtons[1].Activated)
+                    if (!quitActive)
                     {
-                        state = previousState;
-                        previousState = GameState.Pause;
-                    }
+                        pauseMenu.Update(mState, previousMState, kbState,
+                            previousKBState);
 
-                    if (SingleKeyPress(Keys.Enter) || pauseButtons[0].Activated)
-                    {
-                        previousState = state;
-                        state = GameState.Menu;
+                        if (SingleKeyPress(Keys.P))
+                        {
+                            UnpauseGame();
+                        }
                     }
-
-                    
                     break;
+                    
 
                 case GameState.Battle:
-                    if (SingleKeyPress(Keys.P))
-                    {
-                        previousState = state;
-                        state = GameState.Pause;
-                    }
 
                     /*
                     //If battle has finished(Some sort of bool needed here)
@@ -432,20 +501,16 @@ namespace SemesterProject
                     break;
                     
                 case GameState.GameOver:
-                    gameOverMenu.Update(Mouse.GetState(), previousMState);
-
-                    if (SingleKeyPress(Keys.Enter) || gameOverButtons[0].Activated)
-                    {
-                        previousState = state;
-                        state = GameState.Menu;
-
-                    }
+                    gameOverMenu.Update(mState, previousMState, kbState,
+                        previousKBState);
                     break;
-
-                
-
             }
 
+            if (quitActive)
+            {
+                quitMenu.Update(mState, previousMState, kbState, previousKBState);
+            }
+            
             /*
             //Deals with players x directional movement
             switch (playerXState)
@@ -546,33 +611,195 @@ namespace SemesterProject
 
             spriteBatch.Begin();
 
-            switch (state)
+            switch (gameState)
             {
                 case GameState.Menu:
-                    mainMenu.Draw(spriteBatch);
+                    DrawMainMenu();
                     break;
+
 
                 case GameState.World:
-                    player.Draw(spriteBatch);
-                    // Draw the contents of the current room here
+                    DrawWorld();
                     break;
+
 
                 case GameState.Battle:
-                    player.Draw(spriteBatch); // DO NOT call this in the final
+                    DrawBattle();
                     break;
+
 
                 case GameState.Pause:
-                    pauseMenu.Draw(spriteBatch);
+                    DrawPause();
                     break;
+
 
                 case GameState.GameOver:
-                    gameOverMenu.Draw(spriteBatch);
+                    DrawGameOver();
                     break;
             }
-
+            
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        /// <summary>
+        /// Draw the Main Menu state
+        /// </summary>
+        private void DrawMainMenu()
+        {
+            mainMenu.Draw(spriteBatch);
+
+            if (quitActive)
+            {
+                quitMenu.Draw(spriteBatch);
+            }
+        }
+
+        /// <summary>
+        /// Draw the World state
+        /// </summary>
+        private void DrawWorld()
+        {
+            player.Draw(spriteBatch);
+        }
+
+        /// <summary>
+        /// Draw the Battle state
+        /// </summary>
+        private void DrawBattle()
+        {
+            player.Draw(spriteBatch);
+        }
+        
+        /// <summary>
+        /// Draw the Pause state
+        /// </summary>
+        private void DrawPause()
+        {
+            DrawState(previousState);
+
+            spriteBatch.Draw(
+                shadeOverlay,
+                screen,
+                shadowColor);
+
+            pauseMenu.Draw(spriteBatch);
+
+            if (quitActive)
+            {
+                quitMenu.Draw(spriteBatch);
+            }
+        }
+
+        /// <summary>
+        /// Draw the Game Over state
+        /// </summary>
+        private void DrawGameOver()
+        {
+            gameOverMenu.Draw(spriteBatch);
+        }
+
+        /// <summary>
+        /// Draw a game state
+        /// </summary>
+        /// <param name="state">Game state to draw</param>
+        private void DrawState(GameState state)
+        {
+            switch (state)
+            {
+                case GameState.Menu:
+                    DrawMainMenu();
+                    break;
+
+                case GameState.World:
+                    DrawWorld();
+                    break;
+
+                case GameState.Battle:
+                    DrawBattle();
+                    break;
+
+                case GameState.Pause:
+                    DrawPause();
+                    break;
+
+                case GameState.GameOver:
+                    DrawGameOver();
+                    break;
+            }
+        }
+
+
+        // BUTTON FUNCTIONS
+        /// <summary>
+        /// Set the game state to the game World and start the game from
+        /// beginning
+        /// </summary>
+        private void StartGame()
+        {
+            previousState = gameState;
+            gameState = GameState.World;
+
+            IsMouseVisible = false;
+        }
+
+        /// <summary>
+        /// Pause the game
+        /// </summary>
+        private void PauseGame()
+        {
+            if (gameState != GameState.Pause)
+            {
+                previousState = gameState;
+                gameState = GameState.Pause;
+
+                IsMouseVisible = true;
+            }
+            
+        }
+
+        /// <summary>
+        /// Unpause the game
+        /// </summary>
+        private void UnpauseGame()
+        {
+            if (gameState == GameState.Pause)
+            {
+                gameState = previousState;
+                previousState = GameState.Pause;
+
+                IsMouseVisible = false;
+            }
+            
+        }
+
+        /// <summary>
+        /// Set the game state to the Main Menu
+        /// </summary>
+        private void MainMenu()
+        {
+            previousState = gameState;
+            gameState = GameState.Menu;
+
+            IsMouseVisible = true;
+        }
+
+        /// <summary>
+        /// Confirm with the user if they want to quit the game
+        /// </summary>
+        private void ShowQuitMenu()
+        {
+            IsMouseVisible = true;
+            quitActive = true;
+        }
+
+        /// <summary>
+        /// If the user does not want to quit the game
+        /// </summary>
+        private void DenyQuit()
+        {
+            quitActive = false;
         }
     }
 }
