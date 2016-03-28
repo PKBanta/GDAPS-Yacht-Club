@@ -38,9 +38,11 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Ally.cs" />
     <Compile Include="BattleManager.cs" />
     <Compile Include="Character.cs" />
     <Compile Include="Collectible.cs" />
+    <Compile Include="Enemy.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Level.cs" />
     <Compile Include="MapObject.cs" />
