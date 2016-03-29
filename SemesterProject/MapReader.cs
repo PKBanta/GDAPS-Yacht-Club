@@ -21,21 +21,26 @@ namespace SemesterProject
         char[] charList;
         string line;
         Room room;
+        Wall wall;
         Platform platform;
-        Collectible item;
+        Collectible[] item;
         SpriteBatch spritebatch;
+        Random rando = new Random();
+
 
         /// <summary>
         /// pure voodoo magic. might be dangerous
         /// </summary>
         /// <param name="name">name of the text file</param>
         /// <param name="plat">platform object for this particular room</param>
-        /// <param name="i">item that can be found in this room</param>
+        /// <param name="wa">wall object for this particular room</param>
+        /// <param name="i">arrray of items that can potentially be found in this room</param>
         /// <param name="batch">spritebatch</param>
-        public void ReadMap(string name, Platform plat, Collectible i, SpriteBatch batch)
+        public void ReadMap(string name, Platform plat, Wall wa, Collectible[] i, SpriteBatch batch)
         {
             spritebatch = batch;
             platform = plat;
+            wall = wa;
             item = i;
             Stream instream;
             StreamReader input = null;
@@ -58,23 +63,54 @@ namespace SemesterProject
 
                 //sets up a new room with the input
                 room = new Room(x, y, up, down, left, right);
+
+                //makes an upper wall if necessary
+                if (up)
+                {
+                    for (int n = 0; n < x; n++)
+                    {
+                        wall.Draw(spritebatch);
+                    }
+                }
+                //draws the actual room
                 while ((line = input.ReadLine()) != null)
                 {
                    
                         charList = line.ToCharArray();
                         for (int n = 0; n < x; n++)
                         {
-                            if (charList[n] == '#')
+                            if(n == 0 && left)
+                            {
+                                wall.Draw(spritebatch);
+                            }
+                            else if (n == x-1 && right)
+                            {
+                                wall.Draw(spritebatch);
+                            }
+                            else if (charList[n] == '#')
                             {
                                 platform.Draw(spritebatch);
+                                room.IncrementTileX();
                             }
                             else if (charList[n] == '*')
                             {
-                                item.Draw(spritebatch);
+                                Collectible randomItem = item[rando.Next(0, item.Length)];
+                                randomItem.Draw(spritebatch);
+                                room.IncrementTileX();
                             }
                         }
+                    room.IncrementTileY();
+                    room.TileXToZero();
                     
-                    
+                }
+
+                //draws the floor if necessary (probably will always be necessary)
+                if (down)
+                {
+                    for (int n = 0; n < x; n++)
+                    {
+                        wall.Draw(spritebatch);
+                    }
                 }
             }
             catch(Exception)
