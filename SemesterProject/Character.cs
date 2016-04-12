@@ -75,6 +75,7 @@ namespace SemesterProject
             this.tex = tex;
             this.damage = damage;
             this.maxHealth = maxHealth;
+            health = maxHealth;
         }
 
         /// <summary>

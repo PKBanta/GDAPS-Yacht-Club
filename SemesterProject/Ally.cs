@@ -17,5 +17,16 @@ namespace SemesterProject
 
 
         }
+
+        /// <summary>
+        /// Allows the ally to follow behind the player on the overworld
+        /// This can be improved later
+        /// </summary>
+        /// <param name="p">The player</param>
+        public void Follow(Player p)
+        {
+            X = p.X - 30;
+            Y = p.Y;
+        }
     }
 }
