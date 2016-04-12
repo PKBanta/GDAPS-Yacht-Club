@@ -69,11 +69,21 @@ namespace SemesterProject
         private int jumpTime = 5;
         private int jumpCounter = 0;
 
+        private Texture2D collectibleTexture;
+        private Texture2D wallTexture;
+        private Texture2D platTexture;
+
+        private Collectible collectible;
+        private Wall wall;
+        private Platform platform;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            graphics.PreferredBackBufferWidth = 1200;
+            graphics.PreferredBackBufferHeight = 800;
+            graphics.ApplyChanges();
         }
 
         /// <summary>
@@ -141,8 +151,15 @@ namespace SemesterProject
             menuFont = Content.Load<SpriteFont>("MenuFont");
             buttonFont = Content.Load<SpriteFont>("ButtonFont");
 
+            //Loads map textures
+            wallTexture = Content.Load<Texture2D>("wall");
+            collectibleTexture = Content.Load<Texture2D>("collectible");
+            platTexture = Content.Load<Texture2D>("tile");
+
             //Initializes player and their texture
             player = new Player(0, 0, playerTexture.Width, playerTexture.Height, 10, 20, playerTexture);
+
+            //initializes map objects
 
 
             // BUTTONS
@@ -401,8 +418,8 @@ namespace SemesterProject
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+           // if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+             //   Exit();
 
             previousKBState = kbState;
             kbState = Keyboard.GetState();

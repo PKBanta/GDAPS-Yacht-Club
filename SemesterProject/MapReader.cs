@@ -69,7 +69,9 @@ namespace SemesterProject
                 {
                     for (int n = 0; n < x; n++)
                     {
+                        wall.Rect = room.Tile;
                         wall.Draw(spritebatch);
+                        room.IncrementTileX();
                     }
                 }
                 //draws the actual room
@@ -82,19 +84,23 @@ namespace SemesterProject
                             if(n == 0 && left)
                             {
                                 wall.Draw(spritebatch);
+                                
                             }
                             else if (n == x-1 && right)
                             {
                                 wall.Draw(spritebatch);
+                                
                             }
                             else if (charList[n] == '#')
                             {
+                                platform.Rect = room.Tile;
                                 platform.Draw(spritebatch);
                                 room.IncrementTileX();
                             }
                             else if (charList[n] == '*')
                             {
                                 Collectible randomItem = item[rando.Next(0, item.Length)];
+                                randomItem.Rect = room.Tile;
                                 randomItem.Draw(spritebatch);
                                 room.IncrementTileX();
                             }
@@ -109,7 +115,9 @@ namespace SemesterProject
                 {
                     for (int n = 0; n < x; n++)
                     {
+                        wall.Rect = room.Tile;
                         wall.Draw(spritebatch);
+                        room.IncrementTileX;
                     }
                 }
             }

@@ -57,6 +57,11 @@ namespace SemesterProject
             tile.Y += 50;
         }
 
+        public void TileXToZero()
+        {
+            tile.X = 0;
+        }
+
         // Methods
     }
 }
