@@ -14,6 +14,7 @@ namespace SemesterProject
         //fields
         int x;
         int y;
+        int count;
         bool up;
         bool down;
         bool left;
@@ -26,6 +27,7 @@ namespace SemesterProject
         Collectible[] item;
         SpriteBatch spritebatch;
         Random rando = new Random();
+        char[,] tileArray; 
 
 
         /// <summary>
@@ -36,14 +38,13 @@ namespace SemesterProject
         /// <param name="wa">wall object for this particular room</param>
         /// <param name="i">arrray of items that can potentially be found in this room</param>
         /// <param name="batch">spritebatch</param>
-        public void ReadMap(string name, Platform plat, Wall wa, Collectible[] i, SpriteBatch batch)
+        public void ReadMap(string name)
         {
-            spritebatch = batch;
-            platform = plat;
-            wall = wa;
-            item = i;
+            
             Stream instream;
             StreamReader input = null;
+            
+            count = 0;
 
             try
             {
@@ -60,69 +61,29 @@ namespace SemesterProject
                 down = (charList[1] != 0);
                 left = (charList[2] != 0);
                 right = (charList[3] != 0);
-
+                tileArray = new char[x, y];
                 //sets up a new room with the input
                 room = new Room(x, y, up, down, left, right);
 
-                //makes an upper wall if necessary
-                if (up)
-                {
-                    for (int n = 0; n < x; n++)
-                    {
-                        wall.Rect = room.Tile;
-                        wall.Draw(spritebatch);
-                        room.IncrementTileX();
-                    }
-                }
-                //draws the actual room
+               
+                //saves the actual room into the character array
                 while ((line = input.ReadLine()) != null)
                 {
-                   
-                        charList = line.ToCharArray();
-                        for (int n = 0; n < x; n++)
-                        {
-                            if(n == 0 && left)
-                            {
-                                wall.Draw(spritebatch);
-                                
-                            }
-                            else if (n == x-1 && right)
-                            {
-                                wall.Draw(spritebatch);
-                                
-                            }
-                            else if (charList[n] == '#')
-                            {
-                                platform.Rect = room.Tile;
-                                platform.Draw(spritebatch);
-                                room.IncrementTileX();
-                            }
-                            else if (charList[n] == '*')
-                            {
-                                Collectible randomItem = item[rando.Next(0, item.Length)];
-                                randomItem.Rect = room.Tile;
-                                randomItem.Draw(spritebatch);
-                                room.IncrementTileX();
-                            }
-                        }
-                    room.IncrementTileY();
-                    room.TileXToZero();
-                    
-                }
 
-                //draws the floor if necessary (probably will always be necessary)
-                if (down)
-                {
-                    for (int n = 0; n < x; n++)
+                    charList = line.ToCharArray();
+                    for (int n = 0; n < y; n++)
                     {
-                        wall.Rect = room.Tile;
-                        wall.Draw(spritebatch);
-                        room.IncrementTileX;
+                        tileArray[count, n] = charList[n];
+
                     }
+                    count++;
+
                 }
+                       
             }
-            catch(Exception)
+            catch(Exception e)
             {
+                Console.WriteLine(e.Message);
             }
             finally
             {
@@ -130,5 +91,72 @@ namespace SemesterProject
                     input.Close();
             }
        }
-    }
+
+        public void DrawMap( Platform plat, Wall wa, Collectible[] i, SpriteBatch batch)
+        {
+            spritebatch = batch;
+            platform = plat;
+            wall = wa;
+            item = i;
+            count = 0;
+
+            room.TileXToZero();
+            room.TileYToZero();
+
+            //makes an upper wall if necessary
+            if (up)
+            {
+                for (int n = 0; n < x; n++)
+                {
+                    wall.Rect = room.Tile;
+                    wall.Draw(spritebatch);
+                    room.IncrementTileX();
+                }
+            }
+            for(int h = 0; h< y; h++)
+            {
+                for (int n = 0; n < x; n++)
+                {
+                    if (n == 0 && left)
+                    {
+                        wall.Rect = room.Tile;
+                        wall.Draw(spritebatch);
+                        room.IncrementTileX();
+                    }
+                    else if (n == x - 1 && right)
+                    {
+                        wall.Rect = room.Tile;
+                        wall.Draw(spritebatch);
+                        room.TileXToZero();
+                        room.IncrementTileY();
+                    }
+                    else if (tileArray[n,h] == '#')
+                    {
+                        platform.Rect = room.Tile;
+                        platform.Draw(spritebatch);
+                        room.IncrementTileX();
+                    }
+                    else if (tileArray[n, h] == '*')
+                    {
+                        Collectible randomItem = item[rando.Next(0, item.Length)];
+                        randomItem.Rect = room.Tile;
+                        randomItem.Draw(spritebatch);
+                        room.IncrementTileX();
+                    }
+                }
+            }
+            //draws the floor if necessary (probably will always be necessary)
+            if (down)
+            {
+                for (int n = 0; n < x; n++)
+                {
+                    wall.Rect = room.Tile;
+                    wall.Draw(spritebatch);
+                    room.IncrementTileX();
+                }
+            }
+
+        }               
+                
+    }   
 }

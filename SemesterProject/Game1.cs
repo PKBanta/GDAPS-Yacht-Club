@@ -159,8 +159,8 @@ namespace SemesterProject
             //Initializes player and their texture
             player = new Player(0, 0, playerTexture.Width, playerTexture.Height, 10, 20, playerTexture);
 
-            //initializes map objects
-
+            
+            
 
             // BUTTONS
             mainMenu_play = new Button(
