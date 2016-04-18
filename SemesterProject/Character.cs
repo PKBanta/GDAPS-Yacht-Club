@@ -22,6 +22,7 @@ namespace SemesterProject
         private int damage;
         private int maxHealth;
         private int health;
+        private int speed;
 
         //Properties
         public int X
@@ -62,6 +63,11 @@ namespace SemesterProject
         public int Height
         {
             get { return height; }
+        }
+
+        public int Speed
+        {
+            get { return speed; }
         }
 
         //Constructor

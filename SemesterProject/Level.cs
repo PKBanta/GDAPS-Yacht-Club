@@ -5,6 +5,13 @@ using System.Text;
 
 namespace SemesterProject
 {
+    public enum LevelType
+    {
+        Streets,
+        Sewer,
+        Tower
+    }
+
     class Level
     {
         // Fields
