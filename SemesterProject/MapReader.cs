@@ -44,6 +44,7 @@ namespace SemesterProject
             Stream instream;
             StreamReader input = null;
             
+
             count = 0;
 
             try
@@ -71,7 +72,7 @@ namespace SemesterProject
                 {
 
                     charList = line.ToCharArray();
-                    for (int n = 0; n < y; n++)
+                    for (int n = 0; n < x; n++)
                     {
                         tileArray[count, n] = charList[n];
 
@@ -141,6 +142,10 @@ namespace SemesterProject
                         Collectible randomItem = item[rando.Next(0, item.Length)];
                         randomItem.Rect = room.Tile;
                         randomItem.Draw(spritebatch);
+                        room.IncrementTileX();
+                    }
+                    else if (tileArray[n,h] == '=')
+                    {
                         room.IncrementTileX();
                     }
                 }

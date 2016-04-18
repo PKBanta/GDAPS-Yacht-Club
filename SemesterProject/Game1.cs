@@ -76,6 +76,8 @@ namespace SemesterProject
         private Collectible collectible;
         private Wall wall;
         private Platform platform;
+        private MapReader reader;
+        private Collectible[] collectList;
 
         public Game1()
         {
@@ -118,7 +120,8 @@ namespace SemesterProject
             kbState = Keyboard.GetState();
             IsMouseVisible = true;
             quitActive = false;
-            
+            reader = new MapReader();
+
 
             //Initializes player and their texture
             playerXState = PlayerXState.StandRight;
@@ -159,8 +162,9 @@ namespace SemesterProject
             //Initializes player and their texture
             player = new Player(0, 0, playerTexture.Width, playerTexture.Height, 10, 20, playerTexture);
 
-            
-            
+            reader.ReadMap("room.txt");
+            wall = new Wall(0, 0, 25, 25, wallTexture);
+            platform = new Platform(0, 0, 25, 25, platTexture);
 
             // BUTTONS
             mainMenu_play = new Button(
@@ -637,6 +641,7 @@ namespace SemesterProject
 
                 case GameState.World:
                     DrawWorld();
+                    reader.DrawMap(platform,wall,collectList,spriteBatch);
                     break;
 
 
