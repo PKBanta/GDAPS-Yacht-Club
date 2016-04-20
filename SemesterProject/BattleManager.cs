@@ -96,6 +96,70 @@ namespace SemesterProject
             }
         }
 
+        /// <summary>
+        /// Checks through the current roster of characters and removes ones that are dead
+        /// </summary>
+        public static void checkAlive()
+        {
+            for(int i = 0; i < roster.Count; i++)
+            {
+                if(roster[i].Health <= 0)
+                {
+                    roster.Remove(roster[i]); //remove dead character
+                    i--; //subtract from i
+                }
+            }
+        }
+
+
+        public static void runBattle()
+        {
+            List<Character> battleRoster = new List<Character>();
+
+            //Populate the battleRoster with 3x the allies and 1x the player (favors allies over players 3:1)
+            for (int j = 0; j < roster.Count; j++)
+            {
+                if (roster[j] is Ally) //adds 3 allies to the battleRoster
+                {
+                    battleRoster.Add(roster[j]);
+                    battleRoster.Add(roster[j]);
+                    battleRoster.Add(roster[j]);
+                }
+                else if (roster[j] is Player || roster[j] is Enemy)
+                {
+                    battleRoster.Add(roster[j]);
+                }
+            }
+
+
+            for (int i = 0; i < roster.Count; i++)
+            {
+                Character target = null;
+                if (roster[i] is Ally || roster[i] is Player) //if the 
+                {
+                    /* If we keep the character method, this chooses a target for allies/player randomly 
+                    while(!(target is Enemy))
+                    {
+                        target = battleRoster[rand.Next(battleRoster.Count)];
+                    }*/
+
+                    //roster[i].Attack(); //runs the attack method for ally/player THIS NEEDS TO BE IMPLEMENTED
+                }
+                else
+                {
+                    while (!(target is Ally) || !(target is Player)) //look for an ally or a player to attack
+                    {
+                        target = battleRoster[rand.Next(battleRoster.Count)];
+                    }
+                    roster[i].Attack(target); //run the enemy attack method
+                }
+
+                
+                
+
+            }
+        }
+
         //private static void EnemyTurn()
         //{
         //    for (int i = 0; i < enemyTeam.Count; i++)
