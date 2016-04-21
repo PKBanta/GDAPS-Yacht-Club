@@ -617,8 +617,8 @@ namespace SemesterProject
                     }
                     break;
             }
-
-            base.Update(gameTime);*/
+            */
+            base.Update(gameTime);
         }
         
 

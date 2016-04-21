@@ -3,33 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+
 namespace SemesterProject
 {
     static class BattleManager
     {
         // Fields
         private static List<Character> roster;
-        //private static List<Enemy> enemyTeam;
-        //private static List<Character> playerTeam;
         private static Random rand = new Random();
         
         // Properties
+        /// <summary>
+        /// The roster of all actors currently alive in the battle
+        /// </summary>
         public static List<Character> Roster
         {
             get { return roster; }
         }
 
-        //static BattleManager()
-        //{
-        //    rand = new Random();
-            
 
-        //}
-
-        
         // Methods
         /// <summary>
-        /// Set up a new battle scene.
+        /// Stage a new battle scene.
         /// </summary>
         /// <param name="initBaddie">The enemy that incited the battle.
         /// Used to determine how to populate the enemy team, and the difficulty
@@ -37,28 +35,13 @@ namespace SemesterProject
         /// <param name="environment">The level type that the battle is taking
         /// place in. Used to determine what types of enemies to add to the
         /// battle, and what background should be drawn.</param>
-        public static void StartBattle(Player player, Enemy initBaddie,
-            LevelType environment)
+        public static void StageBattle(Player player, Enemy initBaddie/*,
+            LevelType environment*/)
         {
-
+            roster.Add(player);
         }
 
-        public static void AddActor(Character actor)
-        {
-            if (actor is Ally)
-            {
-                //playerTeam.Add(actor as Ally);
-                roster.Add(actor as Ally);
-            }
-
-            else if (actor is Enemy)
-            {
-                //enemyTeam.Add(actor as Enemy);
-                roster.Add(actor as Enemy);
-            }
-        }
-
-        private static void InsertActor(Character actor)
+        public static void InsertActor(Character actor)
         {
             if (roster.Count == 0)
             {
@@ -96,7 +79,20 @@ namespace SemesterProject
             }
         }
 
-        //private static void EnemyTurn()
+        public static void Update()
+        {
+
+        }
+
+        public static void Draw(SpriteBatch spriteBatch)
+        {
+            foreach (Character character in roster)
+            {
+                character.Draw(spriteBatch);
+            }
+        }
+
+        //private static void RandomAttack()
         //{
         //    for (int i = 0; i < enemyTeam.Count; i++)
         //    {
