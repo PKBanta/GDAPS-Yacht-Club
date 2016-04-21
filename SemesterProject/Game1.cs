@@ -165,6 +165,9 @@ namespace SemesterProject
             reader.ReadMap("room.txt");
             wall = new Wall(0, 0, 25, 25, wallTexture);
             platform = new Platform(0, 0, 25, 25, platTexture);
+            collectible = new Collectible(0, 0, 25, 25, collectibleTexture, "Horseshit");
+            collectList = new Collectible[1];
+            collectList[0] = collectible;
 
             // BUTTONS
             mainMenu_play = new Button(
