@@ -102,6 +102,11 @@ namespace SemesterProject
             rect.X += dist;
         }
 
+        public virtual void Update()
+        {
+
+        }
+
         /// <summary>
         /// Draw this character
         /// </summary>
