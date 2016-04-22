@@ -39,6 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Ally.cs" />
+    <Compile Include="Background.cs" />
     <Compile Include="BattleManager.cs" />
     <Compile Include="Character.cs" />
     <Compile Include="Collectible.cs" />

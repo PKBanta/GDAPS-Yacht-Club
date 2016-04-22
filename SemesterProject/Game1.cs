@@ -72,12 +72,14 @@ namespace SemesterProject
         private Texture2D collectibleTexture;
         private Texture2D wallTexture;
         private Texture2D platTexture;
+        private Texture2D sewerTexture;
 
         private Collectible collectible;
         private Wall wall;
         private Platform platform;
         private MapReader reader;
         private Collectible[] collectList;
+        private Background sewerBG;
 
         public Game1()
         {
@@ -158,6 +160,7 @@ namespace SemesterProject
             wallTexture = Content.Load<Texture2D>("wall");
             collectibleTexture = Content.Load<Texture2D>("collectible");
             platTexture = Content.Load<Texture2D>("tile");
+            sewerTexture = Content.Load<Texture2D>("sewer BG");
 
             //Initializes player and their texture
             player = new Player(0, 0, playerTexture.Width, playerTexture.Height, 10, 20, playerTexture);
@@ -168,6 +171,7 @@ namespace SemesterProject
             collectible = new Collectible(0, 0, 25, 25, collectibleTexture, "Horseshit");
             collectList = new Collectible[1];
             collectList[0] = collectible;
+            sewerBG = new Background(0, 0, 800, 1200,sewerTexture);
 
             // BUTTONS
             mainMenu_play = new Button(
@@ -644,6 +648,7 @@ namespace SemesterProject
 
                 case GameState.World:
                     DrawWorld();
+                    sewerBG.Draw(spriteBatch);
                     reader.DrawMap(platform,wall,collectList,spriteBatch);
                     break;
 
