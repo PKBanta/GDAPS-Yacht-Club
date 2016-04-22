@@ -51,7 +51,7 @@ namespace SemesterProject
         {
             currentTurn = 0;
 
-            roster.Add(player);
+            //roster.Add(player);
             enemyRoster = new List<Enemy>();
             
             // Insert the Player into the roster
@@ -180,22 +180,26 @@ namespace SemesterProject
             {
                 if(roster[i].Speed > actor.Speed)
                 {
-                    roster.Insert(i++, actor);
+                    roster.Insert(i+1, actor);
                 }
                 if(roster[i].Speed == actor.Speed)
                 {
                     if(actor is Ally || actor is Player)
                     {
                         roster.Insert(i, actor);
+                        break;
                     }
                     else
                     {
                         roster.Insert(i + 1, actor);
+                        break;
                     }
                 }
             }
         }
         
+       
+
         /// <summary>
         /// Update everything contained within the BattleManager
         /// </summary>
