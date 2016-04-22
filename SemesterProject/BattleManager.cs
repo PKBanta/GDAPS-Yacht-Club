@@ -12,6 +12,7 @@ namespace SemesterProject
     static class BattleManager
     {
         // Fields
+        private static List<Character> battleRoster;
         private static List<Character> roster = new List<Character>();
         private static Random rand = new Random();
         private static int currentTurn;
@@ -27,7 +28,10 @@ namespace SemesterProject
             get { return roster; }
         }
 
-
+        public static List<Enemy> EnemyRoster
+        {
+            get { return enemyRoster; }
+        }
         // Methods
         /// <summary>
         /// Stage a new battle scene.
@@ -128,6 +132,23 @@ namespace SemesterProject
                 Keys.Enter,
                 -1,
                 true);
+
+            battleRoster = new List<Character>();
+
+            //Populate the battleRoster with 3x the allies and 1x the player (favors allies over players 3:1)
+            for (int j = 0; j < roster.Count; j++)
+            {
+                if (roster[j] is Ally) //adds 3 allies to the battleRoster
+                {
+                    battleRoster.Add(roster[j]);
+                    battleRoster.Add(roster[j]);
+                    battleRoster.Add(roster[j]);
+                }
+                else if (roster[j] is Player || roster[j] is Enemy)
+                {
+                    battleRoster.Add(roster[j]);
+                }
+            }
         }
 
         /// <summary>
@@ -196,6 +217,7 @@ namespace SemesterProject
             {
                 roster[i].Update();
             }
+            RunBattle();
         }
 
         /// <summary>
@@ -223,6 +245,7 @@ namespace SemesterProject
                 {
                     if (roster[i] is Enemy)
                     {
+                        enemySelectMenu[enemyRoster.IndexOf((Enemy)roster[i])].Active = false;
                         enemyRoster.Remove((Enemy)(roster[i]));
                     }
 
@@ -234,46 +257,55 @@ namespace SemesterProject
 
         public static void RunBattle()
         {
-            List<Character> battleRoster = new List<Character>();
-
-            //Populate the battleRoster with 3x the allies and 1x the player (favors allies over players 3:1)
-            for (int j = 0; j < roster.Count; j++)
+            if (roster[currentTurn] is Enemy)
             {
-                if (roster[j] is Ally) //adds 3 allies to the battleRoster
+                Character target = null;
+                while (!(target is Ally) || !(target is Player)) //look for an ally or a player to attack
                 {
-                    battleRoster.Add(roster[j]);
-                    battleRoster.Add(roster[j]);
-                    battleRoster.Add(roster[j]);
+                    target = battleRoster[rand.Next(battleRoster.Count)];
                 }
-                else if (roster[j] is Player || roster[j] is Enemy)
-                {
-                    battleRoster.Add(roster[j]);
-                }
+                roster[currentTurn].Attack(target); //run the enemy attack method
+                currentTurn = (currentTurn + 1) % roster.Count;
             }
 
 
+            /*
             for (int i = 0; i < roster.Count; i++)
             {
+                
                 Character target = null;
                 if (roster[i] is Ally || roster[i] is Player) //if the 
                 {
-                    /* If we keep the character method, this chooses a target for allies/player randomly 
-                    while(!(target is Enemy))
+                    int turn = currentTurn;
+                    for (int l = 0; l < enemyRoster.Count; l++)
                     {
-                        target = battleRoster[rand.Next(battleRoster.Count)];
-                    }*/
-
-                    //roster[i].Attack(); //runs the attack method for ally/player THIS NEEDS TO BE IMPLEMENTED
+                        if (enemyRoster[l].Health > 0)
+                        {
+                            enemySelectMenu[l].Active = true;
+                        }
+                    }
+                    
+                    
                 }
                 else
                 {
+                    for(int t = 0; t < enemyRoster.Count; t++)
+                    {
+                        if(enemyRoster[t].Health > 0)
+                        {
+                            enemySelectMenu[t].Active = false;
+                        }
+                    }
+
                     while (!(target is Ally) || !(target is Player)) //look for an ally or a player to attack
                     {
-                        target = battleRoster[rand.Next(battleRoster.Count)];
+                        target = battleRoster[rand.Next(battleRoster.Count)];                        
                     }
                     roster[i].Attack(target); //run the enemy attack method
                 }
-            }
+                */
+                CheckAlive();
+            
         }
 
         /// <summary>
@@ -284,6 +316,8 @@ namespace SemesterProject
         {
             if (index < enemyRoster.Count)
                 roster[currentTurn].Attack(enemyRoster[index]);
+
+            currentTurn = (currentTurn + 1) % roster.Count;
         }
 
         private static void Select0()

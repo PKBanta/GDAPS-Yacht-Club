@@ -299,7 +299,7 @@ namespace SemesterProject
                 Battle,  // ActivationFunction
 
                 buttonFont,
-                "Battle time\nmotherfucker",
+                "Battle Time",
                 buttonTextLoc,
                 Color.Fuchsia,
 
@@ -523,7 +523,13 @@ namespace SemesterProject
                     
 
                 case GameState.Battle:
+
+                    BattleManager.Update(mState, previousMState);
                     
+                    if(BattleManager.EnemyRoster.Count == 0)
+                    {
+                        gameState = GameState.Menu;
+                    }
 
                     break;
                     
@@ -664,6 +670,8 @@ namespace SemesterProject
         private void DrawBattle()
         {
             player.Draw(spriteBatch);
+            BattleManager.Draw(spriteBatch);
+            sewerBG.Draw(spriteBatch);
         }
         
         /// <summary>
@@ -801,6 +809,22 @@ namespace SemesterProject
             gameState = GameState.Battle;
 
             IsMouseVisible = true;
+            Enemy one = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 20, 50, 20, 10, 100, collectible.Tex);
+            Enemy two = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 60, 50, 20, 10, 100, collectible.Tex);
+            Enemy three = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 100, 50, 20, 10, 100, collectible.Tex);
+
+            Ally ally = new Ally(100, 20, 50, 20, 50, 50, collectible.Tex);
+
+            List<Enemy> enemies = new List<Enemy>();
+            enemies.Add(one);
+            enemies.Add(two);
+            enemies.Add(three);
+
+            List<Ally> allies = new List<Ally>();
+            allies.Add(ally);
+
+            BattleManager.StageBattle(player, allies, enemies, new Menu(pauseMenu.Texture, new Vector2(0, 0), Color.Black), buttonImage, GraphicsDevice);
+            
         }
     }
 }
