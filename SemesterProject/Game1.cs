@@ -647,8 +647,7 @@ namespace SemesterProject
 
 
                 case GameState.World:
-                    sewerBG.Draw(spriteBatch);
-                    reader.DrawMap(platform, wall, collectList, spriteBatch);
+                    
                     DrawWorld();
                     
                     break;
@@ -692,7 +691,9 @@ namespace SemesterProject
         /// </summary>
         private void DrawWorld()
         {
-            player.Draw(spriteBatch);
+            sewerBG.Draw(spriteBatch);
+            player.Draw(spriteBatch);            
+            reader.DrawMap(platform, wall, collectList, spriteBatch);
         }
 
         /// <summary>
