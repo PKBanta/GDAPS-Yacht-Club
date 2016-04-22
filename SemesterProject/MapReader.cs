@@ -27,8 +27,17 @@ namespace SemesterProject
         Collectible[] item;
         SpriteBatch spritebatch;
         Random rando = new Random();
-        char[,] tileArray; 
+        char[,] tileArray;
+        List<Rectangle> rectList;
 
+        /// <summary>
+        /// returns the list of rectangles of all the platforms in a room
+        /// </summary>
+        public List<Rectangle> RectList
+        {
+            get { return rectList; }
+           
+        }
 
         /// <summary>
         /// pure voodoo magic. might be dangerous
@@ -65,7 +74,7 @@ namespace SemesterProject
                 tileArray = new char[x, y];
                 //sets up a new room with the input
                 room = new Room(x, y, up, down, left, right);
-
+                rectList = new List<Rectangle>();
                
                 //saves the actual room into the character array
                 while ((line = input.ReadLine()) != null)
@@ -76,6 +85,10 @@ namespace SemesterProject
                     for (int n = 0; n < y; n++)
                     {
                         tileArray[count,n] = charList[n];
+                        if(tileArray[count,n] == '#')
+                        {
+                            rectList.Add(new Rectangle(count * 25, n * 25, 25, 25));
+                        }
 
                     }
                     count++;
