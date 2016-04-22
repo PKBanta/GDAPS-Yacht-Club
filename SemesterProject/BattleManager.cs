@@ -81,7 +81,7 @@ namespace SemesterProject
             // Select 3 enemies at most
             Button button0 = new Button(
                 button,
-                new Rectangle(0, g.Viewport.Height, 300, 100),
+                new Rectangle(0, g.Viewport.Height - button.Height, 300, 100),
                 Select0,
                 menu.BodyFont,
                 "Enemy0" + enemies[0].Health + " / " + enemies[0].MaxHealth,
@@ -94,7 +94,7 @@ namespace SemesterProject
 
             Button button1 = new Button(
                 button,
-                new Rectangle(0, g.Viewport.Height + 101, 300, 100),
+                new Rectangle(0, g.Viewport.Height - 101 - button.Height, 300, 100),
                 Select1,
                 menu.BodyFont,
                 "Enemy1" + enemies[1].Health + " / " + enemies[1].MaxHealth,
@@ -107,7 +107,7 @@ namespace SemesterProject
 
             Button button2 =
                 new Button(button,
-                new Rectangle(0, g.Viewport.Height + 202, 300, 100),
+                new Rectangle(0, g.Viewport.Height - 202 - button.Height, 300, 100),
                 Select2,
                 menu.BodyFont,
                 "Enemy2" + enemies[2].Health + " / " + enemies[2].MaxHealth,
@@ -187,7 +187,7 @@ namespace SemesterProject
                     }
                     else
                     {
-                        roster.Insert(i++, actor);
+                        roster.Insert(i + 1, actor);
                     }
                 }
             }
@@ -202,7 +202,7 @@ namespace SemesterProject
         {
             for (int i = 0; i < enemySelectMenu.Count; i++)
             {
-                if (enemyRoster.Count < i)
+                if (i < enemyRoster.Count)
                 {
                     enemySelectMenu[i].Text = "Enemy" + i.ToString() + " "
                         + enemyRoster[i].Health + " / "
@@ -217,6 +217,7 @@ namespace SemesterProject
             {
                 roster[i].Update();
             }
+
             RunBattle();
         }
 
@@ -231,9 +232,7 @@ namespace SemesterProject
                 character.Draw(spriteBatch);
             }
 
-            
             enemySelectMenu.Draw(spriteBatch);
-            
         }
         
         /// <summary>
