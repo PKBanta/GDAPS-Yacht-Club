@@ -531,6 +531,11 @@ namespace SemesterProject
                         gameState = GameState.Menu;
                     }
 
+                    if (SingleKeyPress(Keys.P))
+                    {
+                        PauseGame();
+                    }
+
                     break;
                     
                 case GameState.GameOver:
