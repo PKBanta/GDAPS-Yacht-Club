@@ -127,5 +127,10 @@ namespace SemesterProject
         {
             spriteBatch.Draw(tex, rect, Color.White);
         }
+
+        public virtual void CollisionCheck()
+        {
+
+        }
     }
 }
