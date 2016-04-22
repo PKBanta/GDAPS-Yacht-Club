@@ -647,9 +647,10 @@ namespace SemesterProject
 
 
                 case GameState.World:
-                    DrawWorld();
                     sewerBG.Draw(spriteBatch);
-                    reader.DrawMap(platform,wall,collectList,spriteBatch);
+                    reader.DrawMap(platform, wall, collectList, spriteBatch);
+                    DrawWorld();
+                    
                     break;
 
 
