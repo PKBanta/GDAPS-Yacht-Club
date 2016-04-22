@@ -84,7 +84,7 @@ namespace SemesterProject
             // Select 3 enemies at most
             Button button0 = new Button(
                 button,
-                new Rectangle(0, g.Viewport.Height - button.Height, 300, 100),
+                new Rectangle(0, g.Viewport.Height - button.Height, button.Width, button.Height),
                 Select0,
                 menu.BodyFont,
                 "Enemy0" + enemies[0].Health + " / " + enemies[0].MaxHealth,
@@ -97,7 +97,7 @@ namespace SemesterProject
 
             Button button1 = new Button(
                 button,
-                new Rectangle(0, g.Viewport.Height - 101 - button.Height, 300, 100),
+                new Rectangle(0, g.Viewport.Height - 101 - button.Height, button.Width, button.Height),
                 Select1,
                 menu.BodyFont,
                 "Enemy1" + enemies[1].Health + " / " + enemies[1].MaxHealth,
@@ -110,7 +110,7 @@ namespace SemesterProject
 
             Button button2 =
                 new Button(button,
-                new Rectangle(0, g.Viewport.Height - 202 - button.Height, 300, 100),
+                new Rectangle(0, g.Viewport.Height - 202 - button.Height, button.Width, button.Height),
                 Select2,
                 menu.BodyFont,
                 "Enemy2" + enemies[2].Health + " / " + enemies[2].MaxHealth,
@@ -173,16 +173,19 @@ namespace SemesterProject
                 {
                     //enemyTeam.Add(actor as Enemy);
                     roster.Add(actor as Enemy);
+                    enemyRoster.Add(actor as Enemy);
+                    enemySelectMenu[0].Active = true;
                 }
             }
 
             for (int i = roster.Count - 1; i >= 0; i--) 
             {
-                if(roster[i].Speed > actor.Speed)
+                if (roster[i].Speed > actor.Speed)
                 {
-                    roster.Insert(i+1, actor);
+                    roster.Insert(i + 1, actor);
                 }
-                if(roster[i].Speed == actor.Speed)
+
+                if (roster[i].Speed == actor.Speed)
                 {
                     if(actor is Ally || actor is Player)
                     {
@@ -216,6 +219,7 @@ namespace SemesterProject
                         + enemyRoster[i].MaxHealth;
                 }
 
+                // If it's not the enemy's turn, update the menu select buttons to check to see if they've been activated.
                 if (!(roster[currentTurn] is Enemy))
                     enemySelectMenu[i].Update(mouse, prevMouse);
             }
@@ -254,6 +258,7 @@ namespace SemesterProject
                     if (roster[i] is Enemy)
                     {
                         enemySelectMenu[enemyRoster.IndexOf((Enemy)roster[i])].Active = false;
+                        enemySelectMenu.Remove(enemyRoster.IndexOf((Enemy)roster[i]));
                         enemyRoster.Remove((Enemy)(roster[i]));
                     }
 
@@ -272,11 +277,22 @@ namespace SemesterProject
                 {
                     target = battleRoster[rand.Next(battleRoster.Count)];
                 }
+                
                 roster[currentTurn].Attack(target); //run the enemy attack method
                 currentTurn = (currentTurn + 1) % roster.Count;
+
+                
             }
 
+           if (roster[currentTurn] is Enemy && !(roster[(roster.Count + -1) % roster.Count] is Enemy))
+           {
+               DeactivateAllButtons();
+           }
 
+            else if (roster[currentTurn] is Ally || roster[currentTurn] is Player)
+            {
+                ActivateAllButtons();
+            }
             /*
             for (int i = 0; i < roster.Count; i++)
             {
@@ -313,7 +329,6 @@ namespace SemesterProject
                 }
                 */
                 CheckAlive();
-            
         }
 
         /// <summary>
@@ -341,6 +356,31 @@ namespace SemesterProject
         private static void Select2()
         {
             PlayerTurn(2);
+        }
+
+        /// <summary>
+        /// Activate all attack buttons on living enemies for the player
+        /// </summary>
+        private static void ActivateAllButtons()
+        {
+            for (int i = 0; i < enemySelectMenu.Count; i++)
+            {
+                if (enemyRoster[i].Health > 0)
+                {
+                    enemySelectMenu[i].Active = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make all the attack buttons inactive for the player
+        /// </summary>
+        private static void DeactivateAllButtons()
+        {
+            for (int i = 0; i < enemySelectMenu.Count; i++)
+            {
+                enemySelectMenu[i].Active = false;
+            }
         }
 
         //private static void EnemyTurn()

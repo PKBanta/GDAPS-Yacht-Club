@@ -84,7 +84,7 @@ namespace SemesterProject
         }
 
         //Constructor
-        public Character(int x, int y, int width, int height, int damage, int maxHealth, Texture2D tex)
+        public Character(int x, int y, int width, int height, int speed, int damage, int maxHealth, Texture2D tex)
         {
             this.x = x;
             this.y = y;
@@ -92,6 +92,7 @@ namespace SemesterProject
             this.height = height;
             rect = new Rectangle(x, y, width, height);
             this.tex = tex;
+            this.speed = speed;
             this.damage = damage;
             this.maxHealth = maxHealth;
             health = maxHealth;

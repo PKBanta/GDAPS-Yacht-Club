@@ -163,7 +163,7 @@ namespace SemesterProject
             sewerTexture = Content.Load<Texture2D>("sewer BG");
 
             //Initializes player and their texture
-            player = new Player(0, 0, 25, 50, 10, 20, playerTexture);
+            player = new Player(0, 0, 25, 50, 1, 10, 20, playerTexture);
 
             reader.ReadMap("room.txt");
             wall = new Wall(0, 0, 25, 25, wallTexture);
@@ -458,6 +458,7 @@ namespace SemesterProject
             previousMState = mState;
             mState = Mouse.GetState();
 
+            if (!quitActive)
             switch (gameState)
             {
                 case GameState.Menu:
@@ -506,6 +507,54 @@ namespace SemesterProject
                             }
                             break;
                     }
+                    //Deals with players x directional movement
+                    switch (playerXState)
+                    {
+                        case PlayerXState.StandRight:
+                            if (kbState.IsKeyDown(Keys.D))
+                            {
+                                playerXState = PlayerXState.WalkRight;
+                            }
+
+                            else if (kbState.IsKeyDown(Keys.A))
+                            {
+                                playerXState = PlayerXState.WalkLeft;
+                            }
+                            break;
+
+                        case PlayerXState.WalkRight:
+                            player.Move(5);
+
+                            if (kbState.IsKeyUp(Keys.D))
+                            {
+                                playerXState = PlayerXState.StandRight;
+                                player.XAcceleration = 1;
+                            }
+                            break;
+
+                        case PlayerXState.StandLeft:
+                            if (kbState.IsKeyDown(Keys.A))
+                            {
+                                playerXState = PlayerXState.WalkLeft;
+                            }
+
+                            else if (kbState.IsKeyDown(Keys.D))
+                            {
+                                playerXState = PlayerXState.WalkRight;
+                            }
+                            break;
+
+                        case PlayerXState.WalkLeft:
+
+                            player.Move(-5);
+
+                            if (kbState.IsKeyUp(Keys.A))
+                            {
+                                playerXState = PlayerXState.StandLeft;
+                                player.XAcceleration = 1;
+                            }
+                            break;
+                    }
                     break;
 
                 case GameState.Pause:
@@ -549,56 +598,6 @@ namespace SemesterProject
                 quitMenu.Update(mState, previousMState, kbState, previousKBState);
             }
             
-            
-            //Deals with players x directional movement
-            switch (playerXState)
-            {
-                case PlayerXState.StandRight:
-                    if (kbState.IsKeyDown(Keys.D))
-                    {
-                        playerXState = PlayerXState.WalkRight;
-                    }
-
-                    else if (kbState.IsKeyDown(Keys.A))
-                    {
-                        playerXState = PlayerXState.WalkLeft;
-                    }
-                    break;
-
-                case PlayerXState.WalkRight:
-                    player.Move(5);
-
-                    if (kbState.IsKeyUp(Keys.D))
-                    {
-                        playerXState = PlayerXState.StandRight;
-                        player.XAcceleration = 1;
-                    }
-                    break;
-
-                case PlayerXState.StandLeft:
-                    if (kbState.IsKeyDown(Keys.A))
-                    {
-                        playerXState = PlayerXState.WalkLeft;
-                    }
-
-                    else if (kbState.IsKeyDown(Keys.D))
-                    {
-                        playerXState = PlayerXState.WalkRight;
-                    }
-                    break;
-
-                case PlayerXState.WalkLeft:
-
-                    player.Move(-5);
-
-                    if (kbState.IsKeyUp(Keys.A))
-                    {
-                        playerXState = PlayerXState.StandLeft;
-                        player.XAcceleration = 1;
-                    }
-                    break;
-            }
-
             base.Update(gameTime);
         }
         
@@ -815,11 +814,11 @@ namespace SemesterProject
             
             IsMouseVisible = true;
 
-            Enemy one = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 100, 50, 20, 10, 100, collectible.Tex);
-            Enemy two = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 200, 50, 20, 10, 100, collectible.Tex);
-            Enemy three = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 300, 50, 20, 10, 100, collectible.Tex);
+            Enemy one = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 100,/*width*/ 50,/*height*/ 20, /*speed*/5, /*damage*/10, /*maxHealth*/20, collectible.Tex);
+            Enemy two = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 200, 50, 20, 3, 10, 20, collectible.Tex);
+            Enemy three = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 300, 50, 20, 2, 10, 20, collectible.Tex);
 
-            Ally ally = new Ally(100, 20, 50, 20, 50, 50, collectible.Tex);
+            Ally ally = new Ally(100, 20, 50, 20, 3, 50, 50, collectible.Tex);
 
             List<Enemy> enemies = new List<Enemy>();
             enemies.Add(one);

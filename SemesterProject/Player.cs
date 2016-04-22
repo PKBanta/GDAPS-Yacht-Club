@@ -15,8 +15,8 @@ namespace SemesterProject
         private int jumpAcceleration = 10;
 
         //Constructor
-        public Player(int x, int y, int width, int height, int damage, int maxHealth, Texture2D tex)
-            :base(x, y, width, height, damage, maxHealth, tex)
+        public Player(int x, int y, int width, int height, int speed, int damage, int maxHealth, Texture2D tex)
+            :base(x, y, width, height, speed, damage, maxHealth, tex)
         {
 
         }
