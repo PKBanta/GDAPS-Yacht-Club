@@ -134,9 +134,14 @@ namespace SemesterProject
             spriteBatch.Draw(tex, rect, Color.White);
         }
 
-        public virtual void CollisionCheck()
+        public virtual Rectangle CollisionCheck(Rectangle r)
         {
+            if (rect.Intersects(r))
+            {
+                return r;
+            }
 
+            return new Rectangle();
         }
     }
 }

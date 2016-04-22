@@ -499,6 +499,11 @@ namespace SemesterProject
                         case PlayerYState.Jump:
                             player.Jump();
 
+                            for(int i = 0; i < WallList.Count; i++)
+                            {
+
+                            }
+                            
                             if (player.Y >= GraphicsDevice.Viewport.Height - player.Height)
                             {
                                 playerYState = PlayerYState.Ground;
