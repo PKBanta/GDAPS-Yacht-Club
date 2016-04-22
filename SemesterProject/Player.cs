@@ -10,6 +10,10 @@ namespace SemesterProject
 {
     class Player: Character
     {
+        //Player fields
+        private int jumpSpeed = 12;
+        private int jumpAcceleration = 10;
+
         //Constructor
         public Player(int x, int y, int width, int height, int damage, int maxHealth, Texture2D tex)
             :base(x, y, width, height, damage, maxHealth, tex)
@@ -17,10 +21,17 @@ namespace SemesterProject
 
         }
 
+        public int JumpAcceleration
+        {
+            get { return jumpAcceleration; }
+            set { jumpAcceleration = value; }
+        }
+
         //Moves character up as they jump
         public void Jump()
         {
-            this.Y -= 20;
+            this.Y -= (jumpSpeed * jumpAcceleration);
+            jumpAcceleration--;
         }
         
         //Moves character down as they fall

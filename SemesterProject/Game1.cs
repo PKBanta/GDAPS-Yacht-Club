@@ -446,11 +446,11 @@ namespace SemesterProject
                     //Player Movement
                     if (kbState.IsKeyDown(Keys.Left))
                     {
-                        player.Move(-4);
+                        player.Move(-5);
                     }
                     else if (kbState.IsKeyDown(Keys.Right))
                     {
-                        player.Move(4);
+                        player.Move(5);
                     }
 
                     //Deals with player's y directional movement
@@ -466,26 +466,12 @@ namespace SemesterProject
                             break;
 
                         case PlayerYState.Jump:
-                            if (jumpCounter < jumpTime)
-                            {
-                                player.Jump();
-                                jumpCounter++;
-                            }
+                            player.Jump();
 
-                            else playerYState = PlayerYState.Fall;
-                            break;
-
-                        case PlayerYState.Fall:
-                            jumpCounter = 0;
-
-                            if (player.Y < GraphicsDevice.Viewport.Height - player.Height)
-                            {
-                                player.Fall();
-                            }
-
-                            else
+                            if (player.Y >= GraphicsDevice.Viewport.Height - player.Height)
                             {
                                 playerYState = PlayerYState.Ground;
+                                player.JumpAcceleration = 8;
                             }
                             break;
                     }
@@ -528,7 +514,7 @@ namespace SemesterProject
                 quitMenu.Update(mState, previousMState, kbState, previousKBState);
             }
             
-            /*
+            
             //Deals with players x directional movement
             switch (playerXState)
             {
@@ -545,11 +531,12 @@ namespace SemesterProject
                     break;
 
                 case PlayerXState.WalkRight:
-                    player.Move(20);
+                    player.Move(5);
 
-                    if (kbState.IsKeyUp(Keys.Right))
+                    if (kbState.IsKeyUp(Keys.D))
                     {
                         playerXState = PlayerXState.StandRight;
+                        player.XAcceleration = 1;
                     }
                     break;
 
@@ -566,55 +553,18 @@ namespace SemesterProject
                     break;
 
                 case PlayerXState.WalkLeft:
-                    player.Y = GraphicsDevice.Viewport.Height;
 
-                    player.Move(-20);
+                    player.Move(-5);
 
-                    if (kbState.IsKeyUp(Keys.Left))
+                    if (kbState.IsKeyUp(Keys.A))
                     {
                         playerXState = PlayerXState.StandLeft;
-                    }
-                    break;
-            }
-            
-            //Deals with player's y directional movement
-            switch (playerYState)
-            {
-                case PlayerYState.Ground:
-                    player.Y = GraphicsDevice.Viewport.Height;
-
-                    if (kbState.IsKeyDown(Keys.Space))
-                    {
-                        playerYState = PlayerYState.Jump;
-                    }
-                    break;
-
-                case PlayerYState.Jump:
-                    if (jumpCounter < jumpTime)
-                    {
-                        player.Jump();
-                        jumpCounter++;
-                    }
-
-                    else playerYState = PlayerYState.Fall;
-                    break;
-
-                case PlayerYState.Fall:
-                    jumpCounter = 0;
-
-                    if(player.Y < GraphicsDevice.Viewport.Height)
-                    {
-                        player.Fall();
-                    }
-
-                    else
-                    {
-                        playerYState = PlayerYState.Ground;
+                        player.XAcceleration = 1;
                     }
                     break;
             }
 
-            base.Update(gameTime);*/
+            base.Update(gameTime);
         }
         
 
