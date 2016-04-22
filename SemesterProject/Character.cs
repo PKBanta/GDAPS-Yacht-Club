@@ -13,6 +13,7 @@ namespace SemesterProject
         //Movement and appearance related fields
         private int x;
         private int y;
+        private int xAcceleration;
         private int width;
         private int height;
         private Rectangle rect;
@@ -64,6 +65,12 @@ namespace SemesterProject
         {
             get { return height; }
         }
+        
+        public int XAcceleration
+        {
+            get { return xAcceleration; }
+            set { xAcceleration = value; }
+        }
 
         public int Speed
         {
@@ -82,6 +89,7 @@ namespace SemesterProject
             this.damage = damage;
             this.maxHealth = maxHealth;
             health = maxHealth;
+            xAcceleration = 1;
         }
 
         /// <summary>
@@ -99,7 +107,11 @@ namespace SemesterProject
         /// <param name="dist">Distance for the character to move per frame</param>
         public virtual void Move(int dist)
         {
-            rect.X += dist;
+            rect.X += (dist * xAcceleration);
+            if(xAcceleration < 5)
+            {
+                xAcceleration++;
+            }
         }
 
         public virtual void Update()
