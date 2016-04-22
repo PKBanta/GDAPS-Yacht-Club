@@ -60,7 +60,7 @@ namespace SemesterProject
         private bool quitActive;
 
         private Button mainMenu_play, mainMenu_quit, pause_menu, pause_resume,
-            pause_quit, quit_no, quit_yes;
+            pause_quit, quit_no, quit_yes, battleTime;
         private List<Button> mainMenuButtons, pauseButtons, gameOverButtons,
             confirmQuitButtons;
 
@@ -290,10 +290,29 @@ namespace SemesterProject
                 true,  // clickable
                 true); // linger
 
+            battleTime = new Button(
+                buttonImage,
+                new Rectangle(GraphicsDevice.Viewport.Width / 2
+                    - buttonImage.Width / 2, GraphicsDevice.Viewport.Height / 2
+                    + buttonImage.Height / 2 + 10,
+                    buttonImage.Width, buttonImage.Height),
+                Exit,  // ActivationFunction
+
+                buttonFont,
+                "Battle time\nmotherfucker",
+                buttonTextLoc,
+                Color.Fuchsia,
+
+                true,  // active
+                true,  // highlightable
+                true,  // clickable
+                false); // linger
+
             mainMenuButtons = new List<Button>()
             {
                 mainMenu_play,
-                mainMenu_quit
+                mainMenu_quit,
+                battleTime
             };
 
             pauseButtons = new List<Button>()
@@ -305,7 +324,7 @@ namespace SemesterProject
 
             gameOverButtons = new List<Button>()
             {
-
+                
             };
 
             confirmQuitButtons = new List<Button>()
@@ -408,6 +427,7 @@ namespace SemesterProject
                 false);
             
             mainMenu_play.ButtonActivationEvent += mainMenu.Reset;
+            battleTime.ButtonActivationEvent += mainMenu.Reset;
             pause_resume.ButtonActivationEvent += pauseMenu.Reset;
             pause_menu.ButtonActivationEvent += pauseMenu.Reset;
             quit_no.ButtonActivationEvent += quitMenu.Reset;
@@ -517,14 +537,7 @@ namespace SemesterProject
                     
 
                 case GameState.Battle:
-
-                    /*
-                    //If battle has finished(Some sort of bool needed here)
-                    if (battle.Finished)
-                    {
-                        previousState = state;
-                        state = GameState.World;
-                    }*/
+                    
 
                     break;
                     
@@ -647,8 +660,6 @@ namespace SemesterProject
 
 
                 case GameState.World:
-                    sewerBG.Draw(spriteBatch);
-                    reader.DrawMap(platform, wall, collectList, spriteBatch);
                     DrawWorld();
                     
                     break;
@@ -692,6 +703,8 @@ namespace SemesterProject
         /// </summary>
         private void DrawWorld()
         {
+            reader.DrawMap(platform, wall, collectList, spriteBatch);
+            sewerBG.Draw(spriteBatch);
             player.Draw(spriteBatch);
         }
 
@@ -802,7 +815,6 @@ namespace SemesterProject
 
                 IsMouseVisible = false;
             }
-            
         }
 
         /// <summary>
@@ -831,6 +843,14 @@ namespace SemesterProject
         private void DenyQuit()
         {
             quitActive = false;
+        }
+
+        private void Battle()
+        {
+            previousState = gameState;
+            gameState = GameState.Battle;
+
+            IsMouseVisible = true;
         }
     }
 }

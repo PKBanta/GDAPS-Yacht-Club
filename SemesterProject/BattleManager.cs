@@ -82,7 +82,8 @@ namespace SemesterProject
                 true,
                 false);
 
-            Button button1 = new Button(button,
+            Button button1 = new Button(
+                button,
                 new Rectangle(0, g.Viewport.Height + 101, 300, 100),
                 Select1,
                 menu.BodyFont,
@@ -211,7 +212,7 @@ namespace SemesterProject
         /// <summary>
         /// Checks through the current roster of characters and removes ones that are dead
         /// </summary>
-        public static void checkAlive()
+        public static void CheckAlive()
         {
             for(int i = 0; i < roster.Count; i++)
             {
@@ -228,7 +229,7 @@ namespace SemesterProject
             }
         }
 
-        public static void runBattle()
+        public static void RunBattle()
         {
             List<Character> battleRoster = new List<Character>();
 
