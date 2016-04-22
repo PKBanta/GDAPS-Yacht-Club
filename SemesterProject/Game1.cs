@@ -163,7 +163,7 @@ namespace SemesterProject
             sewerTexture = Content.Load<Texture2D>("sewer BG");
 
             //Initializes player and their texture
-            player = new Player(0, 0, playerTexture.Width, playerTexture.Height, 10, 20, playerTexture);
+            player = new Player(0, 0, 25, 50, 10, 20, playerTexture);
 
             reader.ReadMap("room.txt");
             wall = new Wall(0, 0, 25, 25, wallTexture);
@@ -653,9 +653,9 @@ namespace SemesterProject
         /// </summary>
         private void DrawWorld()
         {
-            reader.DrawMap(platform, wall, collectList, spriteBatch);
-            player.Draw(spriteBatch);
             sewerBG.Draw(spriteBatch);
+            player.Draw(spriteBatch);
+            reader.DrawMap(platform, wall, collectList, spriteBatch);
         }
 
         /// <summary>
