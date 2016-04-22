@@ -209,10 +209,7 @@ namespace SemesterProject
                 character.Draw(spriteBatch);
             }
 
-            for (int i = 0; i < enemySelectMenu.Count; i++)
-            {
-                enemySelectMenu.Draw(spriteBatch);
-            }
+            enemySelectMenu.Draw(spriteBatch);
         }
         
         /// <summary>
