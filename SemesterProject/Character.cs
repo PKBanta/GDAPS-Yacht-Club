@@ -77,6 +77,12 @@ namespace SemesterProject
             get { return speed; }
         }
 
+        public Texture2D Texture
+        {
+            get { return tex; }
+            set { tex = value; }
+        }
+
         //Constructor
         public Character(int x, int y, int width, int height, int damage, int maxHealth, Texture2D tex)
         {

@@ -60,7 +60,7 @@ namespace SemesterProject
         private bool quitActive;
 
         private Button mainMenu_play, mainMenu_quit, pause_menu, pause_resume,
-            pause_quit, quit_no, quit_yes;
+            pause_quit, quit_no, quit_yes, battleTime;
         private List<Button> mainMenuButtons, pauseButtons, gameOverButtons,
             confirmQuitButtons;
 
@@ -163,7 +163,7 @@ namespace SemesterProject
             sewerTexture = Content.Load<Texture2D>("sewer BG");
 
             //Initializes player and their texture
-            player = new Player(0, 0, playerTexture.Width, playerTexture.Height, 10, 20, playerTexture);
+            player = new Player(0, 0, 25, 50, 10, 20, playerTexture);
 
             reader.ReadMap("room.txt");
             wall = new Wall(0, 0, 25, 25, wallTexture);
@@ -290,10 +290,29 @@ namespace SemesterProject
                 true,  // clickable
                 true); // linger
 
+            battleTime = new Button(
+                buttonImage,
+                new Rectangle(GraphicsDevice.Viewport.Width / 2
+                    - buttonImage.Width / 2, GraphicsDevice.Viewport.Height / 2
+                    + buttonImage.Height / 2 + 10,
+                    buttonImage.Width, buttonImage.Height),
+                Battle,  // ActivationFunction
+
+                buttonFont,
+                "Battle Time",
+                buttonTextLoc,
+                Color.Fuchsia,
+
+                true,  // active
+                true,  // highlightable
+                true,  // clickable
+                false); // linger
+
             mainMenuButtons = new List<Button>()
             {
                 mainMenu_play,
-                mainMenu_quit
+                mainMenu_quit,
+                battleTime
             };
 
             pauseButtons = new List<Button>()
@@ -305,7 +324,7 @@ namespace SemesterProject
 
             gameOverButtons = new List<Button>()
             {
-
+                
             };
 
             confirmQuitButtons = new List<Button>()
@@ -408,6 +427,7 @@ namespace SemesterProject
                 false);
             
             mainMenu_play.ButtonActivationEvent += mainMenu.Reset;
+            battleTime.ButtonActivationEvent += mainMenu.Reset;
             pause_resume.ButtonActivationEvent += pauseMenu.Reset;
             pause_menu.ButtonActivationEvent += pauseMenu.Reset;
             quit_no.ButtonActivationEvent += quitMenu.Reset;
@@ -504,13 +524,12 @@ namespace SemesterProject
 
                 case GameState.Battle:
 
-                    /*
-                    //If battle has finished(Some sort of bool needed here)
-                    if (battle.Finished)
+                    BattleManager.Update(mState, previousMState);
+                    
+                    if(BattleManager.EnemyRoster.Count == 0)
                     {
-                        previousState = state;
-                        state = GameState.World;
-                    }*/
+                        gameState = GameState.Menu;
+                    }
 
                     break;
                     
@@ -597,7 +616,6 @@ namespace SemesterProject
 
 
                 case GameState.World:
-                    
                     DrawWorld();
                     
                     break;
@@ -642,7 +660,7 @@ namespace SemesterProject
         private void DrawWorld()
         {
             sewerBG.Draw(spriteBatch);
-            player.Draw(spriteBatch);            
+            player.Draw(spriteBatch);
             reader.DrawMap(platform, wall, collectList, spriteBatch);
         }
 
@@ -652,6 +670,8 @@ namespace SemesterProject
         private void DrawBattle()
         {
             player.Draw(spriteBatch);
+            BattleManager.Draw(spriteBatch);
+            sewerBG.Draw(spriteBatch);
         }
         
         /// <summary>
@@ -753,7 +773,6 @@ namespace SemesterProject
 
                 IsMouseVisible = false;
             }
-            
         }
 
         /// <summary>
@@ -782,6 +801,30 @@ namespace SemesterProject
         private void DenyQuit()
         {
             quitActive = false;
+        }
+
+        private void Battle()
+        {
+            previousState = gameState;
+            gameState = GameState.Battle;
+
+            IsMouseVisible = true;
+            Enemy one = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 20, 50, 20, 10, 100, collectible.Tex);
+            Enemy two = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 60, 50, 20, 10, 100, collectible.Tex);
+            Enemy three = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 100, 50, 20, 10, 100, collectible.Tex);
+
+            Ally ally = new Ally(100, 20, 50, 20, 50, 50, collectible.Tex);
+
+            List<Enemy> enemies = new List<Enemy>();
+            enemies.Add(one);
+            enemies.Add(two);
+            enemies.Add(three);
+
+            List<Ally> allies = new List<Ally>();
+            allies.Add(ally);
+
+            BattleManager.StageBattle(player, allies, enemies, new Menu(pauseMenu.Texture, new Vector2(0, 0), Color.Black), buttonImage, GraphicsDevice);
+            
         }
     }
 }
