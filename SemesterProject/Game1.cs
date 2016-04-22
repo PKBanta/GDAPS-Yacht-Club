@@ -704,8 +704,8 @@ namespace SemesterProject
         private void DrawWorld()
         {
             reader.DrawMap(platform, wall, collectList, spriteBatch);
-            sewerBG.Draw(spriteBatch);
             player.Draw(spriteBatch);
+            sewerBG.Draw(spriteBatch);
         }
 
         /// <summary>
