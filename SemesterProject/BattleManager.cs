@@ -217,6 +217,7 @@ namespace SemesterProject
             {
                 roster[i].Update();
             }
+            RunBattle();
         }
 
         /// <summary>

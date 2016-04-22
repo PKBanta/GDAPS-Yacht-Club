@@ -525,7 +525,7 @@ namespace SemesterProject
                 case GameState.Battle:
 
                     BattleManager.Update(mState, previousMState);
-                    BattleManager.RunBattle();
+                    
                     if(BattleManager.EnemyRoster.Count == 0)
                     {
                         gameState = GameState.Menu;
