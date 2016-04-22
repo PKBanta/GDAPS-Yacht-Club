@@ -44,6 +44,7 @@ namespace SemesterProject
             Stream instream;
             StreamReader input = null;
             
+
             count = 0;
 
             try
@@ -57,10 +58,10 @@ namespace SemesterProject
                 x = int.Parse(newLine[0]);
                 y = int.Parse(newLine[1]);
                 charList = newLine[2].ToCharArray();
-                up = (charList[0] != 0);
-                down = (charList[1] != 0);
-                left = (charList[2] != 0);
-                right = (charList[3] != 0);
+                up = (charList[0].Equals('1'));
+                left = (charList[1].Equals('1'));
+                down = (charList[2].Equals('1'));
+                right = (charList[3].Equals('1'));
                 tileArray = new char[x, y];
                 //sets up a new room with the input
                 room = new Room(x, y, up, down, left, right);
@@ -71,9 +72,10 @@ namespace SemesterProject
                 {
 
                     charList = line.ToCharArray();
+
                     for (int n = 0; n < y; n++)
                     {
-                        tileArray[count, n] = charList[n];
+                        tileArray[count,n] = charList[n];
 
                     }
                     count++;
@@ -113,7 +115,7 @@ namespace SemesterProject
                     room.IncrementTileX();
                 }
             }
-            for(int h = 0; h< y; h++)
+            for(int h = 0; h< y-1; h++)
             {
                 for (int n = 0; n < x; n++)
                 {
@@ -123,13 +125,7 @@ namespace SemesterProject
                         wall.Draw(spritebatch);
                         room.IncrementTileX();
                     }
-                    else if (n == x - 1 && right)
-                    {
-                        wall.Rect = room.Tile;
-                        wall.Draw(spritebatch);
-                        room.TileXToZero();
-                        room.IncrementTileY();
-                    }
+                   
                     else if (tileArray[n,h] == '#')
                     {
                         platform.Rect = room.Tile;
@@ -142,6 +138,23 @@ namespace SemesterProject
                         randomItem.Rect = room.Tile;
                         randomItem.Draw(spritebatch);
                         room.IncrementTileX();
+                    }
+                    
+                    else if (tileArray[n,h] == '=')
+                    {
+                        room.IncrementTileX();
+                    }
+                    else if (n==x-1 && !right)
+                    {
+                        room.TileXToZero();
+                        room.IncrementTileY();
+                    }
+                    else if (n == x-1 && right)
+                    {
+                        wall.Rect = room.Tile;
+                        wall.Draw(spritebatch);
+                        room.TileXToZero();
+                        room.IncrementTileY();
                     }
                 }
             }

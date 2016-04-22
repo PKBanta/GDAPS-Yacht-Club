@@ -23,6 +23,7 @@ namespace SemesterProject
         private int damage;
         private int maxHealth;
         private int health;
+        private int speed;
 
         //Properties
         public int X
@@ -65,10 +66,16 @@ namespace SemesterProject
             get { return height; }
         }
 
+<<<<<<< HEAD
         public int XAcceleration
         {
             get { return xAcceleration; }
             set { xAcceleration = value; }
+=======
+        public int Speed
+        {
+            get { return speed; }
+>>>>>>> 32dd858169a5f0c27bbfbee1b4c8e30d6bc58eb0
         }
 
         //Constructor
@@ -106,6 +113,11 @@ namespace SemesterProject
             {
                 xAcceleration++;
             }
+        }
+
+        public virtual void Update()
+        {
+
         }
 
         /// <summary>

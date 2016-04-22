@@ -72,10 +72,14 @@ namespace SemesterProject
         private Texture2D collectibleTexture;
         private Texture2D wallTexture;
         private Texture2D platTexture;
+        private Texture2D sewerTexture;
 
         private Collectible collectible;
         private Wall wall;
         private Platform platform;
+        private MapReader reader;
+        private Collectible[] collectList;
+        private Background sewerBG;
 
         public Game1()
         {
@@ -118,7 +122,8 @@ namespace SemesterProject
             kbState = Keyboard.GetState();
             IsMouseVisible = true;
             quitActive = false;
-            
+            reader = new MapReader();
+
 
             //Initializes player and their texture
             playerXState = PlayerXState.StandRight;
@@ -155,12 +160,18 @@ namespace SemesterProject
             wallTexture = Content.Load<Texture2D>("wall");
             collectibleTexture = Content.Load<Texture2D>("collectible");
             platTexture = Content.Load<Texture2D>("tile");
+            sewerTexture = Content.Load<Texture2D>("sewer BG");
 
             //Initializes player and their texture
             player = new Player(0, 0, playerTexture.Width, playerTexture.Height, 10, 20, playerTexture);
 
-            
-            
+            reader.ReadMap("room.txt");
+            wall = new Wall(0, 0, 25, 25, wallTexture);
+            platform = new Platform(0, 0, 25, 25, platTexture);
+            collectible = new Collectible(0, 0, 25, 25, collectibleTexture, "Horseshit");
+            collectList = new Collectible[1];
+            collectList[0] = collectible;
+            sewerBG = new Background(0, 0, 800, 1200,sewerTexture);
 
             // BUTTONS
             mainMenu_play = new Button(
@@ -586,7 +597,9 @@ namespace SemesterProject
 
 
                 case GameState.World:
+                    
                     DrawWorld();
+                    
                     break;
 
 
@@ -628,7 +641,9 @@ namespace SemesterProject
         /// </summary>
         private void DrawWorld()
         {
-            player.Draw(spriteBatch);
+            sewerBG.Draw(spriteBatch);
+            player.Draw(spriteBatch);            
+            reader.DrawMap(platform, wall, collectList, spriteBatch);
         }
 
         /// <summary>

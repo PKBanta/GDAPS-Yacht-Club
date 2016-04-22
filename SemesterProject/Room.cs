@@ -54,7 +54,7 @@ namespace SemesterProject
         /// </summary>
         public void IncrementTileY()
         {
-            tile.X = 0;
+            
             tile.Y += 25;
         }
 
