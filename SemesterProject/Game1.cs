@@ -670,8 +670,8 @@ namespace SemesterProject
         private void DrawBattle()
         {
             player.Draw(spriteBatch);
-            BattleManager.Draw(spriteBatch);
             sewerBG.Draw(spriteBatch);
+            BattleManager.Draw(spriteBatch);
         }
         
         /// <summary>
@@ -807,8 +807,9 @@ namespace SemesterProject
         {
             previousState = gameState;
             gameState = GameState.Battle;
-
+            
             IsMouseVisible = true;
+
             Enemy one = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 20, 50, 20, 10, 100, collectible.Tex);
             Enemy two = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 60, 50, 20, 10, 100, collectible.Tex);
             Enemy three = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 100, 50, 20, 10, 100, collectible.Tex);
@@ -823,8 +824,7 @@ namespace SemesterProject
             List<Ally> allies = new List<Ally>();
             allies.Add(ally);
 
-            BattleManager.StageBattle(player, allies, enemies, new Menu(pauseMenu.Texture, new Vector2(0, 0), Color.Black), buttonImage, GraphicsDevice);
-            
+            BattleManager.StageBattle(player, allies, enemies, new Menu(pauseMenu.Texture, new Vector2(0, 300), Color.White), buttonImage, GraphicsDevice);
         }
     }
 }
