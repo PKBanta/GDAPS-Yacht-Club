@@ -810,9 +810,9 @@ namespace SemesterProject
             
             IsMouseVisible = true;
 
-            Enemy one = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 20, 50, 20, 10, 100, collectible.Tex);
-            Enemy two = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 60, 50, 20, 10, 100, collectible.Tex);
-            Enemy three = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 100, 50, 20, 10, 100, collectible.Tex);
+            Enemy one = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 100, 50, 20, 10, 100, collectible.Tex);
+            Enemy two = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 200, 50, 20, 10, 100, collectible.Tex);
+            Enemy three = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 300, 50, 20, 10, 100, collectible.Tex);
 
             Ally ally = new Ally(100, 20, 50, 20, 50, 50, collectible.Tex);
 

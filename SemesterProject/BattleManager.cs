@@ -32,6 +32,7 @@ namespace SemesterProject
         {
             get { return enemyRoster; }
         }
+
         // Methods
         /// <summary>
         /// Stage a new battle scene.
@@ -48,6 +49,8 @@ namespace SemesterProject
         public static void StageBattle(Player player, List<Ally> allies, List<Enemy> enemies, Menu menu, Texture2D button, GraphicsDevice g/*,
             LevelType environment*/)
         {
+            currentTurn = 0;
+
             roster.Add(player);
             enemyRoster = new List<Enemy>();
             
@@ -67,7 +70,7 @@ namespace SemesterProject
             for (int i = 0; i < enemies.Count; i++)
             {
                 enemies[i].X = g.Viewport.Width - enemies[i].Width - 200 + 30 * i;
-                enemies[i].Y = g.Viewport.Height - enemies[i].Height - 230 + 10 * i;
+                enemies[i].Y = g.Viewport.Height - enemies[i].Height - 230 + 30 * i;
 
                 enemyRoster.Add(enemies[i]);
                 InsertActor(enemies[i]);
