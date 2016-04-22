@@ -296,7 +296,7 @@ namespace SemesterProject
                     - buttonImage.Width / 2, GraphicsDevice.Viewport.Height / 2
                     + buttonImage.Height / 2 + 10,
                     buttonImage.Width, buttonImage.Height),
-                Exit,  // ActivationFunction
+                Battle,  // ActivationFunction
 
                 buttonFont,
                 "Battle time\nmotherfucker",

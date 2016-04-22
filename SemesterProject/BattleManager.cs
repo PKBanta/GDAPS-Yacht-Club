@@ -53,12 +53,18 @@ namespace SemesterProject
             // Insert the Allies into the roster
             for (int i = 0; i < allies.Count; i++)
             {
+                allies[i].X = 200 - 30 * i;
+                allies[i].Y = 230 - 10 * i;
+
                 InsertActor(allies[i] as Ally);
             }
 
             // Insert the baddies into the roster
             for (int i = 0; i < enemies.Count; i++)
             {
+                enemies[i].X = g.Viewport.Width - enemies[i].Width - 200 + 30 * i;
+                enemies[i].Y = g.Viewport.Height - enemies[i].Height - 230 + 10 * i;
+
                 enemyRoster.Add(enemies[i]);
                 InsertActor(enemies[i]);
 
