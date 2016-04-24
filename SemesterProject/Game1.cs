@@ -60,7 +60,7 @@ namespace SemesterProject
         private bool quitActive;
 
         private Button mainMenu_play, mainMenu_quit, pause_menu, pause_resume,
-            pause_quit, quit_no, quit_yes, battleTime;
+            pause_quit, quit_no, quit_yes, battleTime, battleButton;
         private List<Button> mainMenuButtons, pauseButtons, gameOverButtons,
             confirmQuitButtons;
 
@@ -301,7 +301,25 @@ namespace SemesterProject
                 buttonFont,
                 "Battle Time",
                 buttonTextLoc,
-                Color.Fuchsia,
+                Color.White,
+
+                true,  // active
+                true,  // highlightable
+                true,  // clickable
+                false); // linger
+
+            battleButton = new Button(
+                buttonImage,
+                new Rectangle(GraphicsDevice.Viewport.Width / 2
+                    - buttonImage.Width / 2, GraphicsDevice.Viewport.Height / 2
+                    + buttonImage.Height / 2 + 10,
+                    buttonImage.Width, buttonImage.Height),
+                new List<ActivationFunction>() { },  // ActivationFunction
+
+                buttonFont,
+                "Battle",
+                buttonTextLoc,
+                Color.White,
 
                 true,  // active
                 true,  // highlightable
@@ -828,7 +846,15 @@ namespace SemesterProject
             List<Ally> allies = new List<Ally>();
             allies.Add(ally);
 
-            BattleManager.StageBattle(player, allies, enemies, new Menu(pauseMenu.Texture, new Vector2(0, 300), Color.White), buttonImage, GraphicsDevice);
+            BattleManager.StageBattle(
+                player,
+                allies,
+                enemies,
+                new Menu(pauseMenu.Texture,
+                    new Vector2(0, 300),
+                    Color.White),
+                battleButton,
+                GraphicsDevice);
         }
     }
 }

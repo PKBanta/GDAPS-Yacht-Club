@@ -46,7 +46,7 @@ namespace SemesterProject
         /// <param name="environment">The level type that the battle is taking
         /// place in. Used to determine what types of enemies to add to the
         /// battle, and what background should be drawn.</param>
-        public static void StageBattle(Player player, List<Ally> allies, List<Enemy> enemies, Menu menu, Texture2D button, GraphicsDevice g/*,
+        public static void StageBattle(Player player, List<Ally> allies, List<Enemy> enemies, Menu menu, Button button, GraphicsDevice g/*,
             LevelType environment*/)
         {
             currentTurn = 0;
@@ -83,10 +83,10 @@ namespace SemesterProject
 
             // Select 3 enemies at most
             Button button0 = new Button(
-                button,
-                new Rectangle(0, g.Viewport.Height - button.Height, button.Width, button.Height),
+                button.Texture,
+                new Rectangle(0, g.Viewport.Height - button.Texture.Height, button.Texture.Width, button.Texture.Height),
                 Select0,
-                menu.BodyFont,
+                button.Font,
                 "Enemy0" + enemies[0].Health + " / " + enemies[0].MaxHealth,
                 new Vector2(10, 10),
                 Color.White,
@@ -96,10 +96,10 @@ namespace SemesterProject
                 false);
 
             Button button1 = new Button(
-                button,
-                new Rectangle(0, g.Viewport.Height - 101 - button.Height, button.Width, button.Height),
+                button.Texture,
+                new Rectangle(0, g.Viewport.Height - 101 - button.Texture.Height, button.Texture.Width, button.Texture.Height),
                 Select1,
-                menu.BodyFont,
+                button.Font,
                 "Enemy1" + enemies[1].Health + " / " + enemies[1].MaxHealth,
                 new Vector2(10, 10),
                 Color.White,
@@ -108,11 +108,11 @@ namespace SemesterProject
                 true,
                 false);
 
-            Button button2 =
-                new Button(button,
-                new Rectangle(0, g.Viewport.Height - 202 - button.Height, button.Width, button.Height),
+            Button button2 = new Button(
+                button.Texture,
+                new Rectangle(0, g.Viewport.Height - 202 - button.Texture.Height, button.Texture.Width, button.Texture.Height),
                 Select2,
-                menu.BodyFont,
+                button.Font,
                 "Enemy2" + enemies[2].Health + " / " + enemies[2].MaxHealth,
                 new Vector2(10, 10),
                 Color.White,
@@ -284,10 +284,10 @@ namespace SemesterProject
                 
             }
 
-           if (roster[currentTurn] is Enemy && !(roster[(roster.Count + -1) % roster.Count] is Enemy))
-           {
+            if (roster[currentTurn] is Enemy && !(roster[(roster.Count + -1) % roster.Count] is Enemy))
+            {
                DeactivateAllButtons();
-           }
+            }
 
             else if (roster[currentTurn] is Ally || roster[currentTurn] is Player)
             {
@@ -307,10 +307,9 @@ namespace SemesterProject
                         {
                             enemySelectMenu[l].Active = true;
                         }
-                    }
-                    
-                    
+                    }        
                 }
+
                 else
                 {
                     for(int t = 0; t < enemyRoster.Count; t++)
@@ -327,8 +326,8 @@ namespace SemesterProject
                     }
                     roster[i].Attack(target); //run the enemy attack method
                 }
-                */
-                CheckAlive();
+            }*/
+            CheckAlive();
         }
 
         /// <summary>

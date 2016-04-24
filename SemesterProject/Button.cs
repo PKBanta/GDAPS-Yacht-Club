@@ -326,6 +326,24 @@ namespace SemesterProject
             set { buttonText = value; }
         }
 
+        /// <summary>
+        /// The texture of this Button
+        /// </summary>
+        public Texture2D Texture
+        {
+            get { return buttonTexture; }
+            set { buttonTexture = value; }
+        }
+
+        /// <summary>
+        /// The font of this Button
+        /// </summary>
+        public SpriteFont Font
+        {
+            get { return font; }
+            set { font = value; }
+        }
+
 
         // Constructors
         /// <summary>
