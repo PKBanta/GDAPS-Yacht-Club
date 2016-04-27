@@ -221,14 +221,24 @@ namespace SemesterProject
 
                 // If it's not the enemy's turn, update the menu select buttons to check to see if they've been activated.
                 if (!(roster[currentTurn] is Enemy))
-                    enemySelectMenu[i].Update(mouse, prevMouse);
+                {
+                    
+                        enemySelectMenu[i].Update(mouse, prevMouse);
+                    
+                         
+                    
+                }
+
+
+
+                    
             }
 
             for (int i = 0; i < roster.Count; i++)
             {
                 roster[i].Update();
             }
-
+            
             RunBattle();
         }
 
@@ -266,10 +276,21 @@ namespace SemesterProject
                     i--; //subtract from i
                 }
             }
+
+            for(int j = 0; j < enemyRoster.Count; j++)
+            {
+                if(enemyRoster[j].Health <= 0)
+                {
+                    enemyRoster.RemoveAt(j);
+                    enemySelectMenu.Remove(j);
+                    j--;
+                }
+            }
         }
 
         public static void RunBattle()
         {
+            CheckAlive();
             if (roster[currentTurn] is Enemy)
             {
                 Character target = null;
@@ -362,7 +383,7 @@ namespace SemesterProject
         /// </summary>
         private static void ActivateAllButtons()
         {
-            for (int i = 0; i < enemySelectMenu.Count; i++)
+            for (int i = 0; i < enemyRoster.Count; i++)
             {
                 if (enemyRoster[i].Health > 0)
                 {
