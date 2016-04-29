@@ -29,6 +29,8 @@ namespace SemesterProject
         Random rando = new Random();
         char[,] tileArray;
         List<Rectangle> rectList;
+        List<MapObject> objList;
+        QuadTreeNode quadtree;
 
         /// <summary>
         /// returns the list of rectangles of all the platforms in a room
@@ -36,7 +38,11 @@ namespace SemesterProject
         public List<Rectangle> RectList
         {
             get { return rectList; }
-           
+
+        }
+        public List<MapObject> ObjList
+        {
+            get { return objList; }
         }
 
         /// <summary>
@@ -47,12 +53,12 @@ namespace SemesterProject
         /// <param name="wa">wall object for this particular room</param>
         /// <param name="i">arrray of items that can potentially be found in this room</param>
         /// <param name="batch">spritebatch</param>
-        public void ReadMap(string name)
+        public void ReadMap(string name, QuadTreeNode qt)
         {
-            
+            quadtree = qt;
             Stream instream;
             StreamReader input = null;
-            
+
 
             count = 0;
 
@@ -75,7 +81,8 @@ namespace SemesterProject
                 //sets up a new room with the input
                 room = new Room(x, y, up, down, left, right);
                 rectList = new List<Rectangle>();
-               
+                objList = new List<MapObject>();
+
                 //saves the actual room into the character array
                 while ((line = input.ReadLine()) != null)
                 {
@@ -84,19 +91,15 @@ namespace SemesterProject
 
                     for (int n = 0; n < y; n++)
                     {
-                        tileArray[count,n] = charList[n];
-                        if(tileArray[count,n] == '#')
-                        {
-                            rectList.Add(new Rectangle(count * 25, n * 25, 25, 25));
-                        }
+                        tileArray[count, n] = charList[n];
 
                     }
                     count++;
 
                 }
-                       
+
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
@@ -105,8 +108,29 @@ namespace SemesterProject
                 if (input != null)
                     input.Close();
             }
-       }
+        }
 
+        public void StoreObjects(Platform plat, Wall wa, Collectible[] i, SpriteBatch batch)
+        {
+            for (int h = 0; h < y; h++)
+            {
+                for (int n = 0; n < x; n++)
+                {                                
+                    
+                    else if (tileArray[n, h] == '#')
+                    {
+                        objList.Add(new Platform(n * 25, h * 25, 25, 25, plat.Tex));
+                        quadtree.AddObject(new Platform(n * 25, h * 25, 25, 25, plat.Tex));
+                    }
+                    else if (tileArray[n, h] == '*')
+                    {
+                        objList.Add(new Collectible(n * 25, h * 25, 25, 25, i[0].Tex,""));
+                        quadtree.AddObject(new Collectible(n * 25, h * 25, 25, 25, i[0].Tex, ""));
+                    }                    
+                }
+            }
+        }
+    
         public void DrawMap( Platform plat, Wall wa, Collectible[] i, SpriteBatch batch)
         {
             spritebatch = batch;

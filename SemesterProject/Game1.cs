@@ -92,6 +92,12 @@ namespace SemesterProject
         private MapReader reader;
         private Collectible[] collectList;
         private Background sewerBG;
+
+        //the quadtree
+        private QuadTreeNode quadTree;
+        //the node for Mario
+        private QuadTreeNode marioQuad;
+
         #endregion Textures/Misc.
 
         public Game1()
@@ -139,7 +145,7 @@ namespace SemesterProject
             IsMouseVisible = true;
             quitActive = false;
             reader = new MapReader();
-
+            quadTree = new QuadTreeNode(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
 
             //Initializes player and their texture
             playerXState = PlayerXState.StandRight;
@@ -181,12 +187,14 @@ namespace SemesterProject
             //Initializes player and their texture
             player = new Player(0, 300, 25, 50, 1, 10, 20, playerTexture);
 
-            reader.ReadMap("room.txt");
+            reader.ReadMap("room.txt",quadTree);
+            
             wall = new Wall(0, 0, 25, 25, wallTexture);
             platform = new Platform(0, 0, 25, 25, platTexture);
             collectible = new Collectible(0, 0, 25, 25, collectibleTexture, "Horseshit");
             collectList = new Collectible[1];
             collectList[0] = collectible;
+            reader.StoreObjects(platform, wall, collectList, spriteBatch);
             sewerBG = new Background(0, 0, 800, 1200,sewerTexture);
 
             // BUTTONS
@@ -492,6 +500,8 @@ namespace SemesterProject
 
             previousMState = mState;
             mState = Mouse.GetState();
+
+            marioQuad = quadTree.GetContainingQuad(player.Rect);
 
             if (!quitActive)
             switch (gameState)
