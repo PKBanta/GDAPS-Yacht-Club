@@ -163,7 +163,7 @@ namespace SemesterProject
             sewerTexture = Content.Load<Texture2D>("sewer BG");
 
             //Initializes player and their texture
-            player = new Player(0, 0, 25, 50, 10, 20, playerTexture);
+            player = new Player(0, 300, 25, 50, 10, 20, playerTexture);
 
             reader.ReadMap("room.txt");
             wall = new Wall(0, 0, 25, 25, wallTexture);
@@ -484,30 +484,135 @@ namespace SemesterProject
                         player.Move(5);
                     }
 
+                    //Deals with players x directional movement
+                    switch (playerXState)
+                    {
+                        case PlayerXState.StandRight:
+                            if (kbState.IsKeyDown(Keys.D))
+                            {
+                                playerXState = PlayerXState.WalkRight;
+                            }
+
+                            else if (kbState.IsKeyDown(Keys.A))
+                            {
+                                playerXState = PlayerXState.WalkLeft;
+                            }
+                            break;
+
+                        case PlayerXState.WalkRight:
+                            player.Move(5);
+                            player.UpdateDetectors();
+
+                            for (int i = 0; i < reader.RectList.Count; i++)
+                            {
+                                if (player.Rect.Intersects(reader.RectList[i]))
+                                {
+                                    player.X = reader.RectList[i].X - player.Width;
+                                    break;
+                                }
+                            }
+
+                            if (kbState.IsKeyUp(Keys.D))
+                            {
+                                playerXState = PlayerXState.StandRight;
+                                player.XAcceleration = 1;
+                            }
+                            break;
+
+                        case PlayerXState.StandLeft:
+                            if (kbState.IsKeyDown(Keys.A))
+                            {
+                                playerXState = PlayerXState.WalkLeft;
+                            }
+
+                            else if (kbState.IsKeyDown(Keys.D))
+                            {
+                                playerXState = PlayerXState.WalkRight;
+                            }
+                            break;
+
+                        case PlayerXState.WalkLeft:
+                            player.Move(-5);
+                            player.UpdateDetectors();
+
+                            for (int i = 0; i < reader.RectList.Count; i++)
+                            {
+                                if (player.Rect.Intersects(reader.RectList[i]))
+                                {
+                                    player.X = reader.RectList[i].X + player.Width;
+                                    break;
+                                }
+                            }
+
+                            if (kbState.IsKeyUp(Keys.A))
+                            {
+                                playerXState = PlayerXState.StandLeft;
+                                player.XAcceleration = 1;
+                            }
+                            break;
+                    }
+
                     //Deals with player's y directional movement
                     switch (playerYState)
                     {
                         case PlayerYState.Ground:
-                            player.Y = GraphicsDevice.Viewport.Height - player.Height;
+                            //player.Y = GraphicsDevice.Viewport.Height - player.Height;
+                            bool onPlatform = false;
+
+                            for (int i = 0; i < reader.RectList.Count; i++)
+                            {
+                                if (player.Below.Intersects(reader.RectList[i]))
+                                {
+                                    onPlatform = true;
+                                    break;
+                                }
+                            }
+
+                            if (player.Y >= GraphicsDevice.Viewport.Height - player.Height)
+                            {
+                                onPlatform = true;
+                            }
+
+                            if (!onPlatform)
+                            {
+                                player.JumpAcceleration = -2;
+                                playerYState = PlayerYState.Jump;
+                            }
 
                             if (kbState.IsKeyDown(Keys.Space))
                             {
-                                playerYState = PlayerYState.Jump;
+                                if (previousKBState.IsKeyUp(Keys.Space))
+                                {
+                                    playerYState = PlayerYState.Jump;
+                                }
                             }
                             break;
 
                         case PlayerYState.Jump:
                             player.Jump();
+                            player.UpdateDetectors();
 
-                            for(int i = 0; i < WallList.Count; i++)
+                            for (int i = 0; i < reader.RectList.Count; i++)
                             {
+                                if (player.Above.Intersects(reader.RectList[i]))
+                                {
+                                    player.JumpAcceleration = -2;
+                                    break;
+                                }
 
+                                else if (player.Rect.Intersects(reader.RectList[i]))
+                                {
+                                    player.Y = reader.RectList[i].Y - player.Height;
+                                    player.JumpAcceleration = 20;
+                                    playerYState = PlayerYState.Ground;
+                                    break;
+                                }
                             }
-                            
+
                             if (player.Y >= GraphicsDevice.Viewport.Height - player.Height)
                             {
                                 playerYState = PlayerYState.Ground;
-                                player.JumpAcceleration = 8;
+                                player.JumpAcceleration = 20;
                             }
                             break;
                     }
@@ -550,54 +655,7 @@ namespace SemesterProject
             }
             
             
-            //Deals with players x directional movement
-            switch (playerXState)
-            {
-                case PlayerXState.StandRight:
-                    if (kbState.IsKeyDown(Keys.D))
-                    {
-                        playerXState = PlayerXState.WalkRight;
-                    }
-
-                    else if (kbState.IsKeyDown(Keys.A))
-                    {
-                        playerXState = PlayerXState.WalkLeft;
-                    }
-                    break;
-
-                case PlayerXState.WalkRight:
-                    player.Move(5);
-
-                    if (kbState.IsKeyUp(Keys.D))
-                    {
-                        playerXState = PlayerXState.StandRight;
-                        player.XAcceleration = 1;
-                    }
-                    break;
-
-                case PlayerXState.StandLeft:
-                    if (kbState.IsKeyDown(Keys.A))
-                    {
-                        playerXState = PlayerXState.WalkLeft;
-                    }
-
-                    else if (kbState.IsKeyDown(Keys.D))
-                    {
-                        playerXState = PlayerXState.WalkRight;
-                    }
-                    break;
-
-                case PlayerXState.WalkLeft:
-
-                    player.Move(-5);
-
-                    if (kbState.IsKeyUp(Keys.A))
-                    {
-                        playerXState = PlayerXState.StandLeft;
-                        player.XAcceleration = 1;
-                    }
-                    break;
-            }
+            
 
             base.Update(gameTime);
         }
