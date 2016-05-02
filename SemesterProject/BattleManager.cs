@@ -11,6 +11,7 @@ namespace SemesterProject
 {
     static class BattleManager
     {
+        #region Fields/Properties
         // Fields
         private static List<Character> battleRoster;
         private static List<Character> roster = new List<Character>();
@@ -32,6 +33,9 @@ namespace SemesterProject
         {
             get { return enemyRoster; }
         }
+        #endregion Fields/Properties
+
+        #region Constructor
         // Methods
         /// <summary>
         /// Stage a new battle scene.
@@ -45,10 +49,12 @@ namespace SemesterProject
         /// <param name="environment">The level type that the battle is taking
         /// place in. Used to determine what types of enemies to add to the
         /// battle, and what background should be drawn.</param>
-        public static void StageBattle(Player player, List<Ally> allies, List<Enemy> enemies, Menu menu, Texture2D button, GraphicsDevice g/*,
+        public static void StageBattle(Player player, List<Ally> allies, List<Enemy> enemies, Menu menu, Button button, GraphicsDevice g/*,
             LevelType environment*/)
         {
-            roster.Add(player);
+            currentTurn = 0;
+
+            //roster.Add(player);
             enemyRoster = new List<Enemy>();
             
             // Insert the Player into the roster
@@ -67,7 +73,7 @@ namespace SemesterProject
             for (int i = 0; i < enemies.Count; i++)
             {
                 enemies[i].X = g.Viewport.Width - enemies[i].Width - 200 + 30 * i;
-                enemies[i].Y = g.Viewport.Height - enemies[i].Height - 230 + 10 * i;
+                enemies[i].Y = g.Viewport.Height - enemies[i].Height - 230 + 30 * i;
 
                 enemyRoster.Add(enemies[i]);
                 InsertActor(enemies[i]);
@@ -80,10 +86,10 @@ namespace SemesterProject
 
             // Select 3 enemies at most
             Button button0 = new Button(
-                button,
-                new Rectangle(0, g.Viewport.Height - button.Height, 300, 100),
+                button.Texture,
+                new Rectangle(0, g.Viewport.Height - button.Texture.Height, button.Texture.Width, button.Texture.Height),
                 Select0,
-                menu.BodyFont,
+                button.Font,
                 "Enemy0" + enemies[0].Health + " / " + enemies[0].MaxHealth,
                 new Vector2(10, 10),
                 Color.White,
@@ -93,10 +99,10 @@ namespace SemesterProject
                 false);
 
             Button button1 = new Button(
-                button,
-                new Rectangle(0, g.Viewport.Height - 101 - button.Height, 300, 100),
+                button.Texture,
+                new Rectangle(0, g.Viewport.Height - 101 - button.Texture.Height, button.Texture.Width, button.Texture.Height),
                 Select1,
-                menu.BodyFont,
+                button.Font,
                 "Enemy1" + enemies[1].Health + " / " + enemies[1].MaxHealth,
                 new Vector2(10, 10),
                 Color.White,
@@ -105,11 +111,11 @@ namespace SemesterProject
                 true,
                 false);
 
-            Button button2 =
-                new Button(button,
-                new Rectangle(0, g.Viewport.Height - 202 - button.Height, 300, 100),
+            Button button2 = new Button(
+                button.Texture,
+                new Rectangle(0, g.Viewport.Height - 202 - button.Texture.Height, button.Texture.Width, button.Texture.Height),
                 Select2,
-                menu.BodyFont,
+                button.Font,
                 "Enemy2" + enemies[2].Health + " / " + enemies[2].MaxHealth,
                 new Vector2(10, 10),
                 Color.White,
@@ -150,7 +156,9 @@ namespace SemesterProject
                 }
             }
         }
+        #endregion Constructor
 
+        #region InsertActor
         /// <summary>
         /// Inset an actor into the proper location within the roster
         /// based upon their speed stat
@@ -170,29 +178,36 @@ namespace SemesterProject
                 {
                     //enemyTeam.Add(actor as Enemy);
                     roster.Add(actor as Enemy);
+                    enemyRoster.Add(actor as Enemy);
+                    enemySelectMenu[0].Active = true;
                 }
             }
 
             for (int i = roster.Count - 1; i >= 0; i--) 
             {
-                if(roster[i].Speed > actor.Speed)
+                if (roster[i].Speed > actor.Speed)
                 {
-                    roster.Insert(i++, actor);
+                    roster.Insert(i + 1, actor);
                 }
-                if(roster[i].Speed == actor.Speed)
+
+                if (roster[i].Speed == actor.Speed)
                 {
                     if(actor is Ally || actor is Player)
                     {
                         roster.Insert(i, actor);
+                        break;
                     }
                     else
                     {
                         roster.Insert(i + 1, actor);
+                        break;
                     }
                 }
             }
         }
-        
+        #endregion InsertActor
+
+        #region Update/Draw
         /// <summary>
         /// Update everything contained within the BattleManager
         /// </summary>
@@ -209,15 +224,26 @@ namespace SemesterProject
                         + enemyRoster[i].MaxHealth;
                 }
 
+                // If it's not the enemy's turn, update the menu select buttons to check to see if they've been activated.
                 if (!(roster[currentTurn] is Enemy))
-                    enemySelectMenu[i].Update(mouse, prevMouse);
+                {
+                    
+                        enemySelectMenu[i].Update(mouse, prevMouse);
+                    
+                         
+                    
+                }
+
+
+
+                    
             }
 
             for (int i = 0; i < roster.Count; i++)
             {
                 roster[i].Update();
             }
-
+            
             RunBattle();
         }
 
@@ -234,7 +260,9 @@ namespace SemesterProject
 
             enemySelectMenu.Draw(spriteBatch);
         }
-        
+        #endregion Update/Draw
+
+        #region CheckAlive
         /// <summary>
         /// Checks through the current roster of characters and removes ones that are dead
         /// </summary>
@@ -247,6 +275,7 @@ namespace SemesterProject
                     if (roster[i] is Enemy)
                     {
                         enemySelectMenu[enemyRoster.IndexOf((Enemy)roster[i])].Active = false;
+                        enemySelectMenu.Remove(enemyRoster.IndexOf((Enemy)roster[i]));
                         enemyRoster.Remove((Enemy)(roster[i]));
                     }
 
@@ -254,10 +283,23 @@ namespace SemesterProject
                     i--; //subtract from i
                 }
             }
+            
+            for(int j = 0; j < enemyRoster.Count; j++)
+            {
+                if(enemyRoster[j].Health <= 0)
+                {
+                    enemyRoster.RemoveAt(j);
+                    enemySelectMenu.Remove(j);
+                    j--;
+                }
+            }
         }
+        #endregion CheckAlive
 
+        #region RunBattle
         public static void RunBattle()
         {
+            CheckAlive();
             if (roster[currentTurn] is Enemy)
             {
                 Character target = null;
@@ -265,11 +307,22 @@ namespace SemesterProject
                 {
                     target = battleRoster[rand.Next(battleRoster.Count)];
                 }
+                
                 roster[currentTurn].Attack(target); //run the enemy attack method
                 currentTurn = (currentTurn + 1) % roster.Count;
+
+                
             }
 
+            if (roster[currentTurn] is Enemy && !(roster[(roster.Count + -1) % roster.Count] is Enemy))
+            {
+               DeactivateAllButtons();
+            }
 
+            else if (roster[currentTurn] is Ally || roster[currentTurn] is Player)
+            {
+                ActivateAllButtons();
+            }
             /*
             for (int i = 0; i < roster.Count; i++)
             {
@@ -284,10 +337,9 @@ namespace SemesterProject
                         {
                             enemySelectMenu[l].Active = true;
                         }
-                    }
-                    
-                    
+                    }        
                 }
+
                 else
                 {
                     for(int t = 0; t < enemyRoster.Count; t++)
@@ -304,11 +356,10 @@ namespace SemesterProject
                     }
                     roster[i].Attack(target); //run the enemy attack method
                 }
-                */
-                CheckAlive();
-            
+            }*/
+            CheckAlive();
         }
-
+        #endregion RunBattle
         /// <summary>
         /// The player selects an Enemy for the Player or Ally to attack
         /// </summary>
@@ -336,6 +387,32 @@ namespace SemesterProject
             PlayerTurn(2);
         }
 
+        #region Button Activation
+        /// <summary>
+        /// Activate all attack buttons on living enemies for the player
+        /// </summary>
+        private static void ActivateAllButtons()
+        {
+            for (int i = 0; i < enemyRoster.Count; i++)
+            {
+                if (enemyRoster[i].Health > 0)
+                {
+                    enemySelectMenu[i].Active = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Make all the attack buttons inactive for the player
+        /// </summary>
+        private static void DeactivateAllButtons()
+        {
+            for (int i = 0; i < enemySelectMenu.Count; i++)
+            {
+                enemySelectMenu[i].Active = false;
+            }
+        }
+        #endregion Button Activation
         //private static void EnemyTurn()
         //{
         //    for (int i = 0; i < enemyTeam.Count; i++)

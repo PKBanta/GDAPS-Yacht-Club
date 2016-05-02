@@ -864,5 +864,11 @@ namespace SemesterProject
             }
         }
 
+        public void Remove(int index)
+        {
+            menuButtons.RemoveAt(index);
+            count--;
+        }
+
     }
 }

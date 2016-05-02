@@ -12,6 +12,8 @@ namespace SemesterProject
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        
+        #region GameStates        
         enum GameState
         {
             Menu,    // Main ListMenu
@@ -21,6 +23,7 @@ namespace SemesterProject
             GameOver // Game Over Screen
         }
 
+        
         enum PlayerXState
         {
             StandRight,     //Standing facing right
@@ -35,21 +38,27 @@ namespace SemesterProject
             Fall,           //Falling
             Ground          //No vertical movement
         }
-
+        
         private GameState gameState;
         private GameState previousState; //Needed for pause menu
+        #endregion GameStates
 
+        #region KB/Mouse States
         private KeyboardState kbState;
         private KeyboardState previousKBState;
         
         private MouseState mState;
         private MouseState previousMState;
+        #endregion KB/Mouse States
 
+        #region Player
         private Player player;
         private Texture2D playerTexture;        //Player's texture
         private PlayerXState playerXState;      //Player's X direction state
         private PlayerYState playerYState;      //Player's Y direction state
-        
+        #endregion Player
+
+        #region Menus/Buttons
         private Texture2D mainMenuImage, pauseImage, gameOverImage, buttonImage,
             quitImage, shadeOverlay;
         private SpriteFont menuFont, buttonFont;
@@ -60,15 +69,18 @@ namespace SemesterProject
         private bool quitActive;
 
         private Button mainMenu_play, mainMenu_quit, pause_menu, pause_resume,
-            pause_quit, quit_no, quit_yes, battleTime;
+            pause_quit, quit_no, quit_yes, battleTime, battleButton;
         private List<Button> mainMenuButtons, pauseButtons, gameOverButtons,
             confirmQuitButtons;
+        
 
         private static Vector2 buttonTextLoc = new Vector2(5, 5);
-        
+        #endregion Menu/Buttons
+
         private int jumpTime = 5;
         private int jumpCounter = 0;
 
+        #region Textures/Misc.
         private Texture2D collectibleTexture;
         private Texture2D wallTexture;
         private Texture2D platTexture;
@@ -80,6 +92,7 @@ namespace SemesterProject
         private MapReader reader;
         private Collectible[] collectList;
         private Background sewerBG;
+        #endregion Textures/Misc.
 
         public Game1()
         {
@@ -90,6 +103,7 @@ namespace SemesterProject
             graphics.ApplyChanges();
         }
 
+        #region Single Mouse/Key Press
         /// <summary>
         /// Check to see if a single key was pressed just this frame
         /// </summary>
@@ -109,7 +123,9 @@ namespace SemesterProject
             return (mState.LeftButton == ButtonState.Pressed
                 && previousMState.LeftButton == ButtonState.Released);
         }
+        #endregion Single Mouse/Key Press
 
+        #region Initialize/Load Content
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -163,7 +179,7 @@ namespace SemesterProject
             sewerTexture = Content.Load<Texture2D>("sewer BG");
 
             //Initializes player and their texture
-            player = new Player(0, 300, 25, 50, 10, 20, playerTexture);
+            player = new Player(0, 300, 25, 50, 1, 10, 20, playerTexture);
 
             reader.ReadMap("room.txt");
             wall = new Wall(0, 0, 25, 25, wallTexture);
@@ -301,7 +317,25 @@ namespace SemesterProject
                 buttonFont,
                 "Battle Time",
                 buttonTextLoc,
-                Color.Fuchsia,
+                Color.White,
+
+                true,  // active
+                true,  // highlightable
+                true,  // clickable
+                false); // linger
+
+            battleButton = new Button(
+                buttonImage,
+                new Rectangle(GraphicsDevice.Viewport.Width / 2
+                    - buttonImage.Width / 2, GraphicsDevice.Viewport.Height / 2
+                    + buttonImage.Height / 2 + 10,
+                    buttonImage.Width, buttonImage.Height),
+                new List<ActivationFunction>() { },  // ActivationFunction
+
+                buttonFont,
+                "Battle",
+                buttonTextLoc,
+                Color.White,
 
                 true,  // active
                 true,  // highlightable
@@ -432,7 +466,7 @@ namespace SemesterProject
             pause_menu.ButtonActivationEvent += pauseMenu.Reset;
             quit_no.ButtonActivationEvent += quitMenu.Reset;
         }
-
+        #endregion Initialize/Load Content
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
         /// game-specific content.
@@ -442,6 +476,7 @@ namespace SemesterProject
             // TODO: Unload any non ContentManager content here
         }
 
+        #region Update
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -458,6 +493,7 @@ namespace SemesterProject
             previousMState = mState;
             mState = Mouse.GetState();
 
+            if (!quitActive)
             switch (gameState)
             {
                 case GameState.Menu:
@@ -616,6 +652,54 @@ namespace SemesterProject
                             }
                             break;
                     }
+                    //Deals with players x directional movement
+                    switch (playerXState)
+                    {
+                        case PlayerXState.StandRight:
+                            if (kbState.IsKeyDown(Keys.D))
+                            {
+                                playerXState = PlayerXState.WalkRight;
+                            }
+
+                            else if (kbState.IsKeyDown(Keys.A))
+                            {
+                                playerXState = PlayerXState.WalkLeft;
+                            }
+                            break;
+
+                        case PlayerXState.WalkRight:
+                            player.Move(5);
+
+                            if (kbState.IsKeyUp(Keys.D))
+                            {
+                                playerXState = PlayerXState.StandRight;
+                                player.XAcceleration = 1;
+                            }
+                            break;
+
+                        case PlayerXState.StandLeft:
+                            if (kbState.IsKeyDown(Keys.A))
+                            {
+                                playerXState = PlayerXState.WalkLeft;
+                            }
+
+                            else if (kbState.IsKeyDown(Keys.D))
+                            {
+                                playerXState = PlayerXState.WalkRight;
+                            }
+                            break;
+
+                        case PlayerXState.WalkLeft:
+
+                            player.Move(-5);
+
+                            if (kbState.IsKeyUp(Keys.A))
+                            {
+                                playerXState = PlayerXState.StandLeft;
+                                player.XAcceleration = 1;
+                            }
+                            break;
+                    }
                     break;
 
                 case GameState.Pause:
@@ -641,6 +725,11 @@ namespace SemesterProject
                         gameState = GameState.Menu;
                     }
 
+                    if (SingleKeyPress(Keys.P))
+                    {
+                        PauseGame();
+                    }
+
                     break;
                     
                 case GameState.GameOver:
@@ -654,13 +743,11 @@ namespace SemesterProject
                 quitMenu.Update(mState, previousMState, kbState, previousKBState);
             }
             
-            
-            
-
             base.Update(gameTime);
         }
-        
+        #endregion Update
 
+        #region Draw
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -703,7 +790,9 @@ namespace SemesterProject
 
             base.Draw(gameTime);
         }
+        #endregion Draw
 
+        #region DrawStates
         /// <summary>
         /// Draw the Main Menu state
         /// </summary>
@@ -794,7 +883,7 @@ namespace SemesterProject
                     break;
             }
         }
-
+        #endregion DrawStates
 
         // BUTTON FUNCTIONS
         /// <summary>
@@ -809,6 +898,7 @@ namespace SemesterProject
             IsMouseVisible = false;
         }
 
+        #region Pause/Unpause
         /// <summary>
         /// Pause the game
         /// </summary>
@@ -837,7 +927,7 @@ namespace SemesterProject
                 IsMouseVisible = false;
             }
         }
-
+        #endregion Pause/Unpause
         /// <summary>
         /// Set the game state to the Main Menu
         /// </summary>
@@ -866,6 +956,7 @@ namespace SemesterProject
             quitActive = false;
         }
 
+        #region Battle
         private void Battle()
         {
             previousState = gameState;
@@ -873,11 +964,11 @@ namespace SemesterProject
             
             IsMouseVisible = true;
 
-            Enemy one = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 20, 50, 20, 10, 100, collectible.Tex);
-            Enemy two = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 60, 50, 20, 10, 100, collectible.Tex);
-            Enemy three = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 100, 50, 20, 10, 100, collectible.Tex);
+            Enemy one = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 100,/*width*/ 50,/*height*/ 20, /*speed*/5, /*damage*/10, /*maxHealth*/20, collectible.Tex);
+            Enemy two = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 200, 50, 20, 3, 10, 20, collectible.Tex);
+            Enemy three = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 300, 50, 20, 2, 10, 20, collectible.Tex);
 
-            Ally ally = new Ally(100, 20, 50, 20, 50, 50, collectible.Tex);
+            Ally ally = new Ally(100, 20, 50, 20, 3, 50, 50, collectible.Tex);
 
             List<Enemy> enemies = new List<Enemy>();
             enemies.Add(one);
@@ -887,7 +978,16 @@ namespace SemesterProject
             List<Ally> allies = new List<Ally>();
             allies.Add(ally);
 
-            BattleManager.StageBattle(player, allies, enemies, new Menu(pauseMenu.Texture, new Vector2(0, 300), Color.White), buttonImage, GraphicsDevice);
+            BattleManager.StageBattle(
+                player,
+                allies,
+                enemies,
+                new Menu(pauseMenu.Texture,
+                    new Vector2(0, 300),
+                    Color.White),
+                battleButton,
+                GraphicsDevice);
         }
+        #endregion Battle
     }
 }
