@@ -35,6 +35,10 @@ namespace SemesterProject
             get { return rect.Y; }
             set { rect.Y = value; }
         }
+        public Rectangle Rect
+        {
+            get { return rect; }
+        }
 
         public int Damage
         {
