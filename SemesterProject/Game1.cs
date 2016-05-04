@@ -730,7 +730,7 @@ namespace SemesterProject
 
                     BattleManager.Update(mState, previousMState);
                     
-                    if(BattleManager.EnemyRoster.Count == 0)
+                    if(BattleManager.AllDead())
                     {
                         gameState = GameState.Menu;
                     }
