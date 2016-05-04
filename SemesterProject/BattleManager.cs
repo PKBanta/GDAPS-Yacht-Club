@@ -360,6 +360,7 @@ namespace SemesterProject
             CheckAlive();
         }
         #endregion RunBattle
+
         /// <summary>
         /// The player selects an Enemy for the Player or Ally to attack
         /// </summary>

@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework.Input;
 
 namespace SemesterProject
 {
+    
+
     class Character
     {
         //Movement and appearance related fields
@@ -99,6 +101,7 @@ namespace SemesterProject
             xAcceleration = 1;
         }
 
+        // Methods
         /// <summary>
         /// Allows the character to attack
         /// </summary>

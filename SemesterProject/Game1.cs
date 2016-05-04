@@ -73,7 +73,6 @@ namespace SemesterProject
         private List<Button> mainMenuButtons, pauseButtons, gameOverButtons,
             confirmQuitButtons;
         
-
         private static Vector2 buttonTextLoc = new Vector2(5, 5);
         #endregion Menu/Buttons
 
@@ -188,8 +187,8 @@ namespace SemesterProject
             collectList = new Collectible[1];
             collectList[0] = collectible;
             sewerBG = new Background(0, 0, 800, 1200,sewerTexture);
-
-            // BUTTONS
+            
+            #region Buttons
             mainMenu_play = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
@@ -341,7 +340,9 @@ namespace SemesterProject
                 true,  // highlightable
                 true,  // clickable
                 false); // linger
+            #endregion
 
+            #region Button Lists
             mainMenuButtons = new List<Button>()
             {
                 mainMenu_play,
@@ -366,7 +367,9 @@ namespace SemesterProject
                 quit_no,
                 quit_yes
             };
-            
+            #endregion
+
+            #region Menus
             // Main Menu
             mainMenu = new ListMenu(
                 mainMenuImage,
@@ -459,6 +462,7 @@ namespace SemesterProject
                 Keys.Enter,
                 0,
                 false);
+            #endregion
             
             mainMenu_play.ButtonActivationEvent += mainMenu.Reset;
             battleTime.ButtonActivationEvent += mainMenu.Reset;
