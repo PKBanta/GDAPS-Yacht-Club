@@ -115,9 +115,9 @@ namespace SemesterProject
             for (int h = 0; h < y; h++)
             {
                 for (int n = 0; n < x; n++)
-                {                                
+                {
                     
-                    else if (tileArray[n, h] == '#')
+                    /*else */if (tileArray[n, h] == '#')
                     {
                         objList.Add(new Platform(n * 25, h * 25, 25, 25, plat.Tex));
                         quadtree.AddObject(new Platform(n * 25, h * 25, 25, 25, plat.Tex));
