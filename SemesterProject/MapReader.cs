@@ -92,6 +92,11 @@ namespace SemesterProject
                     for (int n = 0; n < y; n++)
                     {
                         tileArray[count, n] = charList[n];
+                        
+                        if (tileArray[count, n] == '#')
+                        {
+                            rectList.Add(new Rectangle(count * 25, n * 25, 25, 25));
+                        }
 
                     }
                     count++;
@@ -110,14 +115,14 @@ namespace SemesterProject
             }
         }
 
-        public void StoreObjects(Platform plat, Wall wa, Collectible[] i, SpriteBatch batch)
+        /*public void StoreObjects(Platform plat, Wall wa, Collectible[] i, SpriteBatch batch)
         {
             for (int h = 0; h < y; h++)
             {
                 for (int n = 0; n < x; n++)
                 {
                     
-                    /*else */if (tileArray[n, h] == '#')
+                    else if (tileArray[n, h] == '#')
                     {
                         objList.Add(new Platform(n * 25, h * 25, 25, 25, plat.Tex));
                         quadtree.AddObject(new Platform(n * 25, h * 25, 25, 25, plat.Tex));
@@ -135,6 +140,7 @@ namespace SemesterProject
                 }
             }
         }
+        */
     
         public void DrawMap( Platform plat, Wall wa, Collectible[] i, SpriteBatch batch)
         {
@@ -212,6 +218,11 @@ namespace SemesterProject
             }
 
         }               
+        
+        public void SwitchRoom(Rectangle playerPosition)
+        {
+
+        }
                 
     }   
 }
