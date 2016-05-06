@@ -670,54 +670,6 @@ namespace SemesterProject
                             }
                             break;
                     }
-                    //Deals with players x directional movement
-                    switch (playerXState)
-                    {
-                        case PlayerXState.StandRight:
-                            if (kbState.IsKeyDown(Keys.D))
-                            {
-                                playerXState = PlayerXState.WalkRight;
-                            }
-
-                            else if (kbState.IsKeyDown(Keys.A))
-                            {
-                                playerXState = PlayerXState.WalkLeft;
-                            }
-                            break;
-
-                        case PlayerXState.WalkRight:
-                            player.Move(5);
-
-                            if (kbState.IsKeyUp(Keys.D))
-                            {
-                                playerXState = PlayerXState.StandRight;
-                                player.XAcceleration = 1;
-                            }
-                            break;
-
-                        case PlayerXState.StandLeft:
-                            if (kbState.IsKeyDown(Keys.A))
-                            {
-                                playerXState = PlayerXState.WalkLeft;
-                            }
-
-                            else if (kbState.IsKeyDown(Keys.D))
-                            {
-                                playerXState = PlayerXState.WalkRight;
-                            }
-                            break;
-
-                        case PlayerXState.WalkLeft:
-
-                            player.Move(-5);
-
-                            if (kbState.IsKeyUp(Keys.A))
-                            {
-                                playerXState = PlayerXState.StandLeft;
-                                player.XAcceleration = 1;
-                            }
-                            break;
-                    }
                     break;
 
                 case GameState.Pause:
