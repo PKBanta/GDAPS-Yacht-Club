@@ -14,7 +14,7 @@ namespace SemesterProject
         public Ally(int x, int y, int width, int height, int speed, int damage, int maxHealth, Texture2D tex)
             : base(x, y, width, height, speed, damage, maxHealth, tex)
         {
-
+            
 
         }
 

@@ -11,14 +11,19 @@ namespace SemesterProject
     class Player: Character
     {
         //Player fields
-        private int jumpSpeed = 12;
-        private int jumpAcceleration = 10;
+        private int jumpSpeed;
+        private int jumpAcceleration;
+        private Rectangle above;
+        private Rectangle below;
 
         //Constructor
         public Player(int x, int y, int width, int height, int speed, int damage, int maxHealth, Texture2D tex)
             :base(x, y, width, height, speed, damage, maxHealth, tex)
         {
-
+            jumpSpeed = 4;
+            jumpAcceleration = 20;
+            above = new Rectangle(this.X, this.Y - 11, this.Width, 10);
+            below = new Rectangle(this.X, this.Y + this.Height, this.Width, 10);
         }
 
         public int JumpAcceleration
@@ -27,17 +32,33 @@ namespace SemesterProject
             set { jumpAcceleration = value; }
         }
 
+        public Rectangle Above
+        {
+            get { return above; }
+        }
+
+        public Rectangle Below
+        {
+            get { return below; }
+        }
+
         //Moves character up as they jump
         public void Jump()
         {
-            this.Y -= (jumpSpeed * jumpAcceleration);
-            jumpAcceleration--;
+            this.Y -= (jumpSpeed * (jumpAcceleration/2));
+            if (jumpSpeed * (jumpAcceleration / 2) >= -25)
+            {
+                jumpAcceleration -= 2;
+            }
         }
-        
-        //Moves character down as they fall
-        public void Fall()
+
+        public void UpdateDetectors()
         {
-            this.Y += 20;
+            above.X = this.X;
+            above.Y = this.Y - 1;
+
+            below.X = this.X;
+            below.Y = this.Y + this.Height + 1;
         }
 
         /*

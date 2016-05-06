@@ -13,8 +13,6 @@ namespace SemesterProject
     class Character
     {
         //Movement and appearance related fields
-        private int x;
-        private int y;
         private int xAcceleration;
         private int width;
         private int height;
@@ -30,16 +28,18 @@ namespace SemesterProject
         //Properties
         public int X
         {
-            get { return x; }
-            set { x = value; }
+            get { return rect.X; }
+            set { rect.X = value; }
         }
 
         public int Y
         {
-            get { return y; }
-            set { y = value;
-                rect.Y = y;
-                }
+            get { return rect.Y; }
+            set { rect.Y = value; }
+        }
+        public Rectangle Rect
+        {
+            get { return rect; }
         }
 
         public int Damage
@@ -88,8 +88,6 @@ namespace SemesterProject
         //Constructor
         public Character(int x, int y, int width, int height, int speed, int damage, int maxHealth, Texture2D tex)
         {
-            this.x = x;
-            this.y = y;
             this.width = width;
             this.height = height;
             rect = new Rectangle(x, y, width, height);
@@ -118,7 +116,7 @@ namespace SemesterProject
         public virtual void Move(int dist)
         {
             rect.X += (dist * xAcceleration);
-            if(xAcceleration < 5)
+            if(xAcceleration < 3)
             {
                 xAcceleration++;
             }
@@ -136,6 +134,16 @@ namespace SemesterProject
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(tex, rect, Color.White);
+        }
+
+        public virtual bool CollisionCheck(Rectangle r1, Rectangle r2)
+        {
+            if (r1.Intersects(r2))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
