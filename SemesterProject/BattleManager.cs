@@ -19,6 +19,9 @@ namespace SemesterProject
         private static int currentTurn;
         private static ListMenu enemySelectMenu;
         private static List<Enemy> enemyRoster;
+        private static Rectangle playerHp;
+        private static Player player;
+        private static List<Ally> allyList;
 
         // Properties
         /// <summary>
@@ -49,31 +52,32 @@ namespace SemesterProject
         /// <param name="environment">The level type that the battle is taking
         /// place in. Used to determine what types of enemies to add to the
         /// battle, and what background should be drawn.</param>
-        public static void StageBattle(Player player, List<Ally> allies, List<Enemy> enemies, Menu menu, Button button, GraphicsDevice g/*,
+        public static void StageBattle(Player player1, List<Ally> allies, List<Enemy> enemies, Menu menu, Button button, GraphicsDevice g/*,
             LevelType environment*/)
         {
-            currentTurn = 0;
-
+            player = player1;
+            currentTurn = 0;            
             //roster.Add(player);
             enemyRoster = new List<Enemy>();
-            
+            allyList = new List<Ally>();
             // Insert the Player into the roster
             roster.Add(player as Player);
 
             // Insert the Allies into the roster
             for (int i = 0; i < allies.Count; i++)
             {
-                allies[i].X = 200 - 30 * i;
-                allies[i].Y = 230 - 10 * i;
+                allies[i].X = player.X;
+                allies[i].Y = player.Y + 100 * (i + 1);
 
                 InsertActor(allies[i] as Ally);
+                allyList.Add(allies[i]);
             }
 
             // Insert the baddies into the roster
             for (int i = 0; i < enemies.Count; i++)
             {
                 enemies[i].X = g.Viewport.Width - enemies[i].Width - 200 + 30 * i;
-                enemies[i].Y = g.Viewport.Height - enemies[i].Height - 230 + 30 * i;
+                enemies[i].Y = g.Viewport.Height - enemies[i].Height - 430 + 150 * i;
 
                 enemyRoster.Add(enemies[i]);
                 InsertActor(enemies[i]);
@@ -87,7 +91,7 @@ namespace SemesterProject
             // Select 3 enemies at most
             Button button0 = new Button(
                 button.Texture,
-                new Rectangle(0, g.Viewport.Height - button.Texture.Height, button.Texture.Width, button.Texture.Height),
+                new Rectangle(0, g.Viewport.Height - button.Texture.Height, button.Texture.Width + 30, button.Texture.Height),
                 Select0,
                 button.Font,
                 "Enemy0" + enemies[0].Health + " / " + enemies[0].MaxHealth,
@@ -100,7 +104,7 @@ namespace SemesterProject
 
             Button button1 = new Button(
                 button.Texture,
-                new Rectangle(0, g.Viewport.Height - 101 - button.Texture.Height, button.Texture.Width, button.Texture.Height),
+                new Rectangle(0, g.Viewport.Height - 101 - button.Texture.Height, button.Texture.Width + 30, button.Texture.Height),
                 Select1,
                 button.Font,
                 "Enemy1" + enemies[1].Health + " / " + enemies[1].MaxHealth,
@@ -113,7 +117,7 @@ namespace SemesterProject
 
             Button button2 = new Button(
                 button.Texture,
-                new Rectangle(0, g.Viewport.Height - 202 - button.Texture.Height, button.Texture.Width, button.Texture.Height),
+                new Rectangle(0, g.Viewport.Height - 202 - button.Texture.Height, button.Texture.Width + 30, button.Texture.Height),
                 Select2,
                 button.Font,
                 "Enemy2" + enemies[2].Health + " / " + enemies[2].MaxHealth,
@@ -155,6 +159,9 @@ namespace SemesterProject
                     battleRoster.Add(roster[j]);
                 }
             }
+
+            playerHp = new Rectangle(0, 20, 100, 50);
+            
         }
         #endregion Constructor
 
@@ -219,7 +226,7 @@ namespace SemesterProject
             {
                 if (i < enemyRoster.Count && enemyRoster[i] != null)
                 {
-                    enemySelectMenu[i].Text = "Enemy" + i.ToString() + " "
+                    enemySelectMenu[i].Text = "Enemy " + i.ToString() + " "
                         + enemyRoster[i].Health + " / "
                         + enemyRoster[i].MaxHealth;
                 }
@@ -267,7 +274,7 @@ namespace SemesterProject
                     enemySelectMenu[i].Draw(spriteBatch);
                 }
             }
-
+            
             foreach(Enemy enemy in enemyRoster)
             {
                 if(enemy != null)
@@ -277,6 +284,19 @@ namespace SemesterProject
 
                 
             }
+
+            foreach(Ally ally in allyList)
+            {
+                if(ally != null)
+                {
+                    ally.Draw(spriteBatch);
+                }
+            }
+            
+            spriteBatch.Draw(enemySelectMenu[0].Texture, playerHp, Color.White);
+            spriteBatch.DrawString(enemySelectMenu[0].Font, player.Health + " / " + player.MaxHealth, new Vector2(playerHp.X + 5, playerHp.Y + playerHp.Height / 2), Color.White);
+            spriteBatch.DrawString(enemySelectMenu[0].Font, "Player HP:" , new Vector2(playerHp.X + 5, playerHp.Y +1), Color.White);
+
         }
         #endregion Update/Draw
 
@@ -458,9 +478,12 @@ namespace SemesterProject
                     numDead++;
                 }
             }
+            
+
             if(numDead == enemyRoster.Count)
             {
                 allDead = true;
+                
             }
 
             return allDead;

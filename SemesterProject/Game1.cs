@@ -57,6 +57,7 @@ namespace SemesterProject
         private Texture2D playerTexture;        //Player's texture
         private PlayerXState playerXState;      //Player's X direction state
         private PlayerYState playerYState;      //Player's Y direction state
+        private Vector2 preBattlePosition;
         #endregion Player
 
         #region Menus/Buttons
@@ -196,7 +197,7 @@ namespace SemesterProject
             collectible = new Collectible(0, 0, 25, 25, collectibleTexture, "Horseshit");
             collectList = new Collectible[1];
             collectList[0] = collectible;
-            reader.StoreObjects();
+            //reader.StoreObjects(platform, wall, collectList, spriteBatch);
             sewerBG = new Background(0, 0, 800, 1200,sewerTexture);
 
             // BUTTONS
@@ -743,7 +744,14 @@ namespace SemesterProject
                     if(BattleManager.AllDead())
                     {
                         gameState = GameState.Menu;
+                        player.X = (int)preBattlePosition.X;
+                        player.Y = (int)preBattlePosition.Y;
                     }
+
+                    if(player.Health <= 0)
+                        {
+                            gameState = GameState.Menu;
+                        }
 
                     if (SingleKeyPress(Keys.P))
                     {
@@ -979,16 +987,19 @@ namespace SemesterProject
         #region Battle
         private void Battle()
         {
+            preBattlePosition = new Vector2(player.X, player.Y);
+            player.X = 10;
+            player.Y = 100;            
             previousState = gameState;
             gameState = GameState.Battle;
             
             IsMouseVisible = true;
 
-            Enemy one = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 100,/*width*/ 50,/*height*/ 20, /*speed*/5, /*damage*/10, /*maxHealth*/20, collectible.Tex);
-            Enemy two = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 200, 50, 20, 3, 10, 20, collectible.Tex);
-            Enemy three = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 300, 50, 20, 2, 10, 20, collectible.Tex);
+            Enemy one = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 100,/*width*/ 300,/*height*/ 100, /*speed*/5, /*damage*/10, /*maxHealth*/20, collectible.Tex);
+            Enemy two = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 200, 300, 100, 3, 10, 20, collectible.Tex);
+            Enemy three = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 300, 300, 100, 2, 10, 20, collectible.Tex);
 
-            Ally ally = new Ally(100, 20, 50, 20, 3, 50, 50, collectible.Tex);
+            Ally ally = new Ally(10, 50, 50, 20, 3, 50, 50, collectible.Tex);
 
             List<Enemy> enemies = new List<Enemy>();
             enemies.Add(one);
