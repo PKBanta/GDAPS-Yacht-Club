@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System;
 
 namespace SemesterProject
 {
@@ -186,6 +187,7 @@ namespace SemesterProject
 
             //Initializes player and their texture
             player = new Player(0, 300, 25, 50, 1, 10, 20, playerTexture);
+            player.Health = 14;
 
             reader.ReadMap("room.txt",quadTree);
             
@@ -612,6 +614,14 @@ namespace SemesterProject
                                     onPlatform = true;
                                     break;
                                 }
+                            }
+
+                            for (int i = 0; i < collectList.Length; i++)
+                            {
+                                    if (player.Rect.Intersects(collectList[i].Rect))
+                                    {
+                                        collectList[i].Collect(player);
+                                    }
                             }
 
                             if (player.Y >= GraphicsDevice.Viewport.Height - player.Height)

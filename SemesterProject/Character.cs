@@ -83,11 +83,6 @@ namespace SemesterProject
             set { tex = value; }
         }
 
-        public Rectangle Rect
-        {
-            get { return rect; }
-        }
-
         //Constructor
         public Character(int x, int y, int width, int height, int speed, int damage, int maxHealth, Texture2D tex)
         {
