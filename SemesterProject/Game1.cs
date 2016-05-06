@@ -530,6 +530,15 @@ namespace SemesterProject
                         player.Move(5);
                     }
 
+                    if (kbState.IsKeyDown(Keys.Up))
+                    {
+                        player.Y -= 5;
+                    }
+                    else if (kbState.IsKeyDown(Keys.Down))
+                    {
+                        player.Y += 5;
+                    }
+
                     //Deals with players x directional movement
                     switch (playerXState)
                     {
@@ -657,7 +666,7 @@ namespace SemesterProject
                                 else if (player.Rect.Intersects(reader.RectList[i]))
                                 {
                                     player.Y = reader.RectList[i].Y - player.Height;
-                                    player.JumpAcceleration = 20;
+                                    player.JumpAcceleration = 17;
                                     playerYState = PlayerYState.Ground;
                                     break;
                                 }
@@ -666,7 +675,7 @@ namespace SemesterProject
                             if (player.Y >= GraphicsDevice.Viewport.Height - player.Height)
                             {
                                 playerYState = PlayerYState.Ground;
-                                player.JumpAcceleration = 20;
+                                player.JumpAcceleration = 17;
                             }
                             break;
                     }

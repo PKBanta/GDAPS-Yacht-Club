@@ -21,7 +21,7 @@ namespace SemesterProject
             :base(x, y, width, height, speed, damage, maxHealth, tex)
         {
             jumpSpeed = 4;
-            jumpAcceleration = 20;
+            jumpAcceleration = 17;
             above = new Rectangle(this.X, this.Y - 11, this.Width, 10);
             below = new Rectangle(this.X, this.Y + this.Height, this.Width, 10);
         }
