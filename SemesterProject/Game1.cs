@@ -79,9 +79,6 @@ namespace SemesterProject
         private static Vector2 buttonTextLoc = new Vector2(5, 5);
         #endregion Menu/Buttons
 
-        private int jumpTime = 5;
-        private int jumpCounter = 0;
-
         #region Textures/Misc.
         private Texture2D collectibleTexture;
         private Texture2D wallTexture;
