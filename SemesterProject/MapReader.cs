@@ -24,11 +24,12 @@ namespace SemesterProject
         Room room;
         Wall wall;
         Platform platform;
-        Collectible[] item;
+        Collectible item;
         SpriteBatch spritebatch;
         Random rando = new Random();
         char[,] tileArray;
         List<Rectangle> rectList;
+        List<Collectible> itemList;
         List<MapObject> objList;
         QuadTreeNode quadtree;
 
@@ -40,6 +41,11 @@ namespace SemesterProject
             get { return rectList; }
 
         }
+        public List<Collectible> ItemList
+        {
+            get { return itemList; }
+        }
+
         public List<MapObject> ObjList
         {
             get { return objList; }
@@ -53,7 +59,7 @@ namespace SemesterProject
         /// <param name="wa">wall object for this particular room</param>
         /// <param name="i">arrray of items that can potentially be found in this room</param>
         /// <param name="batch">spritebatch</param>
-        public void ReadMap(string name, QuadTreeNode qt)
+        public void ReadMap(string name, QuadTreeNode qt,Texture2D collectText)
         {
             quadtree = qt;
             Stream instream;
@@ -81,6 +87,7 @@ namespace SemesterProject
                 room = new Room(x, y, up, down, left, right);
                 rectList = new List<Rectangle>();
                 objList = new List<MapObject>();
+                itemList = new List<Collectible>();
 
                 //saves the actual room into the character array
                 while ((line = input.ReadLine()) != null)
@@ -96,7 +103,11 @@ namespace SemesterProject
                         {
                             rectList.Add(new Rectangle(count * 25, n * 25, 25, 25));
                         }
-
+                        if(tileArray[count,n] == '*')
+                        {
+                            itemList.Add(new Collectible(count * 25, n * 25, 25, 25,collectText, "Horseshit"));
+                        }
+                        
                     }
                     count++;
 
@@ -140,7 +151,7 @@ namespace SemesterProject
         }
         */
     
-        public void DrawMap( Platform plat, Wall wa, Collectible[] i, SpriteBatch batch)
+        public void DrawMap( Platform plat, Wall wa, Collectible i, SpriteBatch batch)
         {
             spritebatch = batch;
             platform = plat;
@@ -180,9 +191,9 @@ namespace SemesterProject
                     }
                     else if (tileArray[n, h] == '*')
                     {
-                        Collectible randomItem = item[rando.Next(0, item.Length)];
-                        randomItem.Rect = room.Tile;
-                        randomItem.Draw(spritebatch);
+                        
+                        item.Rect = room.Tile;
+                        item.Draw(spritebatch);
                         room.IncrementTileX();
                     }
                     
