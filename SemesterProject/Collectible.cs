@@ -23,6 +23,7 @@ namespace SemesterProject
         public bool Active
         {
             get { return active; }
+            set { active = value; }
         }
 
         public Collectible(int x, int y, int h, int w, Texture2D t, string n) : base(x, y, h, w, t)
@@ -55,6 +56,8 @@ namespace SemesterProject
             {
                 p.Health = p.MaxHealth;
             }
+
+            active = false;
         }
     }
 }
