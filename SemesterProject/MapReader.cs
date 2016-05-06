@@ -126,7 +126,12 @@ namespace SemesterProject
                     {
                         objList.Add(new Collectible(n * 25, h * 25, 25, 25, i[0].Tex,""));
                         quadtree.AddObject(new Collectible(n * 25, h * 25, 25, 25, i[0].Tex, ""));
-                    }                    
+                    }
+                    
+                    if (tileArray[n,h] == '#')
+                    {
+                        rectList.Add(new Rectangle(count * 25, n * 25, 25, 25));
+                    }
                 }
             }
         }
