@@ -58,7 +58,7 @@ namespace SemesterProject
             quadtree = qt;
             Stream instream;
             StreamReader input = null;
-
+            StoreObjects();
 
             count = 0;
 
@@ -110,24 +110,12 @@ namespace SemesterProject
             }
         }
 
-        public void StoreObjects(Platform plat, Wall wa, Collectible[] i, SpriteBatch batch)
+        public void StoreObjects()
         {
             for (int h = 0; h < y; h++)
             {
                 for (int n = 0; n < x; n++)
                 {
-                    if (tileArray[n, h] == '#')
-                    /*else */if (tileArray[n, h] == '#')
-                    {
-                        objList.Add(new Platform(n * 25, h * 25, 25, 25, plat.Tex));
-                        quadtree.AddObject(new Platform(n * 25, h * 25, 25, 25, plat.Tex));
-                    }
-                    else if (tileArray[n, h] == '*')
-                    {
-                        objList.Add(new Collectible(n * 25, h * 25, 25, 25, i[0].Tex,""));
-                        quadtree.AddObject(new Collectible(n * 25, h * 25, 25, 25, i[0].Tex, ""));
-                    }
-                    
                     if (tileArray[n,h] == '#')
                     {
                         rectList.Add(new Rectangle(count * 25, n * 25, 25, 25));

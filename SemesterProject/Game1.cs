@@ -196,7 +196,7 @@ namespace SemesterProject
             collectible = new Collectible(0, 0, 25, 25, collectibleTexture, "Horseshit");
             collectList = new Collectible[1];
             collectList[0] = collectible;
-            reader.StoreObjects(platform, wall, collectList, spriteBatch);
+            reader.StoreObjects();
             sewerBG = new Background(0, 0, 800, 1200,sewerTexture);
 
             // BUTTONS
