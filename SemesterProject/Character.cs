@@ -83,6 +83,11 @@ namespace SemesterProject
             set { tex = value; }
         }
 
+<<<<<<< HEAD
+=======
+        
+
+>>>>>>> 6049dc0dc8440223e5455126284a739bfb3f0af3
         //Constructor
         public Character(int x, int y, int width, int height, int speed, int damage, int maxHealth, Texture2D tex)
         {

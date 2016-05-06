@@ -217,7 +217,7 @@ namespace SemesterProject
         {
             for (int i = 0; i < enemySelectMenu.Count; i++)
             {
-                if (i < enemyRoster.Count)
+                if (i < enemyRoster.Count && enemyRoster[i] != null)
                 {
                     enemySelectMenu[i].Text = "Enemy" + i.ToString() + " "
                         + enemyRoster[i].Health + " / "
@@ -257,8 +257,26 @@ namespace SemesterProject
             {
                 character.Draw(spriteBatch);
             }
-
+            /*
             enemySelectMenu.Draw(spriteBatch);
+            */
+            for(int i = 0; i < enemySelectMenu.Count; i++)
+            {
+                if(enemyRoster[i] != null)
+                {
+                    enemySelectMenu[i].Draw(spriteBatch);
+                }
+            }
+
+            foreach(Enemy enemy in enemyRoster)
+            {
+                if(enemy != null)
+                {
+                    enemy.Draw(spriteBatch);
+                }
+
+                
+            }
         }
         #endregion Update/Draw
 
@@ -276,7 +294,7 @@ namespace SemesterProject
                     {
                         enemySelectMenu[enemyRoster.IndexOf((Enemy)roster[i])].Active = false;
                         enemySelectMenu.Remove(enemyRoster.IndexOf((Enemy)roster[i]));
-                        enemyRoster.Remove((Enemy)(roster[i]));
+                        //enemyRoster.Remove((Enemy)(roster[i]));
                     }
 
                     roster.RemoveAt(i); //remove dead character
@@ -286,10 +304,14 @@ namespace SemesterProject
             
             for(int j = 0; j < enemyRoster.Count; j++)
             {
-                if(enemyRoster[j].Health <= 0)
+                if(enemyRoster[j] == null)
                 {
-                    enemyRoster.RemoveAt(j);
-                    enemySelectMenu.Remove(j);
+
+                }
+                else if(enemyRoster[j].Health <= 0)
+                {
+                    enemyRoster[j] = null;
+                    
                     j--;
                 }
             }
@@ -395,7 +417,11 @@ namespace SemesterProject
         {
             for (int i = 0; i < enemyRoster.Count; i++)
             {
-                if (enemyRoster[i].Health > 0)
+                if (enemyRoster[i] == null)
+                {
+
+                }
+                else if (enemyRoster[i].Health > 0)
                 {
                     enemySelectMenu[i].Active = true;
                 }
@@ -420,5 +446,24 @@ namespace SemesterProject
         //        enemyTeam[i].Attack(playerTeam[rand.Next(playerTeam.Count)]);
         //    }
         //}
+
+        public static bool AllDead()
+        {
+            bool allDead = false;
+            int numDead = 0;
+            for(int i = 0; i < enemyRoster.Count; i++)
+            {
+                if(enemyRoster[i] == null)
+                {
+                    numDead++;
+                }
+            }
+            if(numDead == enemyRoster.Count)
+            {
+                allDead = true;
+            }
+
+            return allDead;
+        }
     }
 }
