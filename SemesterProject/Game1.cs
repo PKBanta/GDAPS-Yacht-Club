@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System;
 
 namespace SemesterProject
 {
@@ -56,6 +57,7 @@ namespace SemesterProject
         private Texture2D playerTexture;        //Player's texture
         private PlayerXState playerXState;      //Player's X direction state
         private PlayerYState playerYState;      //Player's Y direction state
+        private Vector2 preBattlePosition;
         #endregion Player
 
         #region Menus/Buttons
@@ -76,9 +78,6 @@ namespace SemesterProject
         private static Vector2 buttonTextLoc = new Vector2(5, 5);
         #endregion Menu/Buttons
 
-        private int jumpTime = 5;
-        private int jumpCounter = 0;
-
         #region Textures/Misc.
         private Texture2D collectibleTexture;
         private Texture2D wallTexture;
@@ -96,6 +95,8 @@ namespace SemesterProject
         private QuadTreeNode quadTree;
         //the node for Mario
         private QuadTreeNode marioQuad;
+
+        private double timeCounter, timePerFrame;
 
         #endregion Textures/Misc.
 
@@ -153,6 +154,9 @@ namespace SemesterProject
             screen = new Rectangle(0, 0, GraphicsDevice.Viewport.Width,
                 GraphicsDevice.Viewport.Height);
 
+            timeCounter = 0;
+            timePerFrame = 10;
+
             base.Initialize();
         }
 
@@ -185,6 +189,7 @@ namespace SemesterProject
 
             //Initializes player and their texture
             player = new Player(0, 300, 25, 50, 1, 10, 20, playerTexture);
+            player.Health = 14;
 
             reader.ReadMap("room.txt",quadTree);
             
@@ -193,7 +198,7 @@ namespace SemesterProject
             collectible = new Collectible(0, 0, 25, 25, collectibleTexture, "Horseshit");
             collectList = new Collectible[1];
             collectList[0] = collectible;
-            reader.StoreObjects(platform, wall, collectList, spriteBatch);
+            //reader.StoreObjects(platform, wall, collectList, spriteBatch);
             sewerBG = new Background(0, 0, 800, 1200,sewerTexture);
             
             #region Buttons
@@ -508,249 +513,224 @@ namespace SemesterProject
             marioQuad = quadTree.GetContainingQuad(player.Rect);
 
             if (!quitActive)
-            switch (gameState)
-            {
-                case GameState.Menu:
-                    if (!quitActive)
-                        mainMenu.Update(mState, previousMState, kbState, previousKBState);
-                    break;
+                switch (gameState)
+                {
+                    case GameState.Menu:
+                        if (!quitActive)
+                            mainMenu.Update(mState, previousMState, kbState, previousKBState);
+                        break;
 
-                case GameState.World:
+                    case GameState.World:
+                        timeCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
                     
-                    if (SingleKeyPress(Keys.P)) //Swtch to pause menu
-                    {
-                        PauseGame();
-                    }
-
-                    //Put in player collision with enemy here
-
-                    //Player Movement
-                    if (kbState.IsKeyDown(Keys.Left))
-                    {
-                        player.Move(-5);
-                    }
-                    else if (kbState.IsKeyDown(Keys.Right))
-                    {
-                        player.Move(5);
-                    }
-
-                    //Deals with players x directional movement
-                    switch (playerXState)
-                    {
-                        case PlayerXState.StandRight:
-                            if (kbState.IsKeyDown(Keys.D))
+                        if (timeCounter >= timePerFrame)
+                        {
+                            timeCounter = 0;
+                            for (int i = 0; i < collectList.Length; i++)
                             {
-                                playerXState = PlayerXState.WalkRight;
+                                collectList[i].Rotation += 0.009f;
                             }
+                        }
 
-                            else if (kbState.IsKeyDown(Keys.A))
-                            {
-                                playerXState = PlayerXState.WalkLeft;
-                            }
-                            break;
+                    
+                        if (SingleKeyPress(Keys.P)) //Swtch to pause menu
+                        {
+                            PauseGame();
+                        }
 
-                        case PlayerXState.WalkRight:
-                            player.Move(5);
-                            player.UpdateDetectors();
+                        //Put in player collision with enemy here
 
-                            for (int i = 0; i < reader.RectList.Count; i++)
-                            {
-                                if (player.Rect.Intersects(reader.RectList[i]))
-                                {
-                                    player.X = reader.RectList[i].X - player.Width;
-                                    break;
-                                }
-                            }
-
-                            if (kbState.IsKeyUp(Keys.D))
-                            {
-                                playerXState = PlayerXState.StandRight;
-                                player.XAcceleration = 1;
-                            }
-                            break;
-
-                        case PlayerXState.StandLeft:
-                            if (kbState.IsKeyDown(Keys.A))
-                            {
-                                playerXState = PlayerXState.WalkLeft;
-                            }
-
-                            else if (kbState.IsKeyDown(Keys.D))
-                            {
-                                playerXState = PlayerXState.WalkRight;
-                            }
-                            break;
-
-                        case PlayerXState.WalkLeft:
+                        //Player Movement
+                        if (kbState.IsKeyDown(Keys.Left))
+                        {
                             player.Move(-5);
-                            player.UpdateDetectors();
+                        }
+                        else if (kbState.IsKeyDown(Keys.Right))
+                        {
+                            player.Move(5);
+                        }
 
-                            for (int i = 0; i < reader.RectList.Count; i++)
-                            {
-                                if (player.Rect.Intersects(reader.RectList[i]))
+                        //Deals with players x directional movement
+                        switch (playerXState)
+                        {
+                            case PlayerXState.StandRight:
+                                if (kbState.IsKeyDown(Keys.D))
                                 {
-                                    player.X = reader.RectList[i].X + player.Width;
-                                    break;
+                                    playerXState = PlayerXState.WalkRight;
                                 }
-                            }
 
-                            if (kbState.IsKeyUp(Keys.A))
-                            {
-                                playerXState = PlayerXState.StandLeft;
-                                player.XAcceleration = 1;
-                            }
-                            break;
-                    }
+                                else if (kbState.IsKeyDown(Keys.A))
+                                {
+                                    playerXState = PlayerXState.WalkLeft;
+                                }
+                                break;
 
-                    //Deals with player's y directional movement
-                    switch (playerYState)
-                    {
-                        case PlayerYState.Ground:
-                            //player.Y = GraphicsDevice.Viewport.Height - player.Height;
-                            bool onPlatform = false;
+                            case PlayerXState.WalkRight:
+                                player.Move(5);
+                                player.UpdateDetectors();
 
-                            for (int i = 0; i < reader.RectList.Count; i++)
-                            {
-                                if (player.Below.Intersects(reader.RectList[i]))
+                                for (int i = 0; i < reader.RectList.Count; i++)
+                                {
+                                    if (player.Rect.Intersects(reader.RectList[i]))
+                                    {
+                                        player.X = reader.RectList[i].X - player.Width;
+                                        break;
+                                    }
+                                }
+
+                                if (kbState.IsKeyUp(Keys.D))
+                                {
+                                    playerXState = PlayerXState.StandRight;
+                                    player.XAcceleration = 1;
+                                }
+                                break;
+
+                            case PlayerXState.StandLeft:
+                                if (kbState.IsKeyDown(Keys.A))
+                                {
+                                    playerXState = PlayerXState.WalkLeft;
+                                }
+
+                                else if (kbState.IsKeyDown(Keys.D))
+                                {
+                                    playerXState = PlayerXState.WalkRight;
+                                }
+                                break;
+
+                            case PlayerXState.WalkLeft:
+                                player.Move(-5);
+                                player.UpdateDetectors();
+
+                                for (int i = 0; i < reader.RectList.Count; i++)
+                                {
+                                    if (player.Rect.Intersects(reader.RectList[i]))
+                                    {
+                                        player.X = reader.RectList[i].X + player.Width;
+                                        break;
+                                    }
+                                }
+
+                                if (kbState.IsKeyUp(Keys.A))
+                                {
+                                    playerXState = PlayerXState.StandLeft;
+                                    player.XAcceleration = 1;
+                                }
+                                break;
+                        }
+
+                        //Deals with player's y directional movement
+                        switch (playerYState)
+                        {
+                            case PlayerYState.Ground:
+                                //player.Y = GraphicsDevice.Viewport.Height - player.Height;
+                                bool onPlatform = false;
+
+                                for (int i = 0; i < reader.RectList.Count; i++)
+                                {
+                                    if (player.Below.Intersects(reader.RectList[i]))
+                                    {
+                                        onPlatform = true;
+                                        break;
+                                    }
+                                }
+
+                                for (int i = 0; i < collectList.Length; i++)
+                                {
+                                        if (player.Rect.Intersects(collectList[i].Rect))
+                                        {
+                                            collectList[i].Collect(player);
+                                        }
+                                }
+
+                                if (player.Y >= GraphicsDevice.Viewport.Height - player.Height)
                                 {
                                     onPlatform = true;
-                                    break;
                                 }
-                            }
 
-                            if (player.Y >= GraphicsDevice.Viewport.Height - player.Height)
-                            {
-                                onPlatform = true;
-                            }
+                                if (!onPlatform)
+                                {
+                                    player.JumpAcceleration = -2;
+                                    playerYState = PlayerYState.Jump;
+                                }
 
-                            if (!onPlatform)
-                            {
-                                player.JumpAcceleration = -2;
-                                playerYState = PlayerYState.Jump;
-                            }
-
-                            if (kbState.IsKeyDown(Keys.Space))
-                            {
-                                if (previousKBState.IsKeyUp(Keys.Space))
+                                if (kbState.IsKeyDown(Keys.Space))
                                 {
                                     playerYState = PlayerYState.Jump;
                                 }
-                            }
-                            break;
+                                break;
 
-                        case PlayerYState.Jump:
-                            player.Jump();
-                            player.UpdateDetectors();
+                            case PlayerYState.Jump:
+                                player.Jump();
+                                player.UpdateDetectors();
 
-                            for (int i = 0; i < reader.RectList.Count; i++)
-                            {
-                                if (player.Above.Intersects(reader.RectList[i]))
+                                for (int i = 0; i < reader.RectList.Count; i++)
                                 {
-                                    player.JumpAcceleration = -2;
-                                    break;
+                                    if (player.Above.Intersects(reader.RectList[i]))
+                                    {
+                                        player.JumpAcceleration = -2;
+                                        break;
+                                    }
+
+                                    else if (player.Rect.Intersects(reader.RectList[i]))
+                                    {
+                                        player.Y = reader.RectList[i].Y - player.Height;
+                                        player.JumpAcceleration = 20;
+                                        playerYState = PlayerYState.Ground;
+                                        break;
+                                    }
                                 }
 
-                                else if (player.Rect.Intersects(reader.RectList[i]))
+                                if (player.Y >= GraphicsDevice.Viewport.Height - player.Height)
                                 {
-                                    player.Y = reader.RectList[i].Y - player.Height;
-                                    player.JumpAcceleration = 20;
                                     playerYState = PlayerYState.Ground;
-                                    break;
+                                    player.JumpAcceleration = 20;
                                 }
-                            }
+                                break;
+                        }
+                        break;
 
-                            if (player.Y >= GraphicsDevice.Viewport.Height - player.Height)
+                    case GameState.Pause:
+                        if (!quitActive)
+                        {
+                            pauseMenu.Update(mState, previousMState, kbState,
+                                previousKBState);
+
+                            if (SingleKeyPress(Keys.P))
                             {
-                                playerYState = PlayerYState.Ground;
-                                player.JumpAcceleration = 20;
+                                UnpauseGame();
                             }
-                            break;
-                    }
-                    //Deals with players x directional movement
-                    switch (playerXState)
-                    {
-                        case PlayerXState.StandRight:
-                            if (kbState.IsKeyDown(Keys.D))
+                        }
+                        break;
+                    
+
+                    case GameState.Battle:
+
+                        BattleManager.Update(mState, previousMState);
+                    
+                        if(BattleManager.AllDead())
+                        {
+                            gameState = GameState.Menu;
+                            player.X = (int)preBattlePosition.X;
+                            player.Y = (int)preBattlePosition.Y;
+                        }
+
+                        if(player.Health <= 0)
                             {
-                                playerXState = PlayerXState.WalkRight;
+                                gameState = GameState.Menu;
                             }
-
-                            else if (kbState.IsKeyDown(Keys.A))
-                            {
-                                playerXState = PlayerXState.WalkLeft;
-                            }
-                            break;
-
-                        case PlayerXState.WalkRight:
-                            player.Move(5);
-
-                            if (kbState.IsKeyUp(Keys.D))
-                            {
-                                playerXState = PlayerXState.StandRight;
-                                player.XAcceleration = 1;
-                            }
-                            break;
-
-                        case PlayerXState.StandLeft:
-                            if (kbState.IsKeyDown(Keys.A))
-                            {
-                                playerXState = PlayerXState.WalkLeft;
-                            }
-
-                            else if (kbState.IsKeyDown(Keys.D))
-                            {
-                                playerXState = PlayerXState.WalkRight;
-                            }
-                            break;
-
-                        case PlayerXState.WalkLeft:
-
-                            player.Move(-5);
-
-                            if (kbState.IsKeyUp(Keys.A))
-                            {
-                                playerXState = PlayerXState.StandLeft;
-                                player.XAcceleration = 1;
-                            }
-                            break;
-                    }
-                    break;
-
-                case GameState.Pause:
-                    if (!quitActive)
-                    {
-                        pauseMenu.Update(mState, previousMState, kbState,
-                            previousKBState);
 
                         if (SingleKeyPress(Keys.P))
                         {
-                            UnpauseGame();
+                            PauseGame();
                         }
-                    }
-                    break;
+
+                        break;
                     
-
-                case GameState.Battle:
-
-                    BattleManager.Update(mState, previousMState);
-                    
-                    if(BattleManager.EnemyRoster.Count == 0)
-                    {
-                        gameState = GameState.Menu;
-                    }
-
-                    if (SingleKeyPress(Keys.P))
-                    {
-                        PauseGame();
-                    }
-
-                    break;
-                    
-                case GameState.GameOver:
-                    gameOverMenu.Update(mState, previousMState, kbState,
-                        previousKBState);
-                    break;
-            }
+                    case GameState.GameOver:
+                        gameOverMenu.Update(mState, previousMState, kbState,
+                            previousKBState);
+                        break;
+                }
 
             if (quitActive)
             {
@@ -973,16 +953,19 @@ namespace SemesterProject
         #region Battle
         private void Battle()
         {
+            preBattlePosition = new Vector2(player.X, player.Y);
+            player.X = 10;
+            player.Y = 100;            
             previousState = gameState;
             gameState = GameState.Battle;
             
             IsMouseVisible = true;
 
-            Enemy one = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 100,/*width*/ 50,/*height*/ 20, /*speed*/5, /*damage*/10, /*maxHealth*/20, collectible.Tex);
-            Enemy two = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 200, 50, 20, 3, 10, 20, collectible.Tex);
-            Enemy three = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 300, 50, 20, 2, 10, 20, collectible.Tex);
+            Enemy one = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 100,/*width*/ 300,/*height*/ 100, /*speed*/5, /*damage*/10, /*maxHealth*/20, collectible.Tex);
+            Enemy two = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 200, 300, 100, 3, 10, 20, collectible.Tex);
+            Enemy three = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 300, 300, 100, 2, 10, 20, collectible.Tex);
 
-            Ally ally = new Ally(100, 20, 50, 20, 3, 50, 50, collectible.Tex);
+            Ally ally = new Ally(10, 50, 50, 20, 3, 50, 50, collectible.Tex);
 
             List<Enemy> enemies = new List<Enemy>();
             enemies.Add(one);
