@@ -718,7 +718,11 @@ namespace SemesterProject
             {
                 quitMenu.Update(mState, previousMState, kbState, previousKBState);
             }
-            
+            if (reader.SwitchRoom(player))
+            {
+                reader.ReadMap("../../../Content/Rooms/room" + reader.RoomNumber +".txt", quadTree, collectibleTexture);
+                
+            }
             base.Update(gameTime);
         }
         #endregion Update
