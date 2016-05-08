@@ -40,6 +40,7 @@ namespace SemesterProject
         public Rectangle Rect
         {
             get { return rect; }
+            set { rect = value; }
         }
 
         public int Damage

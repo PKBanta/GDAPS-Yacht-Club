@@ -12,6 +12,7 @@ namespace SemesterProject
     class MapReader
     {
         //fields
+        int roomNumber = 0;
         int x;
         int y;
         int count;
@@ -24,13 +25,16 @@ namespace SemesterProject
         Room room;
         Wall wall;
         Platform platform;
-        Collectible[] item;
+        Collectible item;
         SpriteBatch spritebatch;
         Random rando = new Random();
         char[,] tileArray;
         List<Rectangle> rectList;
+        List<Collectible> itemList;
         List<MapObject> objList;
         QuadTreeNode quadtree;
+        Rectangle transitionRect;
+
 
         /// <summary>
         /// returns the list of rectangles of all the platforms in a room
@@ -40,9 +44,18 @@ namespace SemesterProject
             get { return rectList; }
 
         }
+        public List<Collectible> ItemList
+        {
+            get { return itemList; }
+        }
+
         public List<MapObject> ObjList
         {
             get { return objList; }
+        }
+        public int RoomNumber
+        {
+            get { return roomNumber; }
         }
 
         /// <summary>
@@ -53,12 +66,12 @@ namespace SemesterProject
         /// <param name="wa">wall object for this particular room</param>
         /// <param name="i">arrray of items that can potentially be found in this room</param>
         /// <param name="batch">spritebatch</param>
-        public void ReadMap(string name, QuadTreeNode qt)
+        public void ReadMap(string name, QuadTreeNode qt,Texture2D collectText)
         {
             quadtree = qt;
             Stream instream;
             StreamReader input = null;
-
+            roomNumber++;
             count = 0;
 
             try
@@ -81,6 +94,21 @@ namespace SemesterProject
                 room = new Room(x, y, up, down, left, right);
                 rectList = new List<Rectangle>();
                 objList = new List<MapObject>();
+                itemList = new List<Collectible>();
+
+                //finds out where to go to load the next map
+                if (!down)
+                {
+                    transitionRect = new Rectangle(0, 750, 1200, 50);
+                }
+                else if (!up)
+                {
+                    transitionRect = new Rectangle(0, 0, 1200, 50);
+                }
+                else
+                {
+                    transitionRect = new Rectangle(1150, 0, 50, 800);
+                }
 
                 //saves the actual room into the character array
                 while ((line = input.ReadLine()) != null)
@@ -96,7 +124,11 @@ namespace SemesterProject
                         {
                             rectList.Add(new Rectangle(count * 25, n * 25, 25, 25));
                         }
-
+                        if(tileArray[count,n] == '*')
+                        {
+                            itemList.Add(new Collectible(count * 25, n * 25, 25, 25,collectText, "Horseshit"));
+                        }
+                        
                     }
                     count++;
 
@@ -140,7 +172,7 @@ namespace SemesterProject
         }
         */
     
-        public void DrawMap( Platform plat, Wall wa, Collectible[] i, SpriteBatch batch)
+        public void DrawMap( Platform plat, Wall wa, Collectible i, SpriteBatch batch)
         {
             spritebatch = batch;
             platform = plat;
@@ -180,9 +212,8 @@ namespace SemesterProject
                     }
                     else if (tileArray[n, h] == '*')
                     {
-                        Collectible randomItem = item[rando.Next(0, item.Length)];
-                        randomItem.Rect = room.Tile;
-                        randomItem.Draw(spritebatch);
+                        item.Rect = room.Tile;
+                        item.Draw(spritebatch);
                         room.IncrementTileX();
                     }
                     
@@ -217,9 +248,27 @@ namespace SemesterProject
 
         }               
         
-        public void SwitchRoom(Rectangle playerPosition)
+        public bool SwitchRoom(Player player)
         {
+            if (player.Rect.Intersects(transitionRect) && !down)
+            {
+                player.Y = 50;
+                return true;
+            }
+            else if (player.Rect.Intersects(transitionRect) && !up)
+            {
+                player.Y = 750;
+                return true;
+            }
+            else if (player.Rect.Intersects(transitionRect) && !left)
+            {
+                player.X = 50;
+                
+                return true;               
 
+            }
+            
+            return false;
         }
                 
     }   

@@ -88,7 +88,7 @@ namespace SemesterProject
         private Wall wall;
         private Platform platform;
         private MapReader reader;
-        private Collectible[] collectList;
+        
         private Background sewerBG;
 
         //the quadtree
@@ -191,13 +191,12 @@ namespace SemesterProject
             player = new Player(0, 300, 25, 50, 1, 10, 20, playerTexture);
             player.Health = 14;
 
-            reader.ReadMap("room.txt",quadTree);
+            reader.ReadMap("room.txt",quadTree,collectibleTexture);
             
             wall = new Wall(0, 0, 25, 25, wallTexture);
             platform = new Platform(0, 0, 25, 25, platTexture);
             collectible = new Collectible(0, 0, 25, 25, collectibleTexture, "Horseshit");
-            collectList = new Collectible[1];
-            collectList[0] = collectible;
+            
             //reader.StoreObjects(platform, wall, collectList, spriteBatch);
             sewerBG = new Background(0, 0, 800, 1200,sewerTexture);
             
@@ -526,12 +525,8 @@ namespace SemesterProject
                         if (timeCounter >= timePerFrame)
                         {
                             timeCounter = 0;
-                            for (int i = 0; i < collectList.Length; i++)
-                            {
-                                collectList[i].Rotation += 0.009f;
-                            }
+                            collectible.Rotation += .009f;
                         }
-
                     
                         if (SingleKeyPress(Keys.P)) //Swtch to pause menu
                         {
@@ -609,7 +604,7 @@ namespace SemesterProject
                                         break;
                                     }
                                 }
-
+                                
                                 if (kbState.IsKeyUp(Keys.A))
                                 {
                                     playerXState = PlayerXState.StandLeft;
@@ -634,14 +629,22 @@ namespace SemesterProject
                                     }
                                 }
 
-                                for (int i = 0; i < collectList.Length; i++)
+                                //for (int i = 0; i < collectList.Length; i++)
+                                //{
+                                //        if (player.Rect.Intersects(collectList[i].Rect))
+                                //        {
+                                //            collectList[i].Collect(player);
+                                //        }
+                                //}
+
+                                for (int i = 0; i < reader.ItemList.Count; i++)
                                 {
-                                        if (player.Rect.Intersects(collectList[i].Rect))
+                                        if (player.Rect.Intersects((reader.ItemList)[i].Rect))
                                         {
-                                            collectList[i].Collect(player);
+                                            reader.ItemList[i].Collect(player);
                                         }
                                 }
-
+                            
                                 if (player.Y >= GraphicsDevice.Viewport.Height - player.Height)
                                 {
                                     onPlatform = true;
@@ -736,7 +739,11 @@ namespace SemesterProject
             {
                 quitMenu.Update(mState, previousMState, kbState, previousKBState);
             }
-            
+            if (reader.SwitchRoom(player))
+            {
+                reader.ReadMap("../../../Content/Rooms/room" + reader.RoomNumber +".txt", quadTree, collectibleTexture);
+                
+            }
             base.Update(gameTime);
         }
         #endregion Update
@@ -807,7 +814,7 @@ namespace SemesterProject
         {
             sewerBG.Draw(spriteBatch);
             player.Draw(spriteBatch);
-            reader.DrawMap(platform, wall, collectList, spriteBatch);
+            reader.DrawMap(platform, wall, collectible, spriteBatch);
         }
 
         /// <summary>
