@@ -34,6 +34,8 @@ namespace SemesterProject
         List<MapObject> objList;
         QuadTreeNode quadtree;
         Rectangle transitionRect;
+
+
         /// <summary>
         /// returns the list of rectangles of all the platforms in a room
         /// </summary>
@@ -151,7 +153,7 @@ namespace SemesterProject
                 for (int n = 0; n < x; n++)
                 {
                     
-                    else if (tileArray[n, h] == '#')
+                    if (tileArray[n, h] == '#')
                     {
                         objList.Add(new Platform(n * 25, h * 25, 25, 25, plat.Tex));
                         quadtree.AddObject(new Platform(n * 25, h * 25, 25, 25, plat.Tex));
@@ -210,7 +212,6 @@ namespace SemesterProject
                     }
                     else if (tileArray[n, h] == '*')
                     {
-                        
                         item.Rect = room.Tile;
                         item.Draw(spritebatch);
                         room.IncrementTileX();
