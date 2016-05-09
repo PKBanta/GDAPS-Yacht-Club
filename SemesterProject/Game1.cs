@@ -312,14 +312,14 @@ namespace SemesterProject
                 true,  // highlightable
                 true,  // clickable
                 true); // linger
-
+            /*
             battleTime = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
                     - buttonImage.Width / 2, GraphicsDevice.Viewport.Height / 2
                     + buttonImage.Height / 2 + 10,
                     buttonImage.Width, buttonImage.Height),
-                Battle,  // ActivationFunction
+                Battle(new Enemy(0,0,50,50,5, 10, 20, collectible.Tex)),  // ActivationFunction
 
                 buttonFont,
                 "Battle Time",
@@ -330,7 +330,7 @@ namespace SemesterProject
                 true,  // highlightable
                 true,  // clickable
                 false); // linger
-
+            */
             battleButton = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
@@ -937,7 +937,7 @@ namespace SemesterProject
         }
 
         #region Battle
-        private void Battle()
+        private void Battle(Enemy enemy1)
         {
             preBattlePosition = new Vector2(player.X, player.Y);
             player.X = 10;
@@ -947,23 +947,22 @@ namespace SemesterProject
             
             IsMouseVisible = true;
 
-            Enemy one = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 100,/*width*/ 300,/*height*/ 100, /*speed*/5, /*damage*/10, /*maxHealth*/20, collectible.Tex);
-            Enemy two = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 200, 300, 100, 3, 10, 20, collectible.Tex);
-            Enemy three = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 300, 300, 100, 2, 10, 20, collectible.Tex);
+            Enemy one = enemy1;
+            Enemy two = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 200, 300, 100, 3, 10, 20, enemy1.Texture);
+            Enemy three = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 300, 300, 100, 2, 10, 20, enemy1.Texture);
 
-            Ally ally = new Ally(10, 50, 50, 20, 3, 50, 50, collectible.Tex);
+            //Ally ally = new Ally(10, 50, 50, 20, 3, 50, 50, collectible.Tex);
 
             List<Enemy> enemies = new List<Enemy>();
             enemies.Add(one);
             enemies.Add(two);
             enemies.Add(three);
 
-            List<Ally> allies = new List<Ally>();
+            /*List<Ally> allies = new List<Ally>();
             allies.Add(ally);
-
+            */
             BattleManager.StageBattle(
-                player,
-                allies,
+                player,                
                 enemies,
                 new Menu(pauseMenu.Texture,
                     new Vector2(0, 300),

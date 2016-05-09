@@ -52,7 +52,7 @@ namespace SemesterProject
         /// <param name="environment">The level type that the battle is taking
         /// place in. Used to determine what types of enemies to add to the
         /// battle, and what background should be drawn.</param>
-        public static void StageBattle(Player player1, List<Ally> allies, List<Enemy> enemies, Menu menu, Button button, GraphicsDevice g/*,
+        public static void StageBattle(Player player1, List<Enemy> enemies, Menu menu, Button button, GraphicsDevice g/*,
             LevelType environment*/)
         {
             player = player1;
@@ -64,14 +64,7 @@ namespace SemesterProject
             roster.Add(player as Player);
 
             // Insert the Allies into the roster
-            for (int i = 0; i < allies.Count; i++)
-            {
-                allies[i].X = player.X;
-                allies[i].Y = player.Y + 100 * (i + 1);
-
-                InsertActor(allies[i] as Ally);
-                allyList.Add(allies[i]);
-            }
+            
 
             // Insert the baddies into the roster
             for (int i = 0; i < enemies.Count; i++)
