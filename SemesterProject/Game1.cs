@@ -97,6 +97,9 @@ namespace SemesterProject
         //the node for Mario
         private QuadTreeNode marioQuad;
 
+        private Enemy enemy;
+        private List<Enemy> enemyList;
+
         #endregion Textures/Misc.
 
         public Game1()
@@ -192,6 +195,12 @@ namespace SemesterProject
             wall = new Wall(0, 0, 25, 25, wallTexture);
             platform = new Platform(0, 0, 25, 25, platTexture);
             collectible = new Collectible(0, 0, 25, 25, collectibleTexture, "Horseshit");
+            //Testing list
+            reader.ItemList.Add(collectible);
+
+            enemy = new Enemy(50, 50, 50, 50, 10, 10, 10, collectibleTexture);
+            enemyList = new List<Enemy>();
+            enemyList.Add(enemy);
             
             //reader.StoreObjects(platform, wall, collectList, spriteBatch);
             sewerBG = new Background(0, 0, 800, 1200,sewerTexture);
@@ -517,6 +526,14 @@ namespace SemesterProject
                         PauseGame();
                     }
 
+                    for(int i = 0; i < enemyList.Count; i++)
+                    {
+                            if (player.Rect.Intersects(enemyList[i].Rect))
+                            {
+                                Battle();
+                            }
+                    }
+
                     //Put in player collision with enemy here
 
                     //Player Movement
@@ -610,7 +627,6 @@ namespace SemesterProject
                     switch (playerYState)
                     {
                         case PlayerYState.Ground:
-                            //player.Y = GraphicsDevice.Viewport.Height - player.Height;
                             bool onPlatform = false;
 
                             for (int i = 0; i < reader.RectList.Count; i++)
@@ -624,10 +640,10 @@ namespace SemesterProject
 
                            for (int i = 0; i < reader.ItemList.Count; i++)
                             {
-                                    if (player.Rect.Intersects((reader.ItemList)[i].Rect))
-                                    {
-                                        reader.ItemList[i].Collect(player);
-                                    }
+                                 if (player.Rect.Intersects(reader.ItemList[i].Rect))
+                                 {
+                                     reader.ItemList[i].Collect(player);
+                                 }
                             }
                             
                             if (player.Y >= GraphicsDevice.Viewport.Height - player.Height)
@@ -799,6 +815,10 @@ namespace SemesterProject
             sewerBG.Draw(spriteBatch);
             player.Draw(spriteBatch);
             reader.DrawMap(platform, wall, collectible, spriteBatch);
+            for(int i = 0; i < enemyList.Count; i++)
+            {
+                enemyList[i].Draw(spriteBatch);
+            }
         }
 
         /// <summary>
