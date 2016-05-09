@@ -149,7 +149,7 @@ namespace SemesterProject
         public List<Rectangle> GetAllRectangles()
         {
             List<Rectangle> rects = new List<Rectangle>();
-            int index = 0;
+            //int index = 0;
 
             if (Divisions != null)
             {

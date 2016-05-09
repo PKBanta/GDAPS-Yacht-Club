@@ -12,6 +12,7 @@ namespace SemesterProject
     class MapReader
     {
         //fields
+        int roomNumber = 0;
         int x;
         int y;
         int count;
@@ -32,6 +33,8 @@ namespace SemesterProject
         List<Collectible> itemList;
         List<MapObject> objList;
         QuadTreeNode quadtree;
+        Rectangle transitionRect;
+
 
         /// <summary>
         /// returns the list of rectangles of all the platforms in a room
@@ -50,6 +53,10 @@ namespace SemesterProject
         {
             get { return objList; }
         }
+        public int RoomNumber
+        {
+            get { return roomNumber; }
+        }
 
         /// <summary>
         /// pure voodoo magic. might be dangerous
@@ -64,7 +71,7 @@ namespace SemesterProject
             quadtree = qt;
             Stream instream;
             StreamReader input = null;
-
+            roomNumber++;
             count = 0;
 
             try
@@ -88,6 +95,20 @@ namespace SemesterProject
                 rectList = new List<Rectangle>();
                 objList = new List<MapObject>();
                 itemList = new List<Collectible>();
+
+                //finds out where to go to load the next map
+                if (!down)
+                {
+                    transitionRect = new Rectangle(0, 750, 1200, 50);
+                }
+                else if (!up)
+                {
+                    transitionRect = new Rectangle(0, 0, 1200, 50);
+                }
+                else
+                {
+                    transitionRect = new Rectangle(1150, 0, 50, 800);
+                }
 
                 //saves the actual room into the character array
                 while ((line = input.ReadLine()) != null)
@@ -132,7 +153,7 @@ namespace SemesterProject
                 for (int n = 0; n < x; n++)
                 {
                     
-                    else if (tileArray[n, h] == '#')
+                    if (tileArray[n, h] == '#')
                     {
                         objList.Add(new Platform(n * 25, h * 25, 25, 25, plat.Tex));
                         quadtree.AddObject(new Platform(n * 25, h * 25, 25, 25, plat.Tex));
@@ -191,7 +212,6 @@ namespace SemesterProject
                     }
                     else if (tileArray[n, h] == '*')
                     {
-                        
                         item.Rect = room.Tile;
                         item.Draw(spritebatch);
                         room.IncrementTileX();
@@ -228,9 +248,27 @@ namespace SemesterProject
 
         }               
         
-        public void SwitchRoom(Rectangle playerPosition)
+        public bool SwitchRoom(Player player)
         {
+            if (player.Rect.Intersects(transitionRect) && !down)
+            {
+                player.Y = 50;
+                return true;
+            }
+            else if (player.Rect.Intersects(transitionRect) && !up)
+            {
+                player.Y = 750;
+                return true;
+            }
+            else if (player.Rect.Intersects(transitionRect) && !left)
+            {
+                player.X = 50;
+                
+                return true;               
 
+            }
+            
+            return false;
         }
                 
     }   

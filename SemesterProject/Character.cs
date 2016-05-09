@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework.Input;
 
 namespace SemesterProject
 {
+    
+
     class Character
     {
         //Movement and appearance related fields
@@ -38,6 +40,7 @@ namespace SemesterProject
         public Rectangle Rect
         {
             get { return rect; }
+            set { rect = value; }
         }
 
         public int Damage
@@ -84,7 +87,7 @@ namespace SemesterProject
             get { return tex; }
             set { tex = value; }
         }
-        
+
         //Constructor
         public Character(int x, int y, int width, int height, int speed, int damage, int maxHealth, Texture2D tex)
         {
@@ -99,6 +102,7 @@ namespace SemesterProject
             xAcceleration = 1;
         }
 
+        // Methods
         /// <summary>
         /// Allows the character to attack
         /// </summary>
