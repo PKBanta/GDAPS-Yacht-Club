@@ -35,5 +35,10 @@ namespace SemesterProject
 
             return targ;
         }
+
+        public void Draw(SpriteBatch spritebatch)
+        {
+            spritebatch.Draw(Texture, Rect, Color.White);
+        }
     }
 }

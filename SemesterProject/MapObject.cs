@@ -16,8 +16,8 @@ namespace SemesterProject
         //appearance fields
         private int height;
         private int width;
-        Texture2D tex;
-        Rectangle rect;
+        private Texture2D tex;
+        private Rectangle rect;
 
         //properties
 

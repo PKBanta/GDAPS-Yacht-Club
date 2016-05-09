@@ -49,15 +49,7 @@ namespace SemesterProject
         {
             if (active)
             {
-                spritebatch.Draw(
-                    Tex,
-                    new Rectangle(Rect.X + Tex.Width / 2, Rect.Y + Tex.Height / 2, Tex.Width, Tex.Height),
-                    null,
-                    Color.White,
-                    rotation,
-                    new Vector2(Tex.Width / 2, Tex.Width / 2),
-                    SpriteEffects.None,
-                    0);
+                spritebatch.Draw(Tex,Rect,Color.White);
             }
         }
 
