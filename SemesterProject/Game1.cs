@@ -101,6 +101,8 @@ namespace SemesterProject
         private Enemy enemy;
         private List<Enemy> enemyList;
 
+        private Enemy killedEnemy;
+
         #endregion Textures/Misc.
 
         public Game1()
@@ -532,7 +534,11 @@ namespace SemesterProject
                     {
                             if (player.Rect.Intersects(enemyList[i].Rect))
                             {
-                               // Battle();
+                                //Battle();
+
+                                Battle(enemyList[i]);
+                                killedEnemy = enemyList[i];
+
                             }
                     }
 
@@ -718,9 +724,10 @@ namespace SemesterProject
                     
                     if(BattleManager.AllDead())
                     {
-                        gameState = GameState.Menu;
+                        gameState = GameState.World;
                         player.X = (int)preBattlePosition.X;
                         player.Y = (int)preBattlePosition.Y;
+                        enemyList.Remove(killedEnemy);
                     }
 
                     if(player.Health <= 0)
