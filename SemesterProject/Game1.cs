@@ -63,7 +63,7 @@ namespace SemesterProject
         #region Menus/Buttons
         private Texture2D mainMenuImage, pauseImage, gameOverImage, buttonImage,
             quitImage, shadeOverlay;
-        private SpriteFont menuFont, buttonFont;
+        private SpriteFont menuFont, buttonFont, healthFont;
         private static Rectangle screen;
         private static Color shadowColor = new Color(200, 200, 200, 255);
 
@@ -79,10 +79,8 @@ namespace SemesterProject
         #endregion Menu/Buttons
 
         #region Textures/Misc.
-        private Texture2D collectibleTexture;
-        private Texture2D wallTexture;
-        private Texture2D platTexture;
-        private Texture2D sewerTexture;
+        private Texture2D collectibleTexture, wallTexture, platTexture,
+            sewerTexture, healthBarBase, healthBarOverlay;
 
         private Collectible collectible;
         private Wall wall;
@@ -171,6 +169,8 @@ namespace SemesterProject
             
             //Loads the player's texture
             playerTexture = Content.Load<Texture2D>("mario");
+
+            // Menu + Misc textures
             mainMenuImage = Content.Load<Texture2D>("mainMenu");
             pauseImage = Content.Load<Texture2D>("pauseMenu");
             gameOverImage = Content.Load<Texture2D>("mainMenu");
@@ -180,6 +180,10 @@ namespace SemesterProject
 
             menuFont = Content.Load<SpriteFont>("MenuFont");
             buttonFont = Content.Load<SpriteFont>("ButtonFont");
+            healthFont = Content.Load<SpriteFont>("Consolas_9");
+
+            healthBarBase = Content.Load<Texture2D>("Health Bar Base");
+            healthBarOverlay = Content.Load<Texture2D>("Health Bar Overlay");
 
             //Loads map textures
             wallTexture = Content.Load<Texture2D>("wall");
@@ -525,7 +529,7 @@ namespace SemesterProject
                         if (timeCounter >= timePerFrame)
                         {
                             timeCounter = 0;
-                            collectible.Rotation += .009f;
+                            //collectible.Rotation += .009f;
                         }
                     
                         if (SingleKeyPress(Keys.P)) //Swtch to pause menu
