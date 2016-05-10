@@ -84,6 +84,7 @@ namespace SemesterProject
         private Texture2D wallTexture;
         private Texture2D platTexture;
         private Texture2D sewerTexture;
+        private Texture2D enemyTexture;
 
         private Collectible collectible;
         private Wall wall;
@@ -99,6 +100,8 @@ namespace SemesterProject
 
         private Enemy enemy;
         private List<Enemy> enemyList;
+
+        private Enemy killedEnemy;
 
         #endregion Textures/Misc.
 
@@ -185,18 +188,19 @@ namespace SemesterProject
             collectibleTexture = Content.Load<Texture2D>("collectible");
             platTexture = Content.Load<Texture2D>("tile");
             sewerTexture = Content.Load<Texture2D>("sewer BG");
+            enemyTexture = Content.Load<Texture2D>("ghost");
 
             //Initializes player and their texture
             player = new Player(0, 300, 25, 50, 1, 10, 20, playerTexture);
             player.Health = 14;
 
-            reader.ReadMap("room.txt",quadTree,collectibleTexture);
+            reader.ReadMap("../../../Content/Rooms/room1.txt", quadTree,collectibleTexture,enemyTexture);
             
             wall = new Wall(0, 0, 25, 25, wallTexture);
             platform = new Platform(0, 0, 25, 25, platTexture);
-            collectible = new Collectible(0, 0, 25, 25, collectibleTexture, "Horseshit");
+            collectible = new Collectible(0, 0, 25, 25, collectibleTexture, "item");
             //Testing list
-            reader.ItemList.Add(collectible);
+            
 
             enemy = new Enemy(50, 50, 50, 50, 10, 10, 10, collectibleTexture);
             enemyList = new List<Enemy>();
@@ -528,10 +532,16 @@ namespace SemesterProject
 
                     for(int i = 0; i < enemyList.Count; i++)
                     {
-                            if (player.Rect.Intersects(enemyList[i].Rect))
+                           /* if (player.Rect.Intersects(enemyList[i].Rect))
                             {
                                 Battle(enemyList[i]);
                             }
+                                //Battle();
+
+                                Battle(enemyList[i]);
+                                killedEnemy = enemyList[i];
+
+                            }*/
                     }
 
                     //Put in player collision with enemy here
@@ -745,9 +755,10 @@ namespace SemesterProject
                     
                     if(BattleManager.AllDead())
                     {
-                        gameState = GameState.Menu;
+                        gameState = GameState.World;
                         player.X = (int)preBattlePosition.X;
                         player.Y = (int)preBattlePosition.Y;
+                        enemyList.Remove(killedEnemy);
                     }
 
                     if(player.Health <= 0)
@@ -774,7 +785,7 @@ namespace SemesterProject
             }
             if (reader.SwitchRoom(player))
             {
-                reader.ReadMap("../../../Content/Rooms/room" + reader.RoomNumber +".txt", quadTree, collectibleTexture);
+                reader.ReadMap("../../../Content/Rooms/room" + reader.RoomNumber +".txt", quadTree, collectibleTexture,enemyTexture);
                 
             }
             base.Update(gameTime);

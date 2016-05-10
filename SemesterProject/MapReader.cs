@@ -12,7 +12,7 @@ namespace SemesterProject
     class MapReader
     {
         //fields
-        int roomNumber = 0;
+        int roomNumber = 1;
         int x;
         int y;
         int count;
@@ -32,7 +32,9 @@ namespace SemesterProject
         List<Rectangle> rectList;
         List<Collectible> itemList;
         List<MapObject> objList;
+        List<Enemy> enemyList;
         QuadTreeNode quadtree;
+        Rectangle previousTransitionRect;
         Rectangle transitionRect;
 
 
@@ -86,13 +88,16 @@ namespace SemesterProject
         /// <param name="wa">wall object for this particular room</param>
         /// <param name="i">arrray of items that can potentially be found in this room</param>
         /// <param name="batch">spritebatch</param>
-        public void ReadMap(string name, QuadTreeNode qt,Texture2D collectText)
+        public void ReadMap(string name, QuadTreeNode qt,Texture2D collectText,Texture2D enemyText)
         {
             quadtree = qt;
             Stream instream;
             StreamReader input = null;
             roomNumber++;
             count = 0;
+
+            previousTransitionRect = transitionRect;
+            
 
             try
             {
@@ -115,19 +120,24 @@ namespace SemesterProject
                 rectList = new List<Rectangle>();
                 objList = new List<MapObject>();
                 itemList = new List<Collectible>();
+                enemyList = new List<Enemy>();
+                Rectangle leftrect = new Rectangle(0, 0, 50, 800);
+                Rectangle rightrect = new Rectangle(1150, 0, 50, 800);
+                Rectangle uprect = new Rectangle(0, 0, 1200, 50);
+                Rectangle downrect = new Rectangle(0, 750, 1200, 50);
 
                 //finds out where to go to load the next map
-                if (!down)
+                if (!down && previousTransitionRect != uprect)
                 {
-                    transitionRect = new Rectangle(0, 750, 1200, 50);
+                    transitionRect = downrect;
                 }
-                else if (!up)
+                else if (!up && previousTransitionRect != downrect)
                 {
-                    transitionRect = new Rectangle(0, 0, 1200, 50);
+                    transitionRect = uprect;
                 }
                 else
                 {
-                    transitionRect = new Rectangle(1150, 0, 50, 800);
+                    transitionRect = rightrect;
                 }
 
                 //saves the actual room into the character array
@@ -146,7 +156,12 @@ namespace SemesterProject
                         }
                         if(tileArray[count,n] == '*')
                         {
-                            itemList.Add(new Collectible(count * 25, n * 25, 25, 25,collectText, "Horseshit"));
+                            itemList.Add(new Collectible(count * 25, n * 25, 25, 25,collectText, "item"));
+                        }
+                        if(tileArray [count,n] == 'e')
+                        {
+                            //need stats on enemies
+                            enemyList.Add(new Enemy(count * 25, n * 25, 25, 25, 1, 1, 1, enemyText));
                         }
                         
                     }
@@ -203,6 +218,9 @@ namespace SemesterProject
             room.TileXToZero();
             room.TileYToZero();
 
+            int enemyCount = enemyList.Count;
+            int collectCount = itemList.Count;
+
             //makes an upper wall if necessary
             if (up)
             {
@@ -223,17 +241,33 @@ namespace SemesterProject
                         wall.Draw(spritebatch);
                         room.IncrementTileX();
                     }
-                   
-                    else if (tileArray[n,h] == '#')
+
+                    else if (tileArray[n, h] == '#')
                     {
                         platform.Rect = room.Tile;
                         platform.Draw(spritebatch);
                         room.IncrementTileX();
                     }
+                    
                     else if (tileArray[n, h] == '*')
                     {
-                        item.Rect = room.Tile;
-                        item.Draw(spritebatch);
+                        if(collectCount > 0)
+                        {
+                            itemList[collectCount-1].Draw(spritebatch);
+                            collectCount--;
+                        }
+                       
+                        room.IncrementTileX();
+                    }
+                    
+                    else if(tileArray[n,h] == 'e')
+                    {
+                        if(enemyCount > 0)
+                        {
+                            enemyList[enemyCount-1].Draw(spritebatch);
+                            enemyCount--;
+                        }
+                        
                         room.IncrementTileX();
                     }
                     
