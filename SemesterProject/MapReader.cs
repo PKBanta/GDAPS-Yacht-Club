@@ -12,7 +12,7 @@ namespace SemesterProject
     class MapReader
     {
         //fields
-        int roomNumber = 0;
+        int roomNumber = 1;
         int x;
         int y;
         int count;
