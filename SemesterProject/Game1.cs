@@ -530,7 +530,7 @@ namespace SemesterProject
                     {
                             if (player.Rect.Intersects(enemyList[i].Rect))
                             {
-                                Battle();
+                                Battle(enemyList[i]);
                             }
                     }
 
@@ -574,6 +574,11 @@ namespace SemesterProject
                             player.Move(5);
                             player.UpdateDetectors();
 
+                            if (reader.Right && player.X >= GraphicsDevice.Viewport.Width - reader.CurrentRoom.Tile.Width - player.Width)
+                            {
+                                player.X = GraphicsDevice.Viewport.Width - reader.CurrentRoom.Tile.Width - player.Width;
+                            }
+
                             for (int i = 0; i < reader.RectList.Count; i++)
                             {
                                 if (player.Rect.Intersects(reader.RectList[i]))
@@ -606,6 +611,11 @@ namespace SemesterProject
                             player.Move(-5);
                             player.UpdateDetectors();
 
+                            if (reader.Left && player.X <= reader.CurrentRoom.Tile.Width)
+                            {
+                                player.X = reader.CurrentRoom.Tile.Width;
+                            }
+
                             for (int i = 0; i < reader.RectList.Count; i++)
                             {
                                 if (player.Rect.Intersects(reader.RectList[i]))
@@ -631,7 +641,7 @@ namespace SemesterProject
 
                             for (int i = 0; i < reader.RectList.Count; i++)
                             {
-                                if (player.Below.Intersects(reader.RectList[i]))
+                                if (player.Below.Intersects(reader.RectList[i]) || player.Y >= GraphicsDevice.Viewport.Height - player.Height - reader.CurrentRoom.Tile.Height)
                                 {
                                     onPlatform = true;
                                     break;
@@ -687,8 +697,27 @@ namespace SemesterProject
                                 }
                             }
 
-                            if (player.Y >= GraphicsDevice.Viewport.Height - player.Height)
+                            if (reader.Up)
                             {
+                                if(player.Y <= reader.CurrentRoom.Tile.Height)
+                                {
+                                    player.JumpAcceleration = -2;
+                                }
+                            }
+
+                            if (reader.Down)
+                            {
+                                if(player.Y >= GraphicsDevice.Viewport.Height - player.Height - reader.CurrentRoom.Tile.Height)
+                                {
+                                    player.Y = GraphicsDevice.Viewport.Height - player.Height - reader.CurrentRoom.Tile.Height;
+                                    playerYState = PlayerYState.Ground;
+                                    player.JumpAcceleration = 17;
+                                }
+                            }
+
+                            else if (player.Y >= GraphicsDevice.Viewport.Height - player.Height)
+                            {
+                                player.Y = GraphicsDevice.Viewport.Height - player.Height;
                                 playerYState = PlayerYState.Ground;
                                 player.JumpAcceleration = 17;
                             }

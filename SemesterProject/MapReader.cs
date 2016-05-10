@@ -57,6 +57,26 @@ namespace SemesterProject
         {
             get { return roomNumber; }
         }
+        public bool Up
+        {
+            get { return up; }
+        }
+        public bool Down
+        {
+            get { return down; }
+        }
+        public bool Left
+        {
+            get { return left; }
+        }
+        public bool Right
+        {
+            get { return right; }
+        }
+        public Room CurrentRoom
+        {
+            get { return room; }
+        }
 
         /// <summary>
         /// pure voodoo magic. might be dangerous
