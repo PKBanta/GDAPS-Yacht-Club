@@ -532,14 +532,14 @@ namespace SemesterProject
 
                     for(int i = 0; i < enemyList.Count; i++)
                     {
-                            if (player.Rect.Intersects(enemyList[i].Rect))
+                           /* if (player.Rect.Intersects(enemyList[i].Rect))
                             {
                                 //Battle();
 
                                 Battle(enemyList[i]);
                                 killedEnemy = enemyList[i];
 
-                            }
+                            }*/
                     }
 
                     //Put in player collision with enemy here
