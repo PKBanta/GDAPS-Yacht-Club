@@ -21,7 +21,8 @@ namespace SemesterProject
             World,   // Game World
             Battle,  // Battle Scene
             Pause,   // Pause Screen
-            GameOver // Game Over Screen
+            GameOver, // Game Over Screen
+            Instructions //Instructions screen
         }
 
         
@@ -67,13 +68,13 @@ namespace SemesterProject
         private static Rectangle screen;
         private static Color shadowColor = new Color(200, 200, 200, 255);
 
-        private ListMenu mainMenu, pauseMenu, gameOverMenu, quitMenu;
+        private ListMenu mainMenu, pauseMenu, gameOverMenu, quitMenu, instructionsMenu;
         private bool quitActive;
 
         private Button mainMenu_play, mainMenu_quit, pause_menu, pause_resume,
-            pause_quit, quit_no, quit_yes, battleTime, battleButton;
+            pause_quit, quit_no, quit_yes, instructions_Play, instructions_Back, battleButton;
         private List<Button> mainMenuButtons, pauseButtons, gameOverButtons,
-            confirmQuitButtons;
+            confirmQuitButtons, instructionsButtons;
         
 
         private static Vector2 buttonTextLoc = new Vector2(5, 5);
@@ -215,7 +216,7 @@ namespace SemesterProject
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
                     - buttonImage.Width - 30, GraphicsDevice.Viewport.Height
                     / 2 - 30, buttonImage.Width, buttonImage.Height),
-                StartGame,  // ActivationFunction
+                ShowInstructions,  // ActivationFunction
 
                 buttonFont,
                 "Play",
@@ -325,17 +326,17 @@ namespace SemesterProject
                 true,  // highlightable
                 true,  // clickable
                 true); // linger
-            /*
-            battleTime = new Button(
+            
+            instructions_Play = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
-                    - buttonImage.Width / 2, GraphicsDevice.Viewport.Height / 2
+                    - buttonImage.Width / 2 - 300, GraphicsDevice.Viewport.Height / 2
                     + buttonImage.Height / 2 + 10,
                     buttonImage.Width, buttonImage.Height),
-                Battle(new Enemy(0,0,50,50,5, 10, 20, collectible.Tex)),  // ActivationFunction
+                StartGame,  // ActivationFunction
 
                 buttonFont,
-                "Battle Time",
+                "Play Game",
                 buttonTextLoc,
                 Color.White,
 
@@ -343,7 +344,25 @@ namespace SemesterProject
                 true,  // highlightable
                 true,  // clickable
                 false); // linger
-            */
+
+            instructions_Back = new Button(
+                buttonImage,
+                new Rectangle(GraphicsDevice.Viewport.Width / 2
+                    - buttonImage.Width / 2, GraphicsDevice.Viewport.Height / 2
+                    + buttonImage.Height / 2 + 10,
+                    buttonImage.Width, buttonImage.Height),
+                ReturnToMenu,  // ActivationFunction
+
+                buttonFont,
+                "Back",
+                buttonTextLoc,
+                Color.White,
+
+                true,  // active
+                true,  // highlightable
+                true,  // clickable
+                false); // linger
+
             battleButton = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
@@ -366,7 +385,7 @@ namespace SemesterProject
             {
                 mainMenu_play,
                 mainMenu_quit,
-                battleTime
+                //battleTime
             };
 
             pauseButtons = new List<Button>()
@@ -385,6 +404,12 @@ namespace SemesterProject
             {
                 quit_no,
                 quit_yes
+            };
+
+            instructionsButtons = new List<Button>()
+            {
+                instructions_Back,
+                instructions_Play
             };
             
             // Main Menu
@@ -406,6 +431,30 @@ namespace SemesterProject
                 Color.White,
 
                 mainMenuButtons,
+                Keys.Left,
+                Keys.Right,
+                Keys.Enter,
+                -1,
+                true);
+
+            instructionsMenu = new ListMenu(
+                mainMenuImage,
+                Vector2.Zero,
+                Color.White,
+
+                menuFont,
+                "             Use the WASD keys to move and SPACE to jump.\nReach the final level and defeat the final boss to defeat the game!",
+                new Vector2(GraphicsDevice.Viewport.Width / 2 - 400,
+                    GraphicsDevice.Viewport.Height / 4),
+                Color.White,
+
+                menuFont,
+                "Click or use arrow keys to select an option.",
+                new Vector2(GraphicsDevice.Viewport.Width / 2 - 330,
+                    GraphicsDevice.Viewport.Height / 4 + 80),
+                Color.White,
+
+                instructionsButtons,
                 Keys.Left,
                 Keys.Right,
                 Keys.Enter,
@@ -532,16 +581,14 @@ namespace SemesterProject
 
                     for(int i = 0; i < enemyList.Count; i++)
                     {
-                           /* if (player.Rect.Intersects(enemyList[i].Rect))
+                            if (player.Rect.Intersects(enemyList[i].Rect))
                             {
-                                Battle(enemyList[i]);
-                            }
-                                //Battle();
+                                
 
                                 Battle(enemyList[i]);
                                 killedEnemy = enemyList[i];
 
-                            }*/
+                            }
                     }
 
                     //Put in player collision with enemy here
@@ -777,6 +824,10 @@ namespace SemesterProject
                     gameOverMenu.Update(mState, previousMState, kbState,
                         previousKBState);
                     break;
+                case GameState.Instructions:
+                    instructionsMenu.Update(mState, previousMState, kbState, previousKBState);
+                    break;
+
             }
 
             if (quitActive)
@@ -829,6 +880,10 @@ namespace SemesterProject
                 case GameState.GameOver:
                     DrawGameOver();
                     break;
+
+                case GameState.Instructions:
+                    DrawInstructions();
+                    break;
             }
             
             spriteBatch.End();
@@ -844,6 +899,16 @@ namespace SemesterProject
         private void DrawMainMenu()
         {
             mainMenu.Draw(spriteBatch);
+
+            if (quitActive)
+            {
+                quitMenu.Draw(spriteBatch);
+            }
+        }
+
+        private void DrawInstructions()
+        {
+            instructionsMenu.Draw(spriteBatch);
 
             if (quitActive)
             {
@@ -945,6 +1010,18 @@ namespace SemesterProject
             gameState = GameState.World;
 
             IsMouseVisible = false;
+        }
+
+        private void ShowInstructions()
+        {
+            previousState = gameState;
+            gameState = GameState.Instructions;
+        }
+
+        private void ReturnToMenu()
+        {
+            previousState = gameState;
+            gameState = GameState.Menu;
         }
 
         #region Pause/Unpause
