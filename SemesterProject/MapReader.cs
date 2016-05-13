@@ -55,6 +55,10 @@ namespace SemesterProject
         {
             get { return objList; }
         }
+        public List<Enemy> EnemyList
+        {
+            get { return enemyList; }
+        }
         public int RoomNumber
         {
             get { return roomNumber; }

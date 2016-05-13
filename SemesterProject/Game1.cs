@@ -200,13 +200,7 @@ namespace SemesterProject
             wall = new Wall(0, 0, 25, 25, wallTexture);
             platform = new Platform(0, 0, 25, 25, platTexture);
             collectible = new Collectible(0, 0, 25, 25, collectibleTexture, "item");
-            //Testing list
-            
 
-            enemy = new Enemy(50, 50, 50, 50, 10, 10, 10, collectibleTexture);
-            enemyList = new List<Enemy>();
-            enemyList.Add(enemy);
-            
             //reader.StoreObjects(platform, wall, collectList, spriteBatch);
             sewerBG = new Background(0, 0, 800, 1200,sewerTexture);
 
@@ -362,7 +356,7 @@ namespace SemesterProject
                 true,  // highlightable
                 true,  // clickable
                 false); // linger
-            */
+            
             battleButton = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
@@ -385,7 +379,7 @@ namespace SemesterProject
             {
                 mainMenu_play,
                 mainMenu_quit,
-                battleTime
+                //battleTime
             };
 
             pauseButtons = new List<Button>()
@@ -579,14 +573,14 @@ namespace SemesterProject
                         PauseGame();
                     }
 
-                    for(int i = 0; i < enemyList.Count; i++)
+                    for(int i = 0; i < reader.EnemyList.Count; i++)
                     {
-                            if (player.Rect.Intersects(enemyList[i].Rect))
+                            if (player.Rect.Intersects(reader.EnemyList[i].Rect))
                             {
                                 
 
-                                Battle(enemyList[i]);
-                                killedEnemy = enemyList[i];
+                                Battle(reader.EnemyList[i]);
+                                killedEnemy = reader.EnemyList[i];
 
                             }
                     }
@@ -628,7 +622,7 @@ namespace SemesterProject
                             break;
 
                         case PlayerXState.WalkRight:
-                            player.Move(5);
+                            player.Move(3);
                             player.UpdateDetectors();
 
                             if (reader.Right && player.X >= GraphicsDevice.Viewport.Width - reader.CurrentRoom.Tile.Width - player.Width)
@@ -665,7 +659,7 @@ namespace SemesterProject
                             break;
 
                         case PlayerXState.WalkLeft:
-                            player.Move(-5);
+                            player.Move(-3);
                             player.UpdateDetectors();
 
                             if (reader.Left && player.X <= reader.CurrentRoom.Tile.Width)
@@ -934,9 +928,9 @@ namespace SemesterProject
             sewerBG.Draw(spriteBatch);
             player.Draw(spriteBatch);
             reader.DrawMap(platform, wall, collectible, spriteBatch);
-            for(int i = 0; i < enemyList.Count; i++)
+            for(int i = 0; i < reader.EnemyList.Count; i++)
             {
-                enemyList[i].Draw(spriteBatch);
+                reader.EnemyList[i].Draw(spriteBatch);
             }
         }
 
