@@ -333,7 +333,7 @@ namespace SemesterProject
             instructions_Play = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
-                    - buttonImage.Width / 2 - 300, GraphicsDevice.Viewport.Height / 2
+                    - buttonImage.Width / 2 - 350, GraphicsDevice.Viewport.Height / 2
                     + buttonImage.Height / 2 + 10,
                     buttonImage.Width, buttonImage.Height),
                 StartGame,  // ActivationFunction
@@ -351,7 +351,7 @@ namespace SemesterProject
             instructions_Back = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
-                    - buttonImage.Width / 2, GraphicsDevice.Viewport.Height / 2
+                    - buttonImage.Width / 2 - 25, GraphicsDevice.Viewport.Height / 2
                     + buttonImage.Height / 2 + 10,
                     buttonImage.Width, buttonImage.Height),
                 ReturnToMenu,  // ActivationFunction
@@ -425,13 +425,13 @@ namespace SemesterProject
                 "TITLE",
                 new Vector2 (GraphicsDevice.Viewport.Width / 2 - 22,
                     GraphicsDevice.Viewport.Height / 4),
-                Color.White,
+                Color.Black,
                 
                 menuFont,
                 "Click or use arrow keys to select an option.",
                 new Vector2(GraphicsDevice.Viewport.Width / 2 - 150,
                     GraphicsDevice.Viewport.Height / 4 + 20),
-                Color.White,
+                Color.Black,
 
                 mainMenuButtons,
                 Keys.Left,
@@ -446,16 +446,16 @@ namespace SemesterProject
                 Color.White,
 
                 menuFont,
-                "             Use the WASD keys to move and SPACE to jump.\nReach the final level and defeat the final boss to defeat the game!",
-                new Vector2(GraphicsDevice.Viewport.Width / 2 - 400,
+                "             Use the WASD keys to move and SPACE to jump.\nReach the final level and defeat the final boss to defeat the game!\n                                                  In Battle:\n        Select an enemy to attack with the buttons on screen.\nBefore an enemy hits you, time hitting Q correctly to avoid damage!\n       Before hitting an enemy, time hitting E to deal extra damage!",
+                new Vector2(GraphicsDevice.Viewport.Width / 2 - 410,
                     GraphicsDevice.Viewport.Height / 4),
-                Color.White,
+                Color.Black,
 
                 menuFont,
                 "Click or use arrow keys to select an option.",
                 new Vector2(GraphicsDevice.Viewport.Width / 2 - 330,
-                    GraphicsDevice.Viewport.Height / 4 + 80),
-                Color.White,
+                    GraphicsDevice.Viewport.Height / 4 + 180),
+                Color.Black,
 
                 instructionsButtons,
                 Keys.Left,
