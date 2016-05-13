@@ -85,6 +85,8 @@ namespace SemesterProject
         private Texture2D wallTexture;
         private Texture2D platTexture;
         private Texture2D sewerTexture;
+        private Texture2D cityTexture;
+        private Texture2D skyLineTexture;
         private Texture2D enemyTexture;
 
         private Collectible collectible;
@@ -93,6 +95,8 @@ namespace SemesterProject
         private MapReader reader;
         
         private Background sewerBG;
+        private Background cityBG;
+        private Background skyLineBG;
 
         //the quadtree
         private QuadTreeNode quadTree;
@@ -189,6 +193,8 @@ namespace SemesterProject
             collectibleTexture = Content.Load<Texture2D>("collectible");
             platTexture = Content.Load<Texture2D>("tile");
             sewerTexture = Content.Load<Texture2D>("sewer BG");
+            cityTexture = Content.Load<Texture2D>("city BG");
+            skyLineTexture = Content.Load<Texture2D>("highrise BG");
             enemyTexture = Content.Load<Texture2D>("ghost");
 
             //Initializes player and their texture
@@ -203,6 +209,8 @@ namespace SemesterProject
 
             //reader.StoreObjects(platform, wall, collectList, spriteBatch);
             sewerBG = new Background(0, 0, 800, 1200,sewerTexture);
+            cityBG = new Background(0, 0, 800, 1200, cityTexture);
+            skyLineBG = new Background(0, 0, 800, 1200, skyLineTexture);
 
             // BUTTONS
             mainMenu_play = new Button(
@@ -925,7 +933,18 @@ namespace SemesterProject
         /// </summary>
         private void DrawWorld()
         {
-            sewerBG.Draw(spriteBatch);
+            if(reader.RoomNumber < 11)
+            {
+                cityBG.Draw(spriteBatch);
+            }
+            else if(reader.RoomNumber >10 && reader.RoomNumber < 21)
+            {
+                sewerBG.Draw(spriteBatch);
+            }
+            else
+            {
+                skyLineBG.Draw(spriteBatch);
+            }
             player.Draw(spriteBatch);
             reader.DrawMap(platform, wall, collectible, spriteBatch);
             for(int i = 0; i < reader.EnemyList.Count; i++)

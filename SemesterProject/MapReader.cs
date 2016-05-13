@@ -83,6 +83,7 @@ namespace SemesterProject
         {
             get { return room; }
         }
+        
 
         /// <summary>
         /// pure voodoo magic. might be dangerous
