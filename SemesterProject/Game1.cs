@@ -21,7 +21,9 @@ namespace SemesterProject
             World,   // Game World
             Battle,  // Battle Scene
             Pause,   // Pause Screen
-            GameOver // Game Over Screen
+            GameOver, // Game Over Screen
+            Instructions, //Instructions screen
+            GameWon // We may never know what this does
         }
 
         
@@ -36,7 +38,6 @@ namespace SemesterProject
         enum PlayerYState
         {
             Jump,           //Jumping
-            Fall,           //Falling
             Ground          //No vertical movement
         }
         
@@ -54,10 +55,9 @@ namespace SemesterProject
 
         #region Player
         private Player player;
-        private Texture2D playerTexture;        //Player's texture
+        private Texture2D sp_player, sp_khris, sp_zombie, sp_slime;
         private PlayerXState playerXState;      //Player's X direction state
         private PlayerYState playerYState;      //Player's Y direction state
-        private Vector2 preBattlePosition;
         #endregion Player
 
         #region Menus/Buttons
@@ -68,20 +68,27 @@ namespace SemesterProject
         private static Rectangle screen;
         private static Color shadowColor = new Color(200, 200, 200, 255);
 
-        private ListMenu mainMenu, pauseMenu, gameOverMenu, quitMenu;
+        private ListMenu mainMenu, pauseMenu, gameOverMenu, quitMenu, instructionsMenu, gameWinMenu;
         private bool quitActive;
 
         private Button mainMenu_play, mainMenu_quit, pause_menu, pause_resume,
-            pause_quit, quit_no, quit_yes, battleTime, battleButton;
+            pause_quit, quit_no, quit_yes, instructions_Play, instructions_Back, battleButton;
         private List<Button> mainMenuButtons, pauseButtons, gameOverButtons,
-            confirmQuitButtons;
+            confirmQuitButtons, instructionsButtons;
         
+
         private static Vector2 buttonTextLoc = new Vector2(5, 5);
         #endregion Menu/Buttons
 
         #region Textures/Misc.
-        private Texture2D collectibleTexture, wallTexture, platTexture,
-            sewerTexture, healthBarBase, healthBarOverlay;
+        private Texture2D collectibleTexture;
+        private Texture2D wallTexture;
+        private Texture2D platTexture;
+        private Texture2D sewerTexture;
+        private Texture2D cityTexture;
+        private Texture2D skyLineTexture;
+        private Texture2D enemyTexture;
+        private Texture2D healthBarBase, healthBarOverlay;
 
         private Collectible collectible;
         private Wall wall;
@@ -89,14 +96,17 @@ namespace SemesterProject
         private MapReader reader;
         
         private Background sewerBG;
+        private Background cityBG;
+        private Background skyLineBG;
 
         //the quadtree
         private QuadTreeNode quadTree;
         //the node for Mario
         private QuadTreeNode marioQuad;
         private Random rand;
+        //private List<Enemy> enemyList;
 
-        private double timeCounter, timePerFrame;
+        private Enemy killedEnemy;
 
         #endregion Textures/Misc.
 
@@ -146,6 +156,7 @@ namespace SemesterProject
             quitActive = false;
             reader = new MapReader();
             quadTree = new QuadTreeNode(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            
 
             //Initializes player and their texture
             playerXState = PlayerXState.StandRight;
@@ -153,13 +164,10 @@ namespace SemesterProject
 
             screen = new Rectangle(0, 0, GraphicsDevice.Viewport.Width,
                 GraphicsDevice.Viewport.Height);
-
+            
             rand = new Random();
             MapReader.rando = rand;
-
-            timeCounter = 0;
-            timePerFrame = 10;
-
+            
             base.Initialize();
         }
 
@@ -173,7 +181,9 @@ namespace SemesterProject
             spriteBatch = new SpriteBatch(GraphicsDevice);
             
             //Loads the player's texture
-            playerTexture = Content.Load<Texture2D>("mario");
+            sp_player = Content.Load<Texture2D>("marioSpriteSheet");
+            sp_zombie = Content.Load<Texture2D>("ZombieSpriteSheet2");
+            sp_slime = Content.Load<Texture2D>("SlimeSpriteSheet");
 
             // Menu + Misc textures
             mainMenuImages = new List<Texture2D>(3);
@@ -181,46 +191,74 @@ namespace SemesterProject
             mainMenuImages.Add(Content.Load<Texture2D>("MenuBackground_Sewer"));
             mainMenuImages.Add(Content.Load<Texture2D>("MenuBackground_Skyscraper"));
             mainMenuImage = mainMenuImages[rand.Next(0, mainMenuImages.Count)];
+
             pauseImage = Content.Load<Texture2D>("pauseMenu");
             //gameOverImage = Content.Load<Texture2D>("mainMenu");
-            gameOverImage = mainMenuImages[rand.Next(0, 3)];
+            gameOverImage = mainMenuImages[rand.Next(0, mainMenuImages.Count)];
             quitImage = Content.Load<Texture2D>("QuitMenu");
             buttonImage = Content.Load<Texture2D>("ButtonImage");
             shadeOverlay = Content.Load<Texture2D>("ShadeOverlay");
 
             menuFont = Content.Load<SpriteFont>("MenuFont");
             buttonFont = Content.Load<SpriteFont>("ButtonFont");
-            healthFont = Content.Load<SpriteFont>("Consolas_9");
+
+            //Loads map textures
+            wallTexture = Content.Load<Texture2D>("wall");
+            collectibleTexture = Content.Load<Texture2D>("collectible");
+            platTexture = Content.Load<Texture2D>("tile");
+
+            sewerTexture = Content.Load<Texture2D>("sewer bg2");
+            cityTexture = Content.Load<Texture2D>("city BG");
+            skyLineTexture = Content.Load<Texture2D>("highrise BG");
+            enemyTexture = Content.Load<Texture2D>("ghost");
 
             healthBarBase = Content.Load<Texture2D>("Health Bar Base");
             healthBarOverlay = Content.Load<Texture2D>("Health Bar Overlay");
 
-            //Loads map textures
-            wallTexture = Content.Load<Texture2D>("wall"/*"wallTemplate"*/);
-            collectibleTexture = Content.Load<Texture2D>("collectible");
-            platTexture = Content.Load<Texture2D>("tile"/*"tileTemplate"*/);
-            sewerTexture = Content.Load<Texture2D>("sewer BG");
+            healthFont = Content.Load<SpriteFont>("Consolas_9");
+            
+            MapReader.healthBarBackground = healthBarBase;
+            MapReader.healthBarOverlay = healthBarOverlay;
+
+            Character.Random = rand;
+
+            Player.PlayerSprite = sp_player;
+            Player.HealthFont = healthFont;
+            
+            Zombie.ZombieSprite = sp_zombie;
+            Zombie.HealthFont = healthFont;
+
+            Slime.SlimeSprite = sp_slime;
+            Slime.HealthFont = healthFont;
+
+            BattleManager.Texture_BackgroundHealth = healthBarBase;
+            BattleManager.Texture_ForegroundHealth = healthBarOverlay;
+            BattleManager.ScreenHeight = GraphicsDevice.Viewport.Height;
+            BattleManager.ScreenWidth = GraphicsDevice.Viewport.Width;
+
 
             //Initializes player and their texture
-            player = new Player(0, 300, 25, 50, 1, 10, 20, playerTexture);
+            player = new Player(Vector2.Zero, healthBarBase, healthBarOverlay);
             player.Health = 14;
 
-            reader.ReadMap("room.txt",quadTree,collectibleTexture);
+            reader.ReadMap("../../../Content/Rooms/room1.txt", quadTree,collectibleTexture,enemyTexture);
             
             wall = new Wall(0, 0, 25, 25, wallTexture);
             platform = new Platform(0, 0, 25, 25, platTexture);
-            collectible = new Collectible(0, 0, 25, 25, collectibleTexture, "Horseshit");
-            
+            collectible = new Collectible(0, 0, 25, 25, collectibleTexture, "item");
+
             //reader.StoreObjects(platform, wall, collectList, spriteBatch);
             sewerBG = new Background(0, 0, 800, 1200,sewerTexture);
-            
-            #region Buttons
+            cityBG = new Background(0, 0, 800, 1200, cityTexture);
+            skyLineBG = new Background(0, 0, 800, 1200, skyLineTexture);
+
+            // BUTTONS
             mainMenu_play = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
                     - buttonImage.Width - 30, GraphicsDevice.Viewport.Height
                     / 2 - 30, buttonImage.Width, buttonImage.Height),
-                StartGame,  // ActivationFunction
+                ShowInstructions,  // ActivationFunction
 
                 buttonFont,
                 "Play",
@@ -330,17 +368,17 @@ namespace SemesterProject
                 true,  // highlightable
                 true,  // clickable
                 true); // linger
-
-            battleTime = new Button(
+            
+            instructions_Play = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
-                    - buttonImage.Width / 2, GraphicsDevice.Viewport.Height / 2
+                    - buttonImage.Width / 2 - 300, GraphicsDevice.Viewport.Height / 2
                     + buttonImage.Height / 2 + 10,
                     buttonImage.Width, buttonImage.Height),
-                Battle,  // ActivationFunction
+                StartGame,  // ActivationFunction
 
                 buttonFont,
-                "Battle Time",
+                "Play Game",
                 buttonTextLoc,
                 Color.White,
 
@@ -349,6 +387,24 @@ namespace SemesterProject
                 true,  // clickable
                 false); // linger
 
+            instructions_Back = new Button(
+                buttonImage,
+                new Rectangle(GraphicsDevice.Viewport.Width / 2
+                    - buttonImage.Width / 2, GraphicsDevice.Viewport.Height / 2
+                    + buttonImage.Height / 2 + 10,
+                    buttonImage.Width, buttonImage.Height),
+                ReturnToMenu,  // ActivationFunction
+
+                buttonFont,
+                "Back",
+                buttonTextLoc,
+                Color.White,
+
+                true,  // active
+                true,  // highlightable
+                true,  // clickable
+                false); // linger
+            
             battleButton = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
@@ -366,14 +422,12 @@ namespace SemesterProject
                 true,  // highlightable
                 true,  // clickable
                 false); // linger
-            #endregion
 
-            #region Button Lists
             mainMenuButtons = new List<Button>()
             {
                 mainMenu_play,
                 mainMenu_quit,
-                battleTime
+                //battleTime
             };
 
             pauseButtons = new List<Button>()
@@ -383,19 +437,20 @@ namespace SemesterProject
                 pause_quit
             };
 
-            gameOverButtons = new List<Button>()
-            {
-                
-            };
-
             confirmQuitButtons = new List<Button>()
             {
                 quit_no,
                 quit_yes
             };
-            #endregion
 
-            #region Menus
+            gameOverButtons = confirmQuitButtons;
+
+            instructionsButtons = new List<Button>()
+            {
+                instructions_Back,
+                instructions_Play
+            };
+            
             // Main Menu
             mainMenu = new ListMenu(
                 mainMenuImage,
@@ -415,6 +470,30 @@ namespace SemesterProject
                 Color.White,
 
                 mainMenuButtons,
+                Keys.Left,
+                Keys.Right,
+                Keys.Enter,
+                -1,
+                true);
+
+            instructionsMenu = new ListMenu(
+                mainMenuImage,
+                Vector2.Zero,
+                Color.White,
+
+                menuFont,
+                "             Use the WASD keys to move and SPACE to jump.\nReach the final level and defeat the final boss to defeat the game!",
+                new Vector2(GraphicsDevice.Viewport.Width / 2 - 400,
+                    GraphicsDevice.Viewport.Height / 4),
+                Color.White,
+
+                menuFont,
+                "Click or use arrow keys to select an option.\n                            Don't get got.",
+                new Vector2(GraphicsDevice.Viewport.Width / 2 - 330,
+                    GraphicsDevice.Viewport.Height / 4 + 80),
+                Color.White,
+
+                instructionsButtons,
                 Keys.Left,
                 Keys.Right,
                 Keys.Enter,
@@ -446,7 +525,7 @@ namespace SemesterProject
 
             // GameOver Menu
             gameOverMenu = new ListMenu(
-                pauseImage,
+                gameOverImage,
                 Vector2.Zero,
                 Color.White,
 
@@ -457,7 +536,7 @@ namespace SemesterProject
                 Color.White,
 
                 menuFont,
-                "Press Enter to return to menu",
+                "Quit?",
                 new Vector2(GraphicsDevice.Viewport.Width / 2 - 250,
                     GraphicsDevice.Viewport.Height / 2),
                 Color.White,
@@ -488,13 +567,40 @@ namespace SemesterProject
                 Keys.Enter,
                 0,
                 false);
-            #endregion
             
+            gameWinMenu = new ListMenu(
+                mainMenuImage,
+                Vector2.Zero,
+                Color.White,
+
+                menuFont,
+                "CONGRATULATIONS!",
+                new Vector2(GraphicsDevice.Viewport.Width / 2
+                - pauseImage.Width, GraphicsDevice.Viewport.Height / 5),
+                Color.White,
+
+                menuFont,
+                "You won, and you didn't get got.",
+                new Vector2(GraphicsDevice.Viewport.Width / 2 - 250,
+                    GraphicsDevice.Viewport.Height / 2),
+                Color.White,
+
+                gameOverButtons,
+                Keys.Left,
+                Keys.Right,
+                Keys.Enter,
+                0,
+                false);
+
             mainMenu_play.ButtonActivationEvent += mainMenu.Reset;
-            battleTime.ButtonActivationEvent += mainMenu.Reset;
             pause_resume.ButtonActivationEvent += pauseMenu.Reset;
             pause_menu.ButtonActivationEvent += pauseMenu.Reset;
             quit_no.ButtonActivationEvent += quitMenu.Reset;
+
+            BattleManager.BattleMenu = pauseMenu;
+            BattleManager.BattleButton = battleButton;
+            BattleManager.gameOverFunction += GameOver;
+            BattleManager.battleWinFunction += WinBattle;
         }
         #endregion Initialize/Load Content
         /// <summary>
@@ -523,7 +629,7 @@ namespace SemesterProject
             previousMState = mState;
             mState = Mouse.GetState();
 
-            marioQuad = quadTree.GetContainingQuad(player.Rect);
+            marioQuad = quadTree.GetContainingQuad(player.O_Position);
 
             if (!quitActive)
                 switch (gameState)
@@ -534,17 +640,26 @@ namespace SemesterProject
                         break;
 
                     case GameState.World:
-                        timeCounter += gameTime.ElapsedGameTime.TotalMilliseconds;
-                    
-                        if (timeCounter >= timePerFrame)
+                        if (reader.RoomNumber >= 31)
                         {
-                            timeCounter = 0;
-                            //collectible.Rotation += .009f;
+                            WinGame();
                         }
-                    
+
                         if (SingleKeyPress(Keys.P)) //Swtch to pause menu
                         {
                             PauseGame();
+                        }
+
+                        player.Update(gameTime.ElapsedGameTime.TotalSeconds, kbState, previousKBState);
+
+                        for(int i = 0; i < reader.EnemyList.Count; i++)
+                        {
+                            if (player.O_Position.Intersects(reader.EnemyList[i].O_Position))
+                            {
+
+                                Battle(reader.EnemyList[i]);
+                                killedEnemy = reader.EnemyList[i];
+                            }
                         }
 
                         //Put in player collision with enemy here
@@ -552,11 +667,20 @@ namespace SemesterProject
                         //Player Movement
                         if (kbState.IsKeyDown(Keys.Left))
                         {
-                            player.Move(-5);
+                            player.O_X -= 5;
                         }
                         else if (kbState.IsKeyDown(Keys.Right))
                         {
-                            player.Move(5);
+                            player.O_X += 5;
+                        }
+
+                        if (kbState.IsKeyDown(Keys.Up))
+                        {
+                            player.O_Y -= 5;
+                        }
+                        else if (kbState.IsKeyDown(Keys.Down))
+                        {
+                            player.O_Y += 5;
                         }
 
                         //Deals with players x directional movement
@@ -566,23 +690,32 @@ namespace SemesterProject
                                 if (kbState.IsKeyDown(Keys.D))
                                 {
                                     playerXState = PlayerXState.WalkRight;
+                                    player.Direction = CharDirection.right;
+                                    player.State = CharacterState.o_walk;
                                 }
 
                                 else if (kbState.IsKeyDown(Keys.A))
                                 {
                                     playerXState = PlayerXState.WalkLeft;
+                                    player.Direction = CharDirection.left;
+                                    player.State = CharacterState.o_walk;
                                 }
                                 break;
 
                             case PlayerXState.WalkRight:
-                                player.Move(5);
+                                player.Move(3);
                                 player.UpdateDetectors();
+
+                                if (reader.Right && player.O_X >= GraphicsDevice.Viewport.Width - reader.CurrentRoom.Tile.Width - player.O_Width)
+                                {
+                                    player.O_X = GraphicsDevice.Viewport.Width - reader.CurrentRoom.Tile.Width - player.O_Width;
+                                }
 
                                 for (int i = 0; i < reader.RectList.Count; i++)
                                 {
-                                    if (player.Rect.Intersects(reader.RectList[i]))
+                                    if (player.Right.Intersects(reader.RectList[i]))
                                     {
-                                        player.X = reader.RectList[i].X - player.Width;
+                                        player.O_X = reader.RectList[i].X - player.O_Width - 1;
                                         break;
                                     }
                                 }
@@ -590,6 +723,7 @@ namespace SemesterProject
                                 if (kbState.IsKeyUp(Keys.D))
                                 {
                                     playerXState = PlayerXState.StandRight;
+                                    player.State = CharacterState.o_idle;
                                     player.XAcceleration = 1;
                                 }
                                 break;
@@ -598,31 +732,41 @@ namespace SemesterProject
                                 if (kbState.IsKeyDown(Keys.A))
                                 {
                                     playerXState = PlayerXState.WalkLeft;
+                                    player.Direction = CharDirection.left;
+                                    player.State = CharacterState.o_walk;
                                 }
 
                                 else if (kbState.IsKeyDown(Keys.D))
                                 {
                                     playerXState = PlayerXState.WalkRight;
+                                    player.Direction = CharDirection.right;
+                                    player.State = CharacterState.o_walk;
                                 }
                                 break;
-
+                                
                             case PlayerXState.WalkLeft:
-                                //player.Direction = CharacterDirection.left;
-                                player.Move(-5);
+                                player.Move(-3);
                                 player.UpdateDetectors();
+                                //player.State = CharacterState.o_walk;
+
+                                if (reader.Left && player.O_X <= reader.CurrentRoom.Tile.Width)
+                                {
+                                    player.O_X = reader.CurrentRoom.Tile.Width;
+                                }
 
                                 for (int i = 0; i < reader.RectList.Count; i++)
                                 {
-                                    if (player.Rect.Intersects(reader.RectList[i]))
+                                    if (player.Left.Intersects(reader.RectList[i]))
                                     {
-                                        player.X = reader.RectList[i].X + player.Width;
+                                        player.O_X = reader.RectList[i].X + player.O_Width + 1;
                                         break;
                                     }
                                 }
-                                
+
                                 if (kbState.IsKeyUp(Keys.A))
                                 {
                                     playerXState = PlayerXState.StandLeft;
+                                    player.State = CharacterState.o_idle;
                                     player.XAcceleration = 1;
                                 }
                                 break;
@@ -632,35 +776,26 @@ namespace SemesterProject
                         switch (playerYState)
                         {
                             case PlayerYState.Ground:
-                                //player.Y = GraphicsDevice.Viewport.Height - player.Height;
                                 bool onPlatform = false;
 
                                 for (int i = 0; i < reader.RectList.Count; i++)
                                 {
-                                    if (player.Below.Intersects(reader.RectList[i]))
+                                    if (player.Below.Intersects(reader.RectList[i]) || player.O_Y >= GraphicsDevice.Viewport.Height - player.O_Height - reader.CurrentRoom.Tile.Height)
                                     {
                                         onPlatform = true;
                                         break;
                                     }
                                 }
 
-                                //for (int i = 0; i < collectList.Length; i++)
-                                //{
-                                //        if (player.Rect.Intersects(collectList[i].Rect))
-                                //        {
-                                //            collectList[i].Collect(player);
-                                //        }
-                                //}
-
-                                for (int i = 0; i < reader.ItemList.Count; i++)
+                               for (int i = 0; i < reader.ItemList.Count; i++)
                                 {
-                                        if (player.Rect.Intersects((reader.ItemList)[i].Rect))
-                                        {
-                                            reader.ItemList[i].Collect(player);
-                                        }
+                                     if (player.O_Position.Intersects(reader.ItemList[i].Rect))
+                                     {
+                                         reader.ItemList[i].Collect(player);
+                                     }
                                 }
                             
-                                if (player.Y >= GraphicsDevice.Viewport.Height - player.Height)
+                                if (player.O_Y >= GraphicsDevice.Viewport.Height - player.O_Height)
                                 {
                                     onPlatform = true;
                                 }
@@ -669,13 +804,29 @@ namespace SemesterProject
                                 {
                                     player.JumpAcceleration = -2;
                                     playerYState = PlayerYState.Jump;
+                                    player.State = CharacterState.o_jump;
                                 }
 
                                 if (kbState.IsKeyDown(Keys.Space))
                                 {
-                                    playerYState = PlayerYState.Jump;
+                                    bool platformAbove = false;
+                                
+                                    for(int i = 0; i < reader.RectList.Count; i++)
+                                    {
+                                        if (player.Above.Intersects(reader.RectList[i]))
+                                        {
+                                            platformAbove = true;
+                                        }
+                                    }
+
+                                    if (previousKBState.IsKeyUp(Keys.Space) && !platformAbove)
+                                    {
+                                        playerYState = PlayerYState.Jump;
+                                        player.State = CharacterState.o_jump;
+                                    }
                                 }
                                 break;
+
 
                             case PlayerYState.Jump:
                                 player.Jump();
@@ -689,27 +840,71 @@ namespace SemesterProject
                                         break;
                                     }
 
-                                    else if (player.Rect.Intersects(reader.RectList[i]))
+                                    else if (player.O_Position.Intersects(reader.RectList[i]))
                                     {
-                                        player.Y = reader.RectList[i].Y - player.Height;
-                                        player.JumpAcceleration = 20;
+                                        player.O_Y = reader.RectList[i].Y - player.O_Height;
+                                        player.JumpAcceleration = 17;
                                         playerYState = PlayerYState.Ground;
+
+                                        if (kbState.IsKeyUp(Keys.A) && kbState.IsKeyUp(Keys.D))
+                                        {
+                                            player.State = CharacterState.o_idle;
+                                        }
+
+                                        else
+                                        {
+                                            if (kbState.IsKeyUp(Keys.A) && kbState.IsKeyDown(Keys.D))
+                                            {
+                                                player.State = CharacterState.o_walk;
+                                                player.Move(5);
+                                            }
+                                            else if (kbState.IsKeyUp(Keys.D) && kbState.IsKeyDown(Keys.A))
+                                            {
+                                                player.State = CharacterState.o_walk;
+                                                player.Move(-5);
+                                            }
+                                        }
+
                                         break;
                                     }
                                 }
 
-                                if (player.Y >= GraphicsDevice.Viewport.Height - player.Height)
+                                if (reader.Up)
                                 {
+                                    if(player.O_Y <= reader.CurrentRoom.Tile.Height)
+                                    {
+                                        player.JumpAcceleration = -2;
+                                    }
+                                }
+
+                                if (reader.Down)
+                                {
+                                    if(player.O_Y >= GraphicsDevice.Viewport.Height - player.O_Height - reader.CurrentRoom.Tile.Height)
+                                    {
+                                        player.O_Y = GraphicsDevice.Viewport.Height - player.O_Height - reader.CurrentRoom.Tile.Height;
+                                        playerYState = PlayerYState.Ground;
+                                        // IDLE HERE@@@@@@@@@@@@@@@@@@@
+                                        player.JumpAcceleration = 17;
+                                    }
+                                }
+
+                                else if (player.O_Y >= GraphicsDevice.Viewport.Height - player.O_Height)
+                                {
+                                    player.O_Y = GraphicsDevice.Viewport.Height - player.O_Height;
                                     playerYState = PlayerYState.Ground;
-                                    player.JumpAcceleration = 20;
+                                    // IDLE HERE@@@@@@@@@@@@@@@@@@@
+                                    player.JumpAcceleration = 17;
                                 }
                                 break;
                         }
+
                         break;
+
 
                     case GameState.Pause:
                         if (!quitActive)
                         {
+
                             pauseMenu.Update(mState, previousMState, kbState,
                                 previousKBState);
 
@@ -722,32 +917,27 @@ namespace SemesterProject
                     
 
                     case GameState.Battle:
-
-                        BattleManager.Update(mState, previousMState);
-                    
-                        if(BattleManager.AllDead())
-                        {
-                            gameState = GameState.Menu;
-                            player.X = (int)preBattlePosition.X;
-                            player.Y = (int)preBattlePosition.Y;
-                        }
-
-                        if(player.Health <= 0)
-                            {
-                                gameState = GameState.Menu;
-                            }
-
-                        if (SingleKeyPress(Keys.P))
+                        if (SingleKeyPress(Keys.P)) //Swtch to pause menu
                         {
                             PauseGame();
                         }
 
+                        BattleManager.Update(gameTime.ElapsedGameTime.TotalSeconds, mState, previousMState, kbState, previousKBState);
                         break;
                     
                     case GameState.GameOver:
                         gameOverMenu.Update(mState, previousMState, kbState,
                             previousKBState);
                         break;
+                        
+                    case GameState.Instructions:
+                        instructionsMenu.Update(mState, previousMState, kbState, previousKBState);
+                        break;
+
+                    case GameState.GameWon:
+                        gameWinMenu.Update(mState, previousMState, kbState, previousKBState);
+                        break;
+
                 }
 
             if (quitActive)
@@ -756,7 +946,7 @@ namespace SemesterProject
             }
             if (reader.SwitchRoom(player))
             {
-                reader.ReadMap("../../../Content/Rooms/room" + reader.RoomNumber +".txt", quadTree, collectibleTexture);
+                reader.ReadMap("../../../Content/Rooms/room" + reader.RoomNumber +".txt", quadTree, collectibleTexture,enemyTexture);
                 
             }
             base.Update(gameTime);
@@ -790,8 +980,7 @@ namespace SemesterProject
                 case GameState.Battle:
                     DrawBattle();
                     break;
-
-
+                    
                 case GameState.Pause:
                     DrawPause();
                     break;
@@ -799,6 +988,14 @@ namespace SemesterProject
 
                 case GameState.GameOver:
                     DrawGameOver();
+                    break;
+
+                case GameState.Instructions:
+                    DrawInstructions();
+                    break;
+
+                case GameState.GameWon:
+                    DrawGameWinYay();
                     break;
             }
             
@@ -823,14 +1020,47 @@ namespace SemesterProject
             }
         }
 
+        private void DrawInstructions()
+        {
+            instructionsMenu.Draw(spriteBatch);
+
+            if (quitActive)
+            {
+                quitMenu.Draw(spriteBatch);
+            }
+        }
+
+        private void DrawGameWinYay()
+        {
+            
+        }
+
         /// <summary>
         /// Draw the World state
         /// </summary>
         private void DrawWorld()
         {
-            sewerBG.Draw(spriteBatch);
+            if(reader.RoomNumber < 11)
+            {
+                cityBG.Draw(spriteBatch);
+            }
+            else if(reader.RoomNumber >10 && reader.RoomNumber < 21)
+            {
+                sewerBG.Draw(spriteBatch);
+            }
+            else
+            {
+                skyLineBG.Draw(spriteBatch);
+            }
             player.Draw(spriteBatch);
             reader.DrawMap(platform, wall, collectible, spriteBatch);
+            for(int i = 0; i < reader.EnemyList.Count; i++)
+            {
+                if (reader.EnemyList[i].Health > 0)
+                {
+                    reader.EnemyList[i].Draw(spriteBatch);
+                }
+            }
         }
 
         /// <summary>
@@ -918,6 +1148,18 @@ namespace SemesterProject
             IsMouseVisible = false;
         }
 
+        private void ShowInstructions()
+        {
+            previousState = gameState;
+            gameState = GameState.Instructions;
+        }
+
+        private void ReturnToMenu()
+        {
+            previousState = gameState;
+            gameState = GameState.Menu;
+        }
+
         #region Pause/Unpause
         /// <summary>
         /// Pause the game
@@ -982,39 +1224,50 @@ namespace SemesterProject
         }
 
         #region Battle
-        private void Battle()
+        private void Battle(Enemy enemy1)
         {
-            preBattlePosition = new Vector2(player.X, player.Y);
-            player.X = 10;
-            player.Y = 100;            
+            player.O_Location = new Vector2(10, 100);           
             previousState = gameState;
             gameState = GameState.Battle;
             
             IsMouseVisible = true;
 
-            Enemy one = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 100,/*width*/ 300,/*height*/ 100, /*speed*/5, /*damage*/10, /*maxHealth*/20, collectible.Tex);
-            Enemy two = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 200, 300, 100, 3, 10, 20, collectible.Tex);
-            Enemy three = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 300, 300, 100, 2, 10, 20, collectible.Tex);
-
-            Ally ally = new Ally(10, 50, 50, 20, 3, 50, 50, collectible.Tex);
-
-            List<Enemy> enemies = new List<Enemy>();
-            enemies.Add(one);
-            enemies.Add(two);
-            enemies.Add(three);
-
-            List<Ally> allies = new List<Ally>();
-            allies.Add(ally);
+            LevelType battleEnvironment;
+            if (reader.RoomNumber < 11)
+            {
+                battleEnvironment = LevelType.street;
+            }
+            else if (reader.RoomNumber < 21)
+            {
+                battleEnvironment = LevelType.sewer;
+            }
+            else
+            {
+                battleEnvironment = LevelType.skyscraper;
+            }
 
             BattleManager.StageBattle(
                 player,
-                allies,
-                enemies,
-                new Menu(pauseMenu.Texture,
-                    new Vector2(0, 300),
-                    Color.White),
-                battleButton,
-                GraphicsDevice);
+                new List<Ally>(),
+                enemy1,
+                battleEnvironment,
+                (reader.RoomNumber % 3));
+        }
+
+        public void WinBattle()
+        {
+            player.Health += 1;
+            gameState = GameState.World;
+        }
+
+        public void WinGame()
+        {
+            gameState = GameState.GameWon;
+        }
+
+        public void GameOver()
+        {
+            gameState = GameState.GameOver;
         }
         #endregion Battle
     }

@@ -1,7 +1,4 @@
-﻿// Jared White
-// May 7, 2016
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,7 +17,7 @@ namespace SemesterProject
         // Fields
         private Texture2D baseTexture, currentTexture;
         private Rectangle baseBar, currentBar;
-        private Color currentColor, textColor, shadowColor;
+        private Color currentColor, baseColor, textColor, shadowColor;
         private float maxValue, currentValue;
         private SpriteFont font;
         private bool drawText;
@@ -210,6 +207,15 @@ namespace SemesterProject
         }
 
         /// <summary>
+        /// The color of the base bar
+        /// </summary>
+        public Color BaseColor
+        {
+            get { return baseColor; }
+            set { baseColor = value; }
+        }
+
+        /// <summary>
         /// The color of the text for the StatusBar
         /// </summary>
         public Color TextColor
@@ -293,6 +299,7 @@ namespace SemesterProject
                 currentBarRectangle.Height);
 
             currentColor = Color.LawnGreen;
+            baseColor = Color.White;
             textColor = new Color(237, 234, 227);
             shadowColor = new Color(42, 41, 61);
 
@@ -300,7 +307,7 @@ namespace SemesterProject
             currentValue = max;
 
             textLocation = font.MeasureString(currentValue.ToString()
-            + " / " + maxValue);
+                + " / " + maxValue);
             textLocation.X = baseBar.X + baseBar.Width / 2
                 - textLocation.X / 2;
             textLocation.Y = baseBar.Y + baseBar.Height / 2
@@ -320,7 +327,7 @@ namespace SemesterProject
             spriteBatch.Draw(
                 baseTexture,
                 baseBar,
-                Color.White);
+                baseColor);
 
             spriteBatch.Draw(
                 currentTexture,
