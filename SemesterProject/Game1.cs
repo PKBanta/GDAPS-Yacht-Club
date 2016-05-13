@@ -984,7 +984,19 @@ namespace SemesterProject
         private void DrawBattle()
         {
             player.Draw(spriteBatch);
-            sewerBG.Draw(spriteBatch);
+            if(reader.RoomNumber < 11)
+            {
+                cityBG.Draw(spriteBatch);
+            }else if(reader.RoomNumber > 10 && reader.RoomNumber < 21)
+            {
+                sewerBG.Draw(spriteBatch);
+            }
+            else
+            {
+                skyLineBG.Draw(spriteBatch);
+            }
+
+            
             BattleManager.Draw(spriteBatch);
         }
         
