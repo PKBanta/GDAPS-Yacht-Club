@@ -427,7 +427,7 @@ namespace SemesterProject
                 Color.White,
 
                 menuFont,
-                "TITLE",
+                "Don't Get Got",
                 new Vector2 (GraphicsDevice.Viewport.Width / 2 - 22,
                     GraphicsDevice.Viewport.Height / 4),
                 Color.Black,
