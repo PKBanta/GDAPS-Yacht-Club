@@ -16,7 +16,7 @@ namespace SemesterProject
         // Fields
         private static Texture2D zombieSprite;
         private static SpriteFont font;
-        public const int ZOM_HEALTH = 5, ZOM_SPEED = 10, ZOM_DAMAGE = 1;
+        public const int ZOM_HEALTH = 8, ZOM_SPEED = 10, ZOM_DAMAGE = 2;
         public const double ZOM_TIMER = .3;
         private const int BASE_CHARGE = 7;
         private double chargeTime;

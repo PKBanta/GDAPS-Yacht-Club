@@ -72,7 +72,7 @@ namespace SemesterProject
         private bool quitActive;
 
         private Button mainMenu_play, mainMenu_quit, pause_menu, pause_resume,
-            pause_quit, quit_no, quit_yes, instructions_Play, instructions_Back, battleButton;
+            pause_quit, quit_no, quit_yes, instructions_Play, instructions_Back, battleButton, winButton;
         private List<Button> mainMenuButtons, pauseButtons, gameOverButtons,
             confirmQuitButtons, instructionsButtons;
         
@@ -181,7 +181,7 @@ namespace SemesterProject
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            
+
             //Loads the player's texture
             sp_player = Content.Load<Texture2D>("marioSpriteSheet");
             sp_zombie = Content.Load<Texture2D>("ZombieSpriteSheet2");
@@ -219,7 +219,7 @@ namespace SemesterProject
             healthBarOverlay = Content.Load<Texture2D>("Health Bar Overlay");
 
             healthFont = Content.Load<SpriteFont>("Consolas_9");
-            
+
             MapReader.healthBarBackground = healthBarBase;
             MapReader.healthBarOverlay = healthBarOverlay;
 
@@ -227,7 +227,7 @@ namespace SemesterProject
 
             Player.PlayerSprite = sp_player;
             Player.HealthFont = healthFont;
-            
+
             Zombie.ZombieSprite = sp_zombie;
             Zombie.HealthFont = healthFont;
 
@@ -244,18 +244,32 @@ namespace SemesterProject
             player = new Player(Vector2.Zero, healthBarBase, healthBarOverlay);
             player.Health = 14;
 
-            reader.ReadMap("../../../Content/Rooms/room1.txt", quadTree,collectibleTexture,enemyTexture);
-            
+            reader.ReadMap("../../../Content/Rooms/room1.txt", quadTree, collectibleTexture, enemyTexture);
+
             wall = new Wall(0, 0, 25, 25, wallTexture);
             platform = new Platform(0, 0, 25, 25, platTexture);
             collectible = new Collectible(0, 0, 25, 25, collectibleTexture, "item");
 
             //reader.StoreObjects(platform, wall, collectList, spriteBatch);
-            sewerBG = new Background(0, 0, 800, 1200,sewerTexture);
+            sewerBG = new Background(0, 0, 800, 1200, sewerTexture);
             cityBG = new Background(0, 0, 800, 1200, cityTexture);
             skyLineBG = new Background(0, 0, 800, 1200, skyLineTexture);
 
             // BUTTONS
+            winButton = new Button(
+                buttonImage,
+                new Rectangle(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2, buttonImage.Width, buttonImage.Height),
+                Exit,
+                buttonFont,
+                "Yay!",
+                buttonTextLoc,
+                Color.White,
+                true,
+                true,
+                true,
+                false
+                );
+
             mainMenu_play = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
@@ -371,7 +385,7 @@ namespace SemesterProject
                 true,  // highlightable
                 true,  // clickable
                 true); // linger
-            
+
             instructions_Play = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
@@ -407,7 +421,7 @@ namespace SemesterProject
                 true,  // highlightable
                 true,  // clickable
                 false); // linger
-            
+
             battleButton = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
@@ -446,7 +460,11 @@ namespace SemesterProject
                 quit_yes
             };
 
-            gameOverButtons = confirmQuitButtons;
+            gameOverButtons = new List<Button>()
+            {
+                winButton
+            };
+                
 
             instructionsButtons = new List<Button>()
             {
@@ -580,13 +598,13 @@ namespace SemesterProject
                 "CONGRATULATIONS!",
                 new Vector2(GraphicsDevice.Viewport.Width / 2
                 - pauseImage.Width, GraphicsDevice.Viewport.Height / 5),
-                Color.White,
+                Color.Black,
 
                 menuFont,
                 "You won, and you didn't get got.",
                 new Vector2(GraphicsDevice.Viewport.Width / 2 - 250,
-                    GraphicsDevice.Viewport.Height / 2),
-                Color.White,
+                    GraphicsDevice.Viewport.Height / 2 - 50),
+                Color.Black,
 
                 gameOverButtons,
                 Keys.Left,
@@ -1037,7 +1055,7 @@ namespace SemesterProject
 
         private void DrawGameWinYay()
         {
-            
+            gameWinMenu.Draw(spriteBatch);
         }
 
         /// <summary>
@@ -1244,7 +1262,8 @@ namespace SemesterProject
         #region Battle
         private void Battle(Enemy enemy1)
         {
-            player.O_Location = new Vector2(10, 100);           
+            
+            //player.O_Location = new Vector2(10, 100);           
             previousState = gameState;
             gameState = GameState.Battle;
             
@@ -1263,6 +1282,8 @@ namespace SemesterProject
             {
                 battleEnvironment = LevelType.skyscraper;
             }
+
+            player.State = CharacterState.b_idle;
 
             BattleManager.StageBattle(
                 player,

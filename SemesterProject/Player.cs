@@ -13,7 +13,7 @@ namespace SemesterProject
         // Fields
         #region Fields
         public const int JUMP_FRAME = 1, PLAYER_HEALTH = 10, PLAYER_SPEED = 4,
-            PLAYER_DAMAGE = 100;
+            PLAYER_DAMAGE = 3;
         public const double PLAYER_TIMER = 0.15;
         private static Texture2D playerSprite;
         private static SpriteFont font;
