@@ -816,9 +816,10 @@ namespace SemesterProject
                     if(BattleManager.AllDead())
                     {
                         gameState = GameState.World;
-                        player.X = (int)preBattlePosition.X;
-                        player.Y = (int)preBattlePosition.Y;
+                        //player.X = (int)preBattlePosition.X;
+                        //player.Y = (int)preBattlePosition.Y;
                         reader.EnemyList.Remove(killedEnemy);
+                        player.Rect = new Rectangle((int)preBattlePosition.X, (int)preBattlePosition.Y, 25, 50);
                         //reader.EnemyList[reader.EnemyList.IndexOf(killedEnemy)].Health = 0;
                     }
 
@@ -1114,8 +1115,7 @@ namespace SemesterProject
         private void Battle(Enemy enemy1)
         {
             preBattlePosition = new Vector2(player.X, player.Y);
-            player.X = 10;
-            player.Y = 100;            
+            player.Rect = new Rectangle(10, 100, 100, 200);           
             previousState = gameState;
             gameState = GameState.Battle;
             
