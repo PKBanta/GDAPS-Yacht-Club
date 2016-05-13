@@ -733,6 +733,7 @@ namespace SemesterProject
 
                             if (kbState.IsKeyDown(Keys.Space))
                             {
+                                    /*
                                 bool platformAbove = false;
                                 
                                 for(int i = 0; i < reader.RectList.Count; i++)
@@ -741,9 +742,9 @@ namespace SemesterProject
                                     {
                                         platformAbove = true;
                                     }
-                                }
+                                }*/
 
-                                if (previousKBState.IsKeyUp(Keys.Space) && !platformAbove)
+                                if (previousKBState.IsKeyUp(Keys.Space))
                                 {
                                     playerYState = PlayerYState.Jump;
                                 }
