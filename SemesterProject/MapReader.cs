@@ -312,6 +312,7 @@ namespace SemesterProject
             if (player.Rect.Intersects(transitionRect) && !down)
             {
                 player.Y = 50;
+
                 return true;
             }
             else if (player.Rect.Intersects(transitionRect) && !up)

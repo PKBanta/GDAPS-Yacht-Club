@@ -47,6 +47,7 @@ namespace SemesterProject
         public Texture2D Tex
         {
             get { return tex; }
+            set { tex = value; }
         }
 
         public Rectangle Rect

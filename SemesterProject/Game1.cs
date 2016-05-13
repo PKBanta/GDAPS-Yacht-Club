@@ -88,6 +88,7 @@ namespace SemesterProject
         private Texture2D cityTexture;
         private Texture2D skyLineTexture;
         private Texture2D enemyTexture;
+        private Texture2D sewerTexture2;
 
         private Collectible collectible;
         private Wall wall;
@@ -108,6 +109,8 @@ namespace SemesterProject
 
         private Enemy killedEnemy;
 
+        private Random rand;
+
         #endregion Textures/Misc.
 
         public Game1()
@@ -117,6 +120,7 @@ namespace SemesterProject
             graphics.PreferredBackBufferWidth = 1200;
             graphics.PreferredBackBufferHeight = 800;
             graphics.ApplyChanges();
+            rand = new Random();
         }
 
         #region Single Mouse/Key Press
@@ -194,6 +198,7 @@ namespace SemesterProject
             collectibleTexture = Content.Load<Texture2D>("collectible");
             platTexture = Content.Load<Texture2D>("tile");
             sewerTexture = Content.Load<Texture2D>("sewer bg2");
+            sewerTexture2 = Content.Load<Texture2D>("sewer BG");
             cityTexture = Content.Load<Texture2D>("city BG");
             skyLineTexture = Content.Load<Texture2D>("highrise BG");
             enemyTexture = Content.Load<Texture2D>("ghost");
@@ -637,6 +642,7 @@ namespace SemesterProject
                             if (reader.Right && player.X >= GraphicsDevice.Viewport.Width - reader.CurrentRoom.Tile.Width - player.Width)
                             {
                                 player.X = GraphicsDevice.Viewport.Width - reader.CurrentRoom.Tile.Width - player.Width;
+                                
                             }
 
                             for (int i = 0; i < reader.RectList.Count; i++)
@@ -852,7 +858,19 @@ namespace SemesterProject
             if (reader.SwitchRoom(player))
             {
                 reader.ReadMap("../../../Content/Rooms/room" + reader.RoomNumber +".txt", quadTree, collectibleTexture,enemyTexture);
-                
+                if (reader.RoomNumber > 10 && reader.RoomNumber < 21)
+                {
+                    int temp = rand.Next(2);
+                    if (temp == 0)
+                    {
+                        sewerBG.Tex = sewerTexture;
+                    }
+                    else
+                    {
+                        sewerBG.Tex = sewerTexture2;
+                    }
+                }
+
             }
             base.Update(gameTime);
         }
@@ -942,6 +960,7 @@ namespace SemesterProject
             }
             else if(reader.RoomNumber >10 && reader.RoomNumber < 21)
             {
+                
                 sewerBG.Draw(spriteBatch);
             }
             else
