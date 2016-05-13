@@ -192,7 +192,7 @@ namespace SemesterProject
             wallTexture = Content.Load<Texture2D>("wall");
             collectibleTexture = Content.Load<Texture2D>("collectible");
             platTexture = Content.Load<Texture2D>("tile");
-            sewerTexture = Content.Load<Texture2D>("sewer BG");
+            sewerTexture = Content.Load<Texture2D>("sewer bg2");
             cityTexture = Content.Load<Texture2D>("city BG");
             skyLineTexture = Content.Load<Texture2D>("highrise BG");
             enemyTexture = Content.Load<Texture2D>("ghost");
