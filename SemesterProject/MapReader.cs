@@ -20,6 +20,7 @@ namespace SemesterProject
         bool down;
         bool left;
         bool right;
+        char transRectChar;
         char[] charList;
         string line;
         Room room;
@@ -119,6 +120,7 @@ namespace SemesterProject
                 left = (charList[1].Equals('1'));
                 down = (charList[2].Equals('1'));
                 right = (charList[3].Equals('1'));
+                transRectChar = (newLine[3].ToCharArray()[0]);
                 tileArray = new char[x, y];
                 //sets up a new room with the input
                 room = new Room(x, y, up, down, left, right);
@@ -132,15 +134,15 @@ namespace SemesterProject
                 Rectangle downrect = new Rectangle(0, 750, 1200, 50);
 
                 //finds out where to go to load the next map
-                if (!down && previousTransitionRect != uprect)
+                if (transRectChar == 'd')
                 {
                     transitionRect = downrect;
                 }
-                else if (!up && previousTransitionRect != downrect)
+                else if (transRectChar == 'u')
                 {
                     transitionRect = uprect;
                 }
-                else
+                else if (transRectChar == 'r')
                 {
                     transitionRect = rightrect;
                 }
@@ -309,17 +311,17 @@ namespace SemesterProject
         
         public bool SwitchRoom(Player player)
         {
-            if (player.Rect.Intersects(transitionRect) && !down)
+            if (player.Rect.Intersects(transitionRect) && transRectChar == 'd')
             {
                 player.Y = 50;
                 return true;
             }
-            else if (player.Rect.Intersects(transitionRect) && !up)
+            else if (player.Rect.Intersects(transitionRect) && transRectChar == 'u')
             {
                 player.Y = 750;
                 return true;
             }
-            else if (player.Rect.Intersects(transitionRect) && !left)
+            else if (player.Rect.Intersects(transitionRect) && transRectChar == 'r')
             {
                 player.X = 50;
                 
