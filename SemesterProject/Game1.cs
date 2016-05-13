@@ -88,6 +88,7 @@ namespace SemesterProject
         private Texture2D cityTexture;
         private Texture2D skyLineTexture;
         private Texture2D enemyTexture;
+        private Texture2D sewerTexture2;
 
         private Collectible collectible;
         private Wall wall;
@@ -108,6 +109,8 @@ namespace SemesterProject
 
         private Enemy killedEnemy;
 
+        private Random rand;
+
         #endregion Textures/Misc.
 
         public Game1()
@@ -117,6 +120,7 @@ namespace SemesterProject
             graphics.PreferredBackBufferWidth = 1200;
             graphics.PreferredBackBufferHeight = 800;
             graphics.ApplyChanges();
+            rand = new Random();
         }
 
         #region Single Mouse/Key Press
@@ -194,6 +198,7 @@ namespace SemesterProject
             collectibleTexture = Content.Load<Texture2D>("collectible");
             platTexture = Content.Load<Texture2D>("tile");
             sewerTexture = Content.Load<Texture2D>("sewer bg2");
+            sewerTexture2 = Content.Load<Texture2D>("sewer BG");
             cityTexture = Content.Load<Texture2D>("city BG");
             skyLineTexture = Content.Load<Texture2D>("highrise BG");
             enemyTexture = Content.Load<Texture2D>("ghost");
@@ -333,7 +338,7 @@ namespace SemesterProject
             instructions_Play = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
-                    - buttonImage.Width / 2 - 300, GraphicsDevice.Viewport.Height / 2
+                    - buttonImage.Width / 2 - 350, GraphicsDevice.Viewport.Height / 2
                     + buttonImage.Height / 2 + 10,
                     buttonImage.Width, buttonImage.Height),
                 StartGame,  // ActivationFunction
@@ -351,7 +356,7 @@ namespace SemesterProject
             instructions_Back = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
-                    - buttonImage.Width / 2, GraphicsDevice.Viewport.Height / 2
+                    - buttonImage.Width / 2 - 25, GraphicsDevice.Viewport.Height / 2
                     + buttonImage.Height / 2 + 10,
                     buttonImage.Width, buttonImage.Height),
                 ReturnToMenu,  // ActivationFunction
@@ -425,13 +430,13 @@ namespace SemesterProject
                 "TITLE",
                 new Vector2 (GraphicsDevice.Viewport.Width / 2 - 22,
                     GraphicsDevice.Viewport.Height / 4),
-                Color.White,
+                Color.Black,
                 
                 menuFont,
                 "Click or use arrow keys to select an option.",
                 new Vector2(GraphicsDevice.Viewport.Width / 2 - 150,
                     GraphicsDevice.Viewport.Height / 4 + 20),
-                Color.White,
+                Color.Black,
 
                 mainMenuButtons,
                 Keys.Left,
@@ -446,16 +451,16 @@ namespace SemesterProject
                 Color.White,
 
                 menuFont,
-                "             Use the WASD keys to move and SPACE to jump.\nReach the final level and defeat the final boss to defeat the game!",
-                new Vector2(GraphicsDevice.Viewport.Width / 2 - 400,
+                "             Use the WASD keys to move and SPACE to jump.\nReach the final level and defeat the final boss to defeat the game!\n                                                  In Battle:\n        Select an enemy to attack with the buttons on screen.\nBefore an enemy hits you, time hitting Q correctly to avoid damage!\n       Before hitting an enemy, time hitting E to deal extra damage!",
+                new Vector2(GraphicsDevice.Viewport.Width / 2 - 410,
                     GraphicsDevice.Viewport.Height / 4),
-                Color.White,
+                Color.Black,
 
                 menuFont,
                 "Click or use arrow keys to select an option.",
                 new Vector2(GraphicsDevice.Viewport.Width / 2 - 330,
-                    GraphicsDevice.Viewport.Height / 4 + 80),
-                Color.White,
+                    GraphicsDevice.Viewport.Height / 4 + 180),
+                Color.Black,
 
                 instructionsButtons,
                 Keys.Left,
@@ -635,6 +640,7 @@ namespace SemesterProject
                             if (reader.Right && player.X >= GraphicsDevice.Viewport.Width - reader.CurrentRoom.Tile.Width - player.Width)
                             {
                                 player.X = GraphicsDevice.Viewport.Width - reader.CurrentRoom.Tile.Width - player.Width;
+                                
                             }
 
                             for (int i = 0; i < reader.RectList.Count; i++)
@@ -814,9 +820,10 @@ namespace SemesterProject
                     if(BattleManager.AllDead())
                     {
                         gameState = GameState.World;
-                        player.X = (int)preBattlePosition.X;
-                        player.Y = (int)preBattlePosition.Y;
+                        //player.X = (int)preBattlePosition.X;
+                        //player.Y = (int)preBattlePosition.Y;
                         reader.EnemyList.Remove(killedEnemy);
+                        player.Rect = new Rectangle((int)preBattlePosition.X, (int)preBattlePosition.Y, 25, 50);
                         //reader.EnemyList[reader.EnemyList.IndexOf(killedEnemy)].Health = 0;
                     }
 
@@ -849,7 +856,19 @@ namespace SemesterProject
             if (reader.SwitchRoom(player))
             {
                 reader.ReadMap("../../../Content/Rooms/room" + reader.RoomNumber +".txt", quadTree, collectibleTexture,enemyTexture);
-                
+                if (reader.RoomNumber > 10 && reader.RoomNumber < 21)
+                {
+                    int temp = rand.Next(2);
+                    if (temp == 0)
+                    {
+                        sewerBG.Tex = sewerTexture;
+                    }
+                    else
+                    {
+                        sewerBG.Tex = sewerTexture2;
+                    }
+                }
+
             }
             base.Update(gameTime);
         }
@@ -939,6 +958,7 @@ namespace SemesterProject
             }
             else if(reader.RoomNumber >10 && reader.RoomNumber < 21)
             {
+                
                 sewerBG.Draw(spriteBatch);
             }
             else
@@ -1112,8 +1132,7 @@ namespace SemesterProject
         private void Battle(Enemy enemy1)
         {
             preBattlePosition = new Vector2(player.X, player.Y);
-            player.X = 10;
-            player.Y = 100;            
+            player.Rect = new Rectangle(10, 100, 100, 200);           
             previousState = gameState;
             gameState = GameState.Battle;
             
