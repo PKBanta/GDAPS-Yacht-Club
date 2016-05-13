@@ -594,8 +594,6 @@ namespace SemesterProject
                             }
                     }
 
-                    //Put in player collision with enemy here
-
                     //Player Movement
                     if (kbState.IsKeyDown(Keys.Left))
                     {

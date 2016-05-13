@@ -18,7 +18,17 @@ namespace SemesterProject
         private Rectangle right;
         private Rectangle left;
 
-        //Constructor
+        /// <summary>
+        /// Constructor inherits from Character class and sets up detector rectangles and jump variables
+        /// </summary>
+        /// <param name="x">X position</param>
+        /// <param name="y">Y position</param>
+        /// <param name="width">Rectangle width</param>
+        /// <param name="height">Rectangle height</param>
+        /// <param name="speed">Speed that determines when the player will attack in battle</param>
+        /// <param name="damage">Damage the player will deal in battle</param>
+        /// <param name="maxHealth">Maximum amount of health the player can have</param>
+        /// <param name="tex">Texture</param>
         public Player(int x, int y, int width, int height, int speed, int damage, int maxHealth, Texture2D tex)
             :base(x, y, width, height, speed, damage, maxHealth, tex)
         {
@@ -28,15 +38,16 @@ namespace SemesterProject
             below = new Rectangle(this.X, this.Y + this.Height, this.Width, 10);
             right = new Rectangle(this.X + this.Width, this.Y, 10, this.Height);
             left = new Rectangle(this.X - 11, this.Y, 10, this.Height);
-
         }
 
+        //A variable that decreases over time to make the player jump and fall
         public int JumpAcceleration
         {
             get { return jumpAcceleration; }
             set { jumpAcceleration = value; }
         }
 
+        //Small rectangles that detect collisions with map objects
         public Rectangle Above
         {
             get { return above; }
@@ -57,7 +68,8 @@ namespace SemesterProject
             get { return left; }
         }
 
-        //Moves character up as they jump
+        //Using a constant "speed" variable, an "acceleration" is added to the jump speed to change Y position
+        //The acceleration decreases until it is -25 to allow the player to jump and then fall after a small amount of time
         public void Jump()
         {
             this.Y -= (jumpSpeed * (jumpAcceleration/2));
@@ -82,16 +94,5 @@ namespace SemesterProject
             left.X = this.X - 11;
             left.Y = this.Y;
         }
-
-        /*
-        /// <summary>
-        /// Detects if player collides with another character
-        /// </summary>
-        /// <param name="c">Character with which the player collides</param>
-        public void Collide(Character c)
-        {
-
-        }
-        */
     }
 }

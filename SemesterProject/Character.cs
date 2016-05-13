@@ -88,7 +88,17 @@ namespace SemesterProject
             set { tex = value; }
         }
 
-        //Constructor
+        /// <summary>
+        /// Constructor for the character class that sets up the position and size of rectangle and texture
+        /// </summary>
+        /// <param name="x">X position</param>
+        /// <param name="y">Y position</param>
+        /// <param name="width">Rectangle width</param>
+        /// <param name="height">Rectangle height</param>
+        /// <param name="speed">Speed that determines when the character will attack in battle</param>
+        /// <param name="damage">Amount of damage the character will deal in battle</param>
+        /// <param name="maxHealth">Maximum amount of health the player can have</param>
+        /// <param name="tex">Texture</param>
         public Character(int x, int y, int width, int height, int speed, int damage, int maxHealth, Texture2D tex)
         {
             this.width = width;
@@ -104,7 +114,7 @@ namespace SemesterProject
 
         // Methods
         /// <summary>
-        /// Allows the character to attack
+        /// Allows the character to attack and decrease the target's health by character's damage stat
         /// </summary>
         /// <param name="target">Target to attack</param>
         public virtual void Attack(Character target)
@@ -113,7 +123,8 @@ namespace SemesterProject
         }
 
         /// <summary>
-        /// Allows the character to move
+        /// Allows the character to move in the x direction, adding a constant distance to travel multiplied by an increasing acceleration
+        /// to the X value of the rectangle
         /// </summary>
         /// <param name="dist">Distance for the character to move per frame</param>
         public virtual void Move(int dist)
@@ -125,6 +136,7 @@ namespace SemesterProject
             }
         }
 
+        //Virtual method that allows child classes to update information
         public virtual void Update()
         {
 
@@ -137,16 +149,6 @@ namespace SemesterProject
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(tex, rect, Color.White);
-        }
-
-        public virtual bool CollisionCheck(Rectangle r1, Rectangle r2)
-        {
-            if (r1.Intersects(r2))
-            {
-                return true;
-            }
-
-            return false;
         }
     }
 }

@@ -11,6 +11,17 @@ namespace SemesterProject
 {
     class Enemy : Character
     {
+        /// <summary>
+        /// Constructor inherits from the Character class
+        /// </summary>
+        /// <param name="x">X location</param>
+        /// <param name="y">Y location</param>
+        /// <param name="width">Rectangle width</param>
+        /// <param name="height">Rectangle height</param>
+        /// <param name="speed">Speed that determines when enemy will attack during battle</param>
+        /// <param name="damage">Damage the enemy will deal in battle</param>
+        /// <param name="maxHealth">The maximum amount of health the enemy can have</param>
+        /// <param name="tex">Texture</param>
         public Enemy(int x, int y, int width, int height, int speed, int damage, int maxHealth, Texture2D tex)
             : base(x, y, width, height, speed, damage, maxHealth, tex)
         {
@@ -35,10 +46,10 @@ namespace SemesterProject
 
             return targ;
         }
-
+        /*
         public void Draw(SpriteBatch spritebatch)
         {
             spritebatch.Draw(Texture, Rect, Color.White);
-        }
+        }*/
     }
 }
