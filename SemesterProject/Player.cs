@@ -15,6 +15,8 @@ namespace SemesterProject
         private int jumpAcceleration;
         private Rectangle above;
         private Rectangle below;
+        private Rectangle right;
+        private Rectangle left;
 
         //Constructor
         public Player(int x, int y, int width, int height, int speed, int damage, int maxHealth, Texture2D tex)
@@ -24,6 +26,9 @@ namespace SemesterProject
             jumpAcceleration = 17;
             above = new Rectangle(this.X, this.Y - 11, this.Width, 10);
             below = new Rectangle(this.X, this.Y + this.Height, this.Width, 10);
+            right = new Rectangle(this.X + this.Width, this.Y, 10, this.Height);
+            left = new Rectangle(this.X - 11, this.Y, 10, this.Height);
+
         }
 
         public int JumpAcceleration
@@ -42,6 +47,16 @@ namespace SemesterProject
             get { return below; }
         }
 
+        public Rectangle Right
+        {
+            get { return right; }
+        }
+
+        public Rectangle Left
+        {
+            get { return left; }
+        }
+
         //Moves character up as they jump
         public void Jump()
         {
@@ -52,6 +67,7 @@ namespace SemesterProject
             }
         }
 
+        //Updates the locations of the collision detection rectangles
         public void UpdateDetectors()
         {
             above.X = this.X;
@@ -59,6 +75,12 @@ namespace SemesterProject
 
             below.X = this.X;
             below.Y = this.Y + this.Height + 1;
+
+            right.X = this.X + this.Width;
+            right.Y = this.Y;
+
+            left.X = this.X - 11;
+            left.Y = this.Y;
         }
 
         /*
