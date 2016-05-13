@@ -62,7 +62,8 @@ namespace SemesterProject
 
         #region Menus/Buttons
         private Texture2D mainMenuImage, pauseImage, gameOverImage, buttonImage,
-            quitImage, shadeOverlay;
+            quitImage, shadeOverlay/*, streetMenu, sewerMenu, cityMenu*/;
+        private List<Texture2D> mainMenuImages;
         private SpriteFont menuFont, buttonFont, healthFont;
         private static Rectangle screen;
         private static Color shadowColor = new Color(200, 200, 200, 255);
@@ -93,6 +94,7 @@ namespace SemesterProject
         private QuadTreeNode quadTree;
         //the node for Mario
         private QuadTreeNode marioQuad;
+        private Random rand;
 
         private double timeCounter, timePerFrame;
 
@@ -152,6 +154,9 @@ namespace SemesterProject
             screen = new Rectangle(0, 0, GraphicsDevice.Viewport.Width,
                 GraphicsDevice.Viewport.Height);
 
+            rand = new Random();
+            MapReader.rando = rand;
+
             timeCounter = 0;
             timePerFrame = 10;
 
@@ -171,9 +176,14 @@ namespace SemesterProject
             playerTexture = Content.Load<Texture2D>("mario");
 
             // Menu + Misc textures
-            mainMenuImage = Content.Load<Texture2D>("mainMenu");
+            mainMenuImages = new List<Texture2D>(3);
+            mainMenuImages.Add(Content.Load<Texture2D>("MenuBackground_City"));
+            mainMenuImages.Add(Content.Load<Texture2D>("MenuBackground_Sewer"));
+            mainMenuImages.Add(Content.Load<Texture2D>("MenuBackground_Skyscraper"));
+            mainMenuImage = mainMenuImages[rand.Next(0, mainMenuImages.Count)];
             pauseImage = Content.Load<Texture2D>("pauseMenu");
-            gameOverImage = Content.Load<Texture2D>("mainMenu");
+            //gameOverImage = Content.Load<Texture2D>("mainMenu");
+            gameOverImage = mainMenuImages[rand.Next(0, 3)];
             quitImage = Content.Load<Texture2D>("QuitMenu");
             buttonImage = Content.Load<Texture2D>("ButtonImage");
             shadeOverlay = Content.Load<Texture2D>("ShadeOverlay");
@@ -186,9 +196,9 @@ namespace SemesterProject
             healthBarOverlay = Content.Load<Texture2D>("Health Bar Overlay");
 
             //Loads map textures
-            wallTexture = Content.Load<Texture2D>("wall");
+            wallTexture = Content.Load<Texture2D>("wall"/*"wallTemplate"*/);
             collectibleTexture = Content.Load<Texture2D>("collectible");
-            platTexture = Content.Load<Texture2D>("tile");
+            platTexture = Content.Load<Texture2D>("tile"/*"tileTemplate"*/);
             sewerTexture = Content.Load<Texture2D>("sewer BG");
 
             //Initializes player and their texture
@@ -597,6 +607,7 @@ namespace SemesterProject
                                 break;
 
                             case PlayerXState.WalkLeft:
+                                //player.Direction = CharacterDirection.left;
                                 player.Move(-5);
                                 player.UpdateDetectors();
 
@@ -803,6 +814,7 @@ namespace SemesterProject
         /// </summary>
         private void DrawMainMenu()
         {
+            //mainMenuImage = mainMenuImages[rand.Next(0, mainMenuImages.Count)];
             mainMenu.Draw(spriteBatch);
 
             if (quitActive)
@@ -868,6 +880,7 @@ namespace SemesterProject
             switch (state)
             {
                 case GameState.Menu:
+                    //mainMenuImage = mainMenuImages[rand.Next(0, mainMenuImages.Count)];
                     DrawMainMenu();
                     break;
 
@@ -899,6 +912,8 @@ namespace SemesterProject
         {
             previousState = gameState;
             gameState = GameState.World;
+            //int x = rand.Next(0, mainMenuImages.Count);
+            mainMenuImage = mainMenuImages[2];
 
             IsMouseVisible = false;
         }
@@ -940,6 +955,11 @@ namespace SemesterProject
         {
             previousState = gameState;
             gameState = GameState.Menu;
+            //int i = rand.Next(0, mainMenuImages.Count);
+            //int a = rand.Next(0, mainMenuImages.Count);
+            //int b = rand.Next(0, mainMenuImages.Count);
+            //int x = rand.Next(0, mainMenuImages.Count);
+            //mainMenuImage = mainMenuImages[x];
 
             IsMouseVisible = true;
         }

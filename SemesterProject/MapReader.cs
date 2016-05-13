@@ -27,13 +27,15 @@ namespace SemesterProject
         Platform platform;
         Collectible item;
         SpriteBatch spritebatch;
-        Random rando = new Random();
+        public static Random rando;// = new Random();
         char[,] tileArray;
         List<Rectangle> rectList;
         List<Collectible> itemList;
         List<MapObject> objList;
         QuadTreeNode quadtree;
         Rectangle transitionRect;
+        //private LevelType levelType;
+        //public static Background cityBG, sewerBG, skyscraperBG;
 
 
         /// <summary>

@@ -8,8 +8,6 @@ using Microsoft.Xna.Framework.Input;
 
 namespace SemesterProject
 {
-    
-
     class Character
     {
         //Movement and appearance related fields

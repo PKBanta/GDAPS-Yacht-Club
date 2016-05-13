@@ -11,7 +11,6 @@ namespace SemesterProject
     class Room
     {
         // Fields
-
         int width;
         int height;
         bool up;
