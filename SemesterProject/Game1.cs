@@ -362,7 +362,7 @@ namespace SemesterProject
                 true,  // highlightable
                 true,  // clickable
                 false); // linger
-
+            */
             battleButton = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
@@ -385,7 +385,7 @@ namespace SemesterProject
             {
                 mainMenu_play,
                 mainMenu_quit,
-                //battleTime
+                battleTime
             };
 
             pauseButtons = new List<Button>()
@@ -638,9 +638,9 @@ namespace SemesterProject
 
                             for (int i = 0; i < reader.RectList.Count; i++)
                             {
-                                if (player.Rect.Intersects(reader.RectList[i]))
+                                if (player.Right.Intersects(reader.RectList[i]))
                                 {
-                                    player.X = reader.RectList[i].X - player.Width;
+                                    player.X = reader.RectList[i].X - player.Width - 1;
                                     break;
                                 }
                             }
@@ -675,9 +675,9 @@ namespace SemesterProject
 
                             for (int i = 0; i < reader.RectList.Count; i++)
                             {
-                                if (player.Rect.Intersects(reader.RectList[i]))
+                                if (player.Left.Intersects(reader.RectList[i]))
                                 {
-                                    player.X = reader.RectList[i].X + player.Width;
+                                    player.X = reader.RectList[i].X + player.Width + 1;
                                     break;
                                 }
                             }
@@ -726,7 +726,17 @@ namespace SemesterProject
 
                             if (kbState.IsKeyDown(Keys.Space))
                             {
-                                if (previousKBState.IsKeyUp(Keys.Space))
+                                bool platformAbove = false;
+                                
+                                for(int i = 0; i < reader.RectList.Count; i++)
+                                {
+                                    if (player.Above.Intersects(reader.RectList[i]))
+                                    {
+                                        platformAbove = true;
+                                    }
+                                }
+
+                                if (previousKBState.IsKeyUp(Keys.Space) && !platformAbove)
                                 {
                                     playerYState = PlayerYState.Jump;
                                 }
