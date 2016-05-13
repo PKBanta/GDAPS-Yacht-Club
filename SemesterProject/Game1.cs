@@ -100,7 +100,7 @@ namespace SemesterProject
         private QuadTreeNode marioQuad;
 
         private Enemy enemy;
-        private List<Enemy> enemyList;
+        //private List<Enemy> enemyList;
 
         private Enemy killedEnemy;
 
@@ -152,6 +152,7 @@ namespace SemesterProject
             quitActive = false;
             reader = new MapReader();
             quadTree = new QuadTreeNode(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            
 
             //Initializes player and their texture
             playerXState = PlayerXState.StandRight;
@@ -809,7 +810,8 @@ namespace SemesterProject
                         gameState = GameState.World;
                         player.X = (int)preBattlePosition.X;
                         player.Y = (int)preBattlePosition.Y;
-                        enemyList.Remove(killedEnemy);
+                        reader.EnemyList.Remove(killedEnemy);
+                        //reader.EnemyList[reader.EnemyList.IndexOf(killedEnemy)].Health = 0;
                     }
 
                     if(player.Health <= 0)
@@ -930,7 +932,10 @@ namespace SemesterProject
             reader.DrawMap(platform, wall, collectible, spriteBatch);
             for(int i = 0; i < reader.EnemyList.Count; i++)
             {
-                reader.EnemyList[i].Draw(spriteBatch);
+                if (reader.EnemyList[i].Health > 0)
+                {
+                    reader.EnemyList[i].Draw(spriteBatch);
+                }
             }
         }
 
@@ -1097,7 +1102,7 @@ namespace SemesterProject
             
             IsMouseVisible = true;
 
-            Enemy one = enemy1;
+            Enemy one = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 100, 300, 100, 3, 10, 20, enemy1.Texture);
             Enemy two = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 200, 300, 100, 3, 10, 20, enemy1.Texture);
             Enemy three = new Enemy(GraphicsDevice.Viewport.Width - 100, GraphicsDevice.Viewport.Height - 300, 300, 100, 2, 10, 20, enemy1.Texture);
 
