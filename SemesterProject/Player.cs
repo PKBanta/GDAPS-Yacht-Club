@@ -13,7 +13,7 @@ namespace SemesterProject
         // Fields
         #region Fields
         public const int JUMP_FRAME = 1, PLAYER_HEALTH = 10, PLAYER_SPEED = 4,
-            PLAYER_DAMAGE = 1;
+            PLAYER_DAMAGE = 100;
         public const double PLAYER_TIMER = 0.15;
         private static Texture2D playerSprite;
         private static SpriteFont font;
@@ -27,14 +27,16 @@ namespace SemesterProject
         private Rectangle left;
         #endregion
 
-
         // Properties
+
+        //A variable that decreases over time to make the player jump and fall
         public int JumpAcceleration
         {
             get { return jumpAcceleration; }
             set { jumpAcceleration = value; }
         }
 
+        //Small rectangles that detect collisions with map objects
         public Rectangle Above
         {
             get { return above; }
@@ -54,7 +56,7 @@ namespace SemesterProject
         {
             get { return left; }
         }
-
+        
         /// <summary>
         /// The Sprite of all Player objects
         /// </summary>
@@ -143,6 +145,8 @@ namespace SemesterProject
         }
 
         //Moves character up as they jump
+        //Using a constant "speed" variable, an "acceleration" is added to the jump speed to change Y position
+        //The acceleration decreases until it is -25 to allow the player to jump and then fall after a small amount of time
         public void Jump()
         {
             this.O_Y -= (jumpSpeed * (jumpAcceleration/2));

@@ -597,7 +597,7 @@ namespace SemesterProject
         {
             get { return quickTimeEvent; }
         }
-
+        
         public bool QuickEventLocked
         {
             get { return quickEventLocked; }
@@ -736,6 +736,7 @@ namespace SemesterProject
         // Methods
         /// <summary>
         /// Update this Character
+        /// Allows the character to attack and decrease the target's health by character's damage stat
         /// </summary>
         /// <param name="elapsedTime">The elapsed time (in seconds) that have
         /// passed since the last frame</param>
@@ -820,6 +821,8 @@ namespace SemesterProject
 
         /// <summary>
         /// Draw the Character to the screen
+        /// Allows the character to move in the x direction, adding a constant distance to travel multiplied by an increasing acceleration
+        /// to the X value of the rectangle
         /// </summary>
         /// <param name="spriteBatch">Spritebatch to draw with</param>
         public virtual void Draw(SpriteBatch spriteBatch)
@@ -852,7 +855,7 @@ namespace SemesterProject
                     break;
             }
         }
-
+        
         /// <summary>
         /// Draw this Character in their idle overworld state.
         /// </summary>

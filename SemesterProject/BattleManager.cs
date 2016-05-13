@@ -220,7 +220,7 @@ namespace SemesterProject
             // Calculate the locations that all characters should be placed in,
             // and put them where they belong
             CalculateFriendlyBases();
-            CalculateEnemyBases();
+            CalculateEnemyBases(numEnemies);
 
             player.B_Location = friendlyLocations[friendlyLocations.Length - 1];
             for (int i = 0; i < friendlyLocations.Length - 1; i++)
@@ -558,7 +558,7 @@ namespace SemesterProject
                             + enemyRoster[i].MaxHealth;
                     }
 
-                    CalculateEnemyBases();
+                    CalculateEnemyBases(enemyRoster.Count);
                 }
             }
         }
@@ -1298,16 +1298,16 @@ namespace SemesterProject
         /// Recalculate the locations of the base locations of all enemies.
         /// Requires the Player to be in the roster.
         /// </summary>
-        private static void CalculateEnemyBases()
+        private static void CalculateEnemyBases(int numEnemies)
         {
-            if (enemyRoster.Count == 1)
+            if (numEnemies == 1)
             {
                 enemyLocations = new Vector2[1]
                 {
                     new Vector2(screenWidth - 60 - enemyRoster[0].B_Position.Width, screenHeight - enemyRoster[0].B_Position.Height - 213)
                 };
             }
-            else if (enemyRoster.Count == 2)
+            else if (numEnemies == 2)
             {
                 enemyLocations = new Vector2[2]
                 {

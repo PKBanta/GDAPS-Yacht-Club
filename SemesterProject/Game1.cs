@@ -89,6 +89,7 @@ namespace SemesterProject
         private Texture2D skyLineTexture;
         private Texture2D enemyTexture;
         private Texture2D healthBarBase, healthBarOverlay;
+        private Texture2D sewerTexture2;
 
         private Collectible collectible;
         private Wall wall;
@@ -117,6 +118,7 @@ namespace SemesterProject
             graphics.PreferredBackBufferWidth = 1200;
             graphics.PreferredBackBufferHeight = 800;
             graphics.ApplyChanges();
+            rand = new Random();
         }
 
         #region Single Mouse/Key Press
@@ -208,6 +210,7 @@ namespace SemesterProject
             platTexture = Content.Load<Texture2D>("tile");
 
             sewerTexture = Content.Load<Texture2D>("sewer bg2");
+            sewerTexture2 = Content.Load<Texture2D>("sewer BG");
             cityTexture = Content.Load<Texture2D>("city BG");
             skyLineTexture = Content.Load<Texture2D>("highrise BG");
             enemyTexture = Content.Load<Texture2D>("ghost");
@@ -372,7 +375,7 @@ namespace SemesterProject
             instructions_Play = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
-                    - buttonImage.Width / 2 - 300, GraphicsDevice.Viewport.Height / 2
+                    - buttonImage.Width / 2 - 350, GraphicsDevice.Viewport.Height / 2
                     + buttonImage.Height / 2 + 10,
                     buttonImage.Width, buttonImage.Height),
                 StartGame,  // ActivationFunction
@@ -390,7 +393,7 @@ namespace SemesterProject
             instructions_Back = new Button(
                 buttonImage,
                 new Rectangle(GraphicsDevice.Viewport.Width / 2
-                    - buttonImage.Width / 2, GraphicsDevice.Viewport.Height / 2
+                    - buttonImage.Width / 2 - 25, GraphicsDevice.Viewport.Height / 2
                     + buttonImage.Height / 2 + 10,
                     buttonImage.Width, buttonImage.Height),
                 ReturnToMenu,  // ActivationFunction
@@ -458,16 +461,16 @@ namespace SemesterProject
                 Color.White,
 
                 menuFont,
-                "TITLE",
+                "Don't Get Got",
                 new Vector2 (GraphicsDevice.Viewport.Width / 2 - 22,
                     GraphicsDevice.Viewport.Height / 4),
-                Color.White,
+                Color.Black,
                 
                 menuFont,
                 "Click or use arrow keys to select an option.",
                 new Vector2(GraphicsDevice.Viewport.Width / 2 - 150,
                     GraphicsDevice.Viewport.Height / 4 + 20),
-                Color.White,
+                Color.Black,
 
                 mainMenuButtons,
                 Keys.Left,
@@ -482,16 +485,16 @@ namespace SemesterProject
                 Color.White,
 
                 menuFont,
-                "             Use the WASD keys to move and SPACE to jump.\nReach the final level and defeat the final boss to defeat the game!",
-                new Vector2(GraphicsDevice.Viewport.Width / 2 - 400,
+                "             Use the WASD keys to move and SPACE to jump.\nReach the final level and defeat the final boss to defeat the game!\n                                                  In Battle:\n        Select an enemy to attack with the buttons on screen.\nBefore an enemy hits you, time hitting Q correctly to avoid damage!\n       Before hitting an enemy, time hitting E to deal extra damage!",
+                new Vector2(GraphicsDevice.Viewport.Width / 2 - 410,
                     GraphicsDevice.Viewport.Height / 4),
-                Color.White,
+                Color.Black,
 
                 menuFont,
                 "Click or use arrow keys to select an option.\n                            Don't get got.",
                 new Vector2(GraphicsDevice.Viewport.Width / 2 - 330,
-                    GraphicsDevice.Viewport.Height / 4 + 80),
-                Color.White,
+                    GraphicsDevice.Viewport.Height / 4 + 180),
+                Color.Black,
 
                 instructionsButtons,
                 Keys.Left,
@@ -659,11 +662,11 @@ namespace SemesterProject
 
                                 Battle(reader.EnemyList[i]);
                                 killedEnemy = reader.EnemyList[i];
+
                             }
                         }
 
                         //Put in player collision with enemy here
-
                         //Player Movement
                         if (kbState.IsKeyDown(Keys.Left))
                         {
@@ -710,7 +713,7 @@ namespace SemesterProject
                                 {
                                     player.O_X = GraphicsDevice.Viewport.Width - reader.CurrentRoom.Tile.Width - player.O_Width;
                                 }
-
+                                
                                 for (int i = 0; i < reader.RectList.Count; i++)
                                 {
                                     if (player.Right.Intersects(reader.RectList[i]))
@@ -780,22 +783,22 @@ namespace SemesterProject
 
                                 for (int i = 0; i < reader.RectList.Count; i++)
                                 {
-                                    if (player.Below.Intersects(reader.RectList[i]) || player.O_Y >= GraphicsDevice.Viewport.Height - player.O_Height - reader.CurrentRoom.Tile.Height)
+                                    if (player.Below.Intersects(reader.RectList[i]) || player.O_LocY >= GraphicsDevice.Viewport.Height - player.O_Height - reader.CurrentRoom.Tile.Height)
                                     {
                                         onPlatform = true;
                                         break;
                                     }
                                 }
 
-                               for (int i = 0; i < reader.ItemList.Count; i++)
+                                for (int i = 0; i < reader.ItemList.Count; i++)
                                 {
-                                     if (player.O_Position.Intersects(reader.ItemList[i].Rect))
-                                     {
-                                         reader.ItemList[i].Collect(player);
-                                     }
+                                    if (player.O_Position.Intersects(reader.ItemList[i].Rect))
+                                    {
+                                        reader.ItemList[i].Collect(player);
+                                    }
                                 }
-                            
-                                if (player.O_Y >= GraphicsDevice.Viewport.Height - player.O_Height)
+
+                                if (player.O_LocY >= GraphicsDevice.Viewport.Height - player.O_Height)
                                 {
                                     onPlatform = true;
                                 }
@@ -809,23 +812,14 @@ namespace SemesterProject
 
                                 if (kbState.IsKeyDown(Keys.Space))
                                 {
-                                    bool platformAbove = false;
-                                
-                                    for(int i = 0; i < reader.RectList.Count; i++)
-                                    {
-                                        if (player.Above.Intersects(reader.RectList[i]))
-                                        {
-                                            platformAbove = true;
-                                        }
-                                    }
-
-                                    if (previousKBState.IsKeyUp(Keys.Space) && !platformAbove)
+                                    if (previousKBState.IsKeyUp(Keys.Space))
                                     {
                                         playerYState = PlayerYState.Jump;
                                         player.State = CharacterState.o_jump;
                                     }
                                 }
                                 break;
+
 
 
                             case PlayerYState.Jump:
@@ -904,7 +898,6 @@ namespace SemesterProject
                     case GameState.Pause:
                         if (!quitActive)
                         {
-
                             pauseMenu.Update(mState, previousMState, kbState,
                                 previousKBState);
 
@@ -947,7 +940,19 @@ namespace SemesterProject
             if (reader.SwitchRoom(player))
             {
                 reader.ReadMap("../../../Content/Rooms/room" + reader.RoomNumber +".txt", quadTree, collectibleTexture,enemyTexture);
-                
+                if (reader.RoomNumber > 10 && reader.RoomNumber < 21)
+                {
+                    int temp = rand.Next(2);
+                    if (temp == 0)
+                    {
+                        sewerBG.Tex = sewerTexture;
+                    }
+                    else
+                    {
+                        sewerBG.Tex = sewerTexture2;
+                    }
+                }
+
             }
             base.Update(gameTime);
         }
@@ -1046,6 +1051,7 @@ namespace SemesterProject
             }
             else if(reader.RoomNumber >10 && reader.RoomNumber < 21)
             {
+                
                 sewerBG.Draw(spriteBatch);
             }
             else
@@ -1069,7 +1075,19 @@ namespace SemesterProject
         private void DrawBattle()
         {
             player.Draw(spriteBatch);
-            sewerBG.Draw(spriteBatch);
+            if(reader.RoomNumber < 11)
+            {
+                cityBG.Draw(spriteBatch);
+            }else if(reader.RoomNumber > 10 && reader.RoomNumber < 21)
+            {
+                sewerBG.Draw(spriteBatch);
+            }
+            else
+            {
+                skyLineBG.Draw(spriteBatch);
+            }
+
+            
             BattleManager.Draw(spriteBatch);
         }
         
@@ -1251,13 +1269,14 @@ namespace SemesterProject
                 new List<Ally>(),
                 enemy1,
                 battleEnvironment,
-                (reader.RoomNumber % 3));
+                (/*reader.RoomNumber % 3*/1));
         }
 
         public void WinBattle()
         {
             player.Health += 1;
             gameState = GameState.World;
+            reader.EnemyList.Remove(killedEnemy);
         }
 
         public void WinGame()
