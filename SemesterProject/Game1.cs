@@ -638,7 +638,7 @@ namespace SemesterProject
                         case PlayerXState.WalkRight:
                             player.Move(3);
                             player.UpdateDetectors();
-
+                            
                             if (reader.Right && player.X >= GraphicsDevice.Viewport.Width - reader.CurrentRoom.Tile.Width - player.Width)
                             {
                                 player.X = GraphicsDevice.Viewport.Width - reader.CurrentRoom.Tile.Width - player.Width;
@@ -676,7 +676,10 @@ namespace SemesterProject
                         case PlayerXState.WalkLeft:
                             player.Move(-3);
                             player.UpdateDetectors();
-
+                            if(player.X < 0)
+                                {
+                                    player.X = 0;
+                                }
                             if (reader.Left && player.X <= reader.CurrentRoom.Tile.Width)
                             {
                                 player.X = reader.CurrentRoom.Tile.Width;
